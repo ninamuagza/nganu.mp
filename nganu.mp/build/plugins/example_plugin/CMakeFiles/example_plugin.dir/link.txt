@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,--dependency-file=CMakeFiles/example_plugin.dir/link.d -Wl,-soname,example_plugin.so -o /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so CMakeFiles/example_plugin.dir/plugin.cpp.o  /usr/lib/libluajit-5.1.so

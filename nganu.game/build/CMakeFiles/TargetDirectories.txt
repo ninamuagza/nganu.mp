@@ -1,0 +1,3 @@
+/home/fanorisky/GameProject/nganu.game/build/CMakeFiles/nganu-game.dir
+/home/fanorisky/GameProject/nganu.game/build/CMakeFiles/edit_cache.dir
+/home/fanorisky/GameProject/nganu.game/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,12 @@
+map_id=starter_field
+world_name=Greenfields
+tile=48
+width=42
+height=30
+blocked=260,220,220,140
+blocked=820,500,260,160
+blocked=1280,260,280,180
+blocked=1450,900,240,220
+blocked=420,980,180,180
+water=920,120,300,210
+water=1180,1120,360,190
