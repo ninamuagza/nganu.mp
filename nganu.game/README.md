@@ -49,3 +49,5 @@ cd ../nganu.mp
 ## Catatan
 
 Detail jejak pengembangan ada di [`../progress.md`](../progress.md).
+Checklist verifikasi lintas modul ada di [`../VERIFICATION_CHECKLIST.md`](../VERIFICATION_CHECKLIST.md).
+Ringkasan kontrak protokol + asset flow ada di [`../PROTOCOL_ASSET_FLOW.md`](../PROTOCOL_ASSET_FLOW.md).

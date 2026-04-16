@@ -59,6 +59,7 @@ target_link_libraries(game-server PRIVATE enet_static PkgConfig::LUAJIT)
 if(UNIX)
     target_link_libraries(game-server PRIVATE dl m)
 endif()
+target_compile_definitions(game-server PRIVATE NGANU_SERVER_ROOT="${CMAKE_SOURCE_DIR}")
 
 set_target_properties(game-server PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"

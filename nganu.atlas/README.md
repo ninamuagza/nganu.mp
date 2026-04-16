@@ -73,3 +73,4 @@ cmake --build build --parallel
 ## Catatan
 
 Tool ini belum punya object editor, property inspector lengkap, atau map painter multi-layer yang penuh. Versi ini sudah cukup untuk paint tile stamp, blocked/water, spawn, dan save format `.map` dasar.
+Checklist verifikasi lintas modul ada di [`../VERIFICATION_CHECKLIST.md`](../VERIFICATION_CHECKLIST.md).

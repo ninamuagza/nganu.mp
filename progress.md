@@ -6,7 +6,7 @@ Tanggal acuan sesi ini: 2026-04-16
 
 Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 
-- `nganu.mp/game-server`
+- `nganu.mp`
   Server C++17 berbasis ENet + LuaJIT + plugin.
 - `nganu.game`
   Client `raylib` untuk MMORPG 2D top-down.
@@ -16,7 +16,7 @@ Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 1. Analisis codebase awal
 
 - Memetakan struktur repo.
-- Mengidentifikasi `nganu.mp/game-server` sebagai source server utama.
+- Mengidentifikasi `nganu.mp` sebagai source server utama.
 - Menemukan area risiko di packet handling, plugin ABI, dan mode `--test`.
 
 2. Membuat client game baru di `nganu.game`
@@ -98,10 +98,10 @@ Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 
 11. Memindahkan source map ke file `.map`
 
-- Map `starter_field` sekarang punya file sumber nyata di `nganu.mp/game-server/assets/maps/starter_field.map`.
+- Map `starter_field` sekarang punya file sumber nyata di `nganu.mp/assets/maps/starter_field.map`.
 - Server tidak lagi membentuk data map dari string hardcoded di C++.
 - Server sekarang membaca file `.map` lalu mengirim hasilnya ke client sebagai blob asset.
-- Format awal `.map` didokumentasikan di `nganu.mp/game-server/assets/maps/FORMAT.md`.
+- Format awal `.map` didokumentasikan di `nganu.mp/assets/maps/FORMAT.md`.
 - Struktur ini disiapkan supaya nanti map editor bisa menulis file `.map` yang langsung dipakai pipeline yang sama.
 
 12. Menaikkan format map untuk layer dan property
@@ -136,7 +136,7 @@ Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 
 15. Mulai memakai atlas PNG nyata
 
-- Asset atlas yang ditaruh di `nganu.mp/game-server/assets` sekarang mulai dipakai client.
+- Asset atlas yang ditaruh di `nganu.mp/assets` sekarang mulai dipakai client.
 - Layer map sekarang bisa menunjuk atlas source rect dengan bentuk `filename@x@y@w@h`.
 - Renderer `World` sekarang bisa men-tile source rect atlas untuk layer ground, road, dan water.
 - Jadi visual map tidak lagi murni warna/procedural; sudah mulai memakai asset gambar nyata dari project.
@@ -253,14 +253,14 @@ Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 ### Server
 
 ```bash
-cd /home/fanorisky/GameProject/nganu.mp/game-server
+cd /path/to/nganu.mp/nganu.mp
 ./bin/game-server
 ```
 
 ### Client
 
 ```bash
-cd /home/fanorisky/GameProject/nganu.game
+cd /path/to/nganu.mp/nganu.game
 ./build/nganu-game
 ```
 
@@ -303,13 +303,13 @@ cd /home/fanorisky/GameProject/nganu.game
 
 - Pipeline asset sekarang dipisah antara `map`, `map_image`, dan `character_image`.
 - Folder fisik server sekarang juga mulai dipisah:
-  - `nganu.mp/game-server/assets/map_images`
-  - `nganu.mp/game-server/assets/characters`
+  - `nganu.mp/assets/map_images`
+  - `nganu.mp/assets/characters`
 - Format ref atlas di `.map` sekarang mendukung domain eksplisit seperti:
   - `map:terrain_atlas.png@0@0@32@32`
   - `character:base_out_atlas.png@608@0@32@32`
 - Proyek editor atlas baru ada di [`nganu.atlas`](./nganu.atlas) untuk memilih source rect atlas dan menyalin ref asset yang sesuai dengan pipeline runtime.
 - `nganu.atlas` sekarang juga punya mode map editor dasar untuk paint `stamp`, toggle `blocked/water`, set `spawn`, dan save `.map`.
-- Runtime sekarang diarahkan ke satu world besar default [`overworld.map`](./nganu.mp/game-server/assets/maps/overworld.map), dengan `portal` default sebagai teleport dalam map yang sama.
+- Runtime sekarang diarahkan ke satu world besar default [`overworld.map`](./nganu.mp/assets/maps/overworld.map), dengan `portal` default sebagai teleport dalam map yang sama.
 - Konsep `region` sekarang dipakai sebagai object map untuk area besar seperti `Greenfields` dan `Crossroads`, lalu client HUD membaca region aktif dari posisi player.
 - `nganu.atlas` object mode sekarang juga mendukung placement `region`, jadi editor ikut selaras dengan desain overworld tunggal.

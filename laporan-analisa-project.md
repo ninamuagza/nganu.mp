@@ -88,11 +88,11 @@ Secara fungsi, editor sudah sejalan dengan format map server dan client. Masalah
 
 Lokasi:
 
-- [nganu.game/CMakeLists.txt](/home/fanorisky/GameProject/nganu.game/CMakeLists.txt:20)
+- [nganu.game/CMakeLists.txt](./nganu.game/CMakeLists.txt)
 
 Masalah:
 
-- Source ENet dan include directory masih mengarah ke `../nganu.mp/game-server/vendor/enet/...`.
+- Source ENet dan include directory pada histori refactor sempat mengarah ke path server lama yang sudah tidak dipakai.
 - Struktur repo aktual hanya memiliki `nganu.mp/vendor/enet/...`.
 
 Dampak:
@@ -104,11 +104,11 @@ Dampak:
 
 Lokasi:
 
-- [nganu.atlas/src/AtlasEditor.cpp](/home/fanorisky/GameProject/nganu.atlas/src/AtlasEditor.cpp:158)
+- [nganu.atlas/src/AtlasEditor.cpp](./nganu.atlas/src/AtlasEditor.cpp)
 
 Masalah:
 
-- Root asset dan map di-hardcode ke `nganu.mp/game-server/assets/...`.
+- Root asset dan map pada histori refactor sempat di-hardcode ke struktur server lama yang sudah tidak dipakai.
 - Folder itu tidak ada pada struktur repo saat ini.
 
 Dampak:
@@ -120,12 +120,12 @@ Dampak:
 
 Lokasi:
 
-- [nganu.game/README.md](/home/fanorisky/GameProject/nganu.game/README.md:3)
-- [nganu.atlas/README.md](/home/fanorisky/GameProject/nganu.atlas/README.md:10)
+- [nganu.game/README.md](./nganu.game/README.md)
+- [nganu.atlas/README.md](./nganu.atlas/README.md)
 
 Masalah:
 
-- README masih menyebut `nganu.mp/game-server`.
+- README sempat menyebut struktur folder server lama.
 - Instruksi run/build tidak lagi sesuai dengan layout repo aktual.
 
 Dampak:
@@ -137,8 +137,8 @@ Dampak:
 
 Lokasi:
 
-- [nganu.mp/src/core/Server.cpp](/home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp:106)
-- [nganu.game/src/Game.cpp](/home/fanorisky/GameProject/nganu.game/src/Game.cpp:388)
+- [nganu.mp/src/core/Server.cpp](./nganu.mp/src/core/Server.cpp)
+- [nganu.game/src/Game.cpp](./nganu.game/src/Game.cpp)
 
 Fakta:
 
@@ -172,7 +172,7 @@ Dampak:
 
 Prioritas tinggi:
 
-1. Perbaiki seluruh referensi path `game-server` yang sudah obsolete pada client, editor, dan README.
+1. Perbaiki seluruh referensi path `game-server` yang sudah obsolete pada client, editor, dan README (status: sudah diselaraskan ke `nganu.mp/...`).
 2. Tambahkan satu jalur verifikasi lintas modul minimal: configure + build semua target + smoke test server.
 3. Dokumentasikan arsitektur protokol dan asset bootstrap karena itu sekarang bagian inti sistem.
 

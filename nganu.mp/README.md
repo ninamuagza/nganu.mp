@@ -34,6 +34,18 @@ Normal startup expects a valid Lua script at `scripts/main.lua` when `gamemode`
 is set in `server.cfg`. Startup fails fast if the Lua file cannot be loaded or
 if a required plugin fails to load.
 
+## Verification
+
+Use the cross-module checklist before merging:
+
+- [`../VERIFICATION_CHECKLIST.md`](../VERIFICATION_CHECKLIST.md)
+
+## Protocol Notes
+
+For opcode and manifest/asset flow contracts:
+
+- [`../PROTOCOL_ASSET_FLOW.md`](../PROTOCOL_ASSET_FLOW.md)
+
 ## Project Structure
 
 ```

@@ -864,7 +864,7 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
 }
 
 std::filesystem::path Game::CacheDirectory() const {
-    return std::filesystem::current_path() / "cache";
+    return std::filesystem::path(NGANU_REPO_ROOT) / ".cache" / "nganu-game";
 }
 
 std::filesystem::path Game::CachePathForAsset(const std::string& assetKey, const std::string& revision) const {

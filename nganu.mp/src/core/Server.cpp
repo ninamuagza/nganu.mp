@@ -917,6 +917,16 @@ void Server::shutdown() {
 /* ------------------------------------------------------------------ */
 int Server::runTest(const std::string& cfgPath) {
     if (!startup(cfgPath)) return 1;
+    if (maps_.empty() || map_.width() <= 0 || map_.height() <= 0 || map_.tileSize() <= 0) {
+        logger_.error("Test", "Map parser validation failed");
+        shutdown();
+        return 2;
+    }
+    if (contentRevision_.empty()) {
+        logger_.error("Test", "Content revision/manifest validation failed");
+        shutdown();
+        return 3;
+    }
     /* Skip the main loop — go straight to shutdown */
     shutdown();
     return 0;

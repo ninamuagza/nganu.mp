@@ -90,6 +90,6 @@ private:
     std::vector<Rectangle> waterAreas_;
     std::unordered_map<std::string, WorldAtlasTileMeta> atlasTileMeta_;
     mutable std::unordered_map<std::string, Texture2D> textures_;
-    std::filesystem::path mapAssetRoot_ {std::filesystem::current_path() / "cache" / "assets" / "map" / "unknown"};
-    std::filesystem::path characterAssetRoot_ {std::filesystem::current_path() / "cache" / "assets" / "character" / "unknown"};
+    std::filesystem::path mapAssetRoot_;
+    std::filesystem::path characterAssetRoot_;
 };
