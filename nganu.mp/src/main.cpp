@@ -11,9 +11,9 @@ std::filesystem::path resolveConfigPath(const char* fileName) {
         return fromCwd;
     }
 
-    const std::filesystem::path fromRepoRoot = std::filesystem::path(NGANU_SERVER_ROOT) / fileName;
-    if (std::filesystem::exists(fromRepoRoot)) {
-        return fromRepoRoot;
+    const std::filesystem::path fromServerRoot = std::filesystem::path(NGANU_SERVER_ROOT) / fileName;
+    if (std::filesystem::exists(fromServerRoot)) {
+        return fromServerRoot;
     }
 
     return fromCwd;

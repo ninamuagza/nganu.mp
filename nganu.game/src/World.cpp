@@ -308,9 +308,9 @@ std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h) {
 }
 
 World::World() {
-    const std::filesystem::path defaultCacheRoot = std::filesystem::path(NGANU_REPO_ROOT) / ".cache" / "nganu-game" / "assets";
-    mapAssetRoot_ = defaultCacheRoot / "map" / "unknown";
-    characterAssetRoot_ = defaultCacheRoot / "character" / "unknown";
+    const std::filesystem::path clientAssetCacheRoot = std::filesystem::path(NGANU_REPO_ROOT) / ".cache" / "nganu-game" / "assets";
+    mapAssetRoot_ = clientAssetCacheRoot / "map" / "unknown";
+    characterAssetRoot_ = clientAssetCacheRoot / "character" / "unknown";
     LoadDefaults();
 }
 
