@@ -36,11 +36,15 @@ int main(int argc, char* argv[]) {
         if (std::filesystem::exists(testCfgPath)) {
             cfgPath = testCfgPath;
         }
-        std::filesystem::current_path(cfgPath.parent_path());
+        if (cfgPath.has_parent_path()) {
+            std::filesystem::current_path(cfgPath.parent_path());
+        }
         return server.runTest(cfgPath.string());
     }
 
-    std::filesystem::current_path(cfgPath.parent_path());
+    if (cfgPath.has_parent_path()) {
+        std::filesystem::current_path(cfgPath.parent_path());
+    }
     if (!server.startup(cfgPath.string())) {
         return 1;
     }
