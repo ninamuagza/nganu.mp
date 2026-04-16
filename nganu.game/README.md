@@ -1,6 +1,6 @@
 # nganu.game
 
-Prototype client `raylib` untuk MMORPG 2D top-down yang sekarang bisa connect ke `nganu.mp/game-server`.
+Prototype client `raylib` untuk MMORPG 2D top-down yang sekarang bisa connect ke `nganu.mp`.
 
 ## Fitur awal
 
@@ -32,7 +32,7 @@ cmake --build build --parallel
 Jalankan server lebih dulu:
 
 ```bash
-cd ../nganu.mp/game-server
+cd ../nganu.mp
 ./bin/game-server
 ```
 

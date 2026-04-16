@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp" "plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o" "gcc" "plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o.d"
-  "" "/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so" "gcc" "plugins/example_plugin/CMakeFiles/example_plugin.dir/link.d"
+  "/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp" "plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o" "gcc" "plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o.d"
+  "" "/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so" "gcc" "plugins/example_plugin/CMakeFiles/example_plugin.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

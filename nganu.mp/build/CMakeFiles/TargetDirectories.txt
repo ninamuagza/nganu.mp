@@ -1,7 +1,7 @@
-/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/enet_static.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/game-server.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/edit_cache.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/rebuild_cache.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin/CMakeFiles/example_plugin.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin/CMakeFiles/edit_cache.dir
-/home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin/CMakeFiles/rebuild_cache.dir
+/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/enet_static.dir
+/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/game-server.dir
+/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/edit_cache.dir
+/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/rebuild_cache.dir
+/home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/CMakeFiles/example_plugin.dir
+/home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/CMakeFiles/edit_cache.dir
+/home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/CMakeFiles/rebuild_cache.dir

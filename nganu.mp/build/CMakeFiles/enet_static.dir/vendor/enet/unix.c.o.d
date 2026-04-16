@@ -1,5 +1,5 @@
 CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c \
  /usr/include/stdc-predef.h /usr/include/sys/types.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
@@ -53,14 +53,14 @@ CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: \
  /usr/include/time.h /usr/include/bits/time.h \
  /usr/include/bits/types/struct_tm.h \
  /usr/include/bits/types/struct_itimerspec.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/enet.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h \
  /usr/include/stdlib.h /usr/include/bits/waitflags.h \
  /usr/include/bits/waitstatus.h /usr/include/bits/floatn.h \
  /usr/include/bits/floatn-common.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/unix.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/unix.h \
  /usr/include/arpa/inet.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/types.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/protocol.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/list.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/callbacks.h
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/types.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/protocol.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h

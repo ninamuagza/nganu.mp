@@ -23,6 +23,7 @@ add_executable(nganu-atlas
 )
 
 target_include_directories(nganu-atlas PRIVATE src)
+target_compile_definitions(nganu-atlas PRIVATE NGANU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 if (TARGET raylib)
     target_link_libraries(nganu-atlas PRIVATE raylib)
@@ -33,4 +34,3 @@ endif()
 if (UNIX AND NOT APPLE)
     target_link_libraries(nganu-atlas PRIVATE m)
 endif()
-

@@ -185,6 +185,7 @@ void Server::run() {
 
         /* 1. Poll ENet */
         processNetworkEvents();
+        disconnectTimedOutPlayers();
 
         /* 2. Read stdin (non-blocking) */
         processStdin();
@@ -449,6 +450,57 @@ void Server::updatePlayerTriggers(int playerid) {
         }
     }
     active = std::move(nextActive);
+}
+
+void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPeer) {
+    if (playerid <= 0) {
+        return;
+    }
+
+    void* peer = network_.peerForPlayer(playerid);
+    if (notifyNetworkPeer && peer) {
+        network_.disconnectPlayer(playerid, static_cast<uint32_t>(reason));
+    }
+
+    const std::string mapId = playerMapId(playerid);
+    logger_.info("Server", "Player %d disconnected", playerid);
+    script_.callFunction("OnPlayerLeaveMap", playerid);
+    script_.callFunction("OnPlayerDisconnect", playerid, reason);
+    plugins_.firePlayerDisconnect(playerid, reason);
+    broadcastPlayerLeave(playerid, mapId);
+
+    network_.removePlayer(playerid);
+    playerPositions_.erase(playerid);
+    playerNames_.erase(playerid);
+    playerMapIds_.erase(playerid);
+    playerLastMoveAtMs_.erase(playerid);
+    playerLastSeenAtMs_.erase(playerid);
+    playerActiveTriggers_.erase(playerid);
+    releasePlayerId(playerid);
+
+    if (peer) {
+        static_cast<ENetPeer*>(peer)->data = nullptr;
+    }
+}
+
+void Server::disconnectTimedOutPlayers() {
+    const uint64_t currentMs = nowMs();
+    constexpr uint64_t kClientTimeoutMs = 5000;
+    std::vector<int> stalePlayers;
+    stalePlayers.reserve(playerLastSeenAtMs_.size());
+
+    for (const auto& [playerid, lastSeenMs] : playerLastSeenAtMs_) {
+        if (currentMs > lastSeenMs && (currentMs - lastSeenMs) >= kClientTimeoutMs) {
+            stalePlayers.push_back(playerid);
+        }
+    }
+
+    for (int playerid : stalePlayers) {
+        logger_.warn("Server", "Timing out player %d after %llu ms without packets",
+                     playerid,
+                     static_cast<unsigned long long>(currentMs - playerLastSeenAtMs_[playerid]));
+        cleanupPlayerSession(playerid, 11, true);
+    }
 }
 
 void Server::sendSnapshotToPeer(void* peer, const std::string& mapId) {
@@ -774,6 +826,22 @@ void Server::sendMapTransfer(int playerid, const std::string& mapId, float x, fl
     network_.sendPacket(peer, pkt.data(), offset, 0);
 }
 
+void Server::sendAuthoritativePlayerPosition(int playerid) {
+    void* peer = network_.peerForPlayer(playerid);
+    auto it = playerPositions_.find(playerid);
+    if (!peer || it == playerPositions_.end()) return;
+
+    std::vector<uint8_t> pkt(1 + 1 + sizeof(float) * 2);
+    size_t offset = 0;
+    pkt[offset++] = static_cast<uint8_t>(PacketOpcode::GAME_STATE);
+    pkt[offset++] = static_cast<uint8_t>(GameStateType::PLAYER_POSITION);
+    std::memcpy(pkt.data() + offset, &it->second.x, sizeof(it->second.x));
+    offset += sizeof(it->second.x);
+    std::memcpy(pkt.data() + offset, &it->second.y, sizeof(it->second.y));
+    offset += sizeof(it->second.y);
+    network_.sendPacket(peer, pkt.data(), offset, 0, false);
+}
+
 bool Server::transferPlayerToMap(int playerid, const std::string& mapId, std::optional<PlayerPosition> overridePosition) {
     const MapData* destinationMap = mapForId(mapId);
     if (!destinationMap) {
@@ -799,6 +867,7 @@ bool Server::transferPlayerToMap(int playerid, const std::string& mapId, std::op
     playerLastMoveAtMs_[playerid] = nowMs();
 
     sendMapTransfer(playerid, mapId, nextPosition.x, nextPosition.y);
+    sendAuthoritativePlayerPosition(playerid);
     sendSnapshotToPeer(network_.peerForPlayer(playerid), mapId);
     for (const auto& [otherId, name] : playerNames_) {
         if (otherId == playerid || name.empty()) continue;
@@ -835,6 +904,7 @@ void Server::shutdown() {
     playerNames_.clear();
     playerMapIds_.clear();
     playerLastMoveAtMs_.clear();
+    playerLastSeenAtMs_.clear();
     playerActiveTriggers_.clear();
     freePlayerIds_.clear();
     nextPlayerId_ = 1;
@@ -866,6 +936,7 @@ void Server::processNetworkEvents() {
             playerMapIds_[pid] = defaultMapId_;
             playerPositions_[pid] = defaultSpawnPosition(pid, defaultMapId_);
             playerLastMoveAtMs_[pid] = nowMs();
+            playerLastSeenAtMs_[pid] = nowMs();
             playerNames_[pid] = "Player " + std::to_string(pid);
             logger_.info("Server", "Player %d connected", pid);
 
@@ -878,6 +949,7 @@ void Server::processNetworkEvents() {
             pkt[0] = static_cast<uint8_t>(PacketOpcode::HANDSHAKE);
             std::memcpy(pkt + 1, &pid, sizeof(pid));
             network_.sendPacket(event.peer, pkt, sizeof(pkt), 0);
+            sendAuthoritativePlayerPosition(pid);
             sendSnapshotToPeer(event.peer, defaultMapId_);
             broadcastPlayerJoin(pid, pid);
             for (const auto& [otherId, name] : playerNames_) {
@@ -889,24 +961,18 @@ void Server::processNetworkEvents() {
         }
         case ENET_EVENT_TYPE_DISCONNECT: {
             int pid = static_cast<int>(reinterpret_cast<uintptr_t>(event.peer->data));
-            const std::string mapId = playerMapId(pid);
-            logger_.info("Server", "Player %d disconnected", pid);
-            script_.callFunction("OnPlayerLeaveMap", pid);
-            script_.callFunction("OnPlayerDisconnect", pid, 0);
-            plugins_.firePlayerDisconnect(pid, 0);
-            broadcastPlayerLeave(pid, mapId);
-            network_.removePlayer(pid);
-            playerPositions_.erase(pid);
-            playerNames_.erase(pid);
-            playerMapIds_.erase(pid);
-            playerLastMoveAtMs_.erase(pid);
-            playerActiveTriggers_.erase(pid);
-            releasePlayerId(pid);
-            event.peer->data = nullptr;
+            if (pid > 0) {
+                cleanupPlayerSession(pid, 0, false);
+            } else {
+                event.peer->data = nullptr;
+            }
             break;
         }
         case ENET_EVENT_TYPE_RECEIVE: {
             int pid = static_cast<int>(reinterpret_cast<uintptr_t>(event.peer->data));
+            if (pid > 0) {
+                playerLastSeenAtMs_[pid] = nowMs();
+            }
             handlePacket(pid, event.packet->data, event.packet->dataLength);
             enet_packet_destroy(event.packet);
             break;
@@ -970,7 +1036,7 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
                              distance,
                              dtSeconds,
                              walkable ? 1 : 0);
-                sendPlayerJoinToPeer(network_.peerForPlayer(playerid), playerid);
+                sendAuthoritativePlayerPosition(playerid);
                 break;
             }
 

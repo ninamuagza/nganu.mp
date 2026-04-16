@@ -1,7 +1,7 @@
 CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginManager.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginManager.h \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -121,8 +121,8 @@ CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o: \
  /usr/include/c++/15.2.1/bits/node_handle.h \
  /usr/include/c++/15.2.1/bits/erase_if.h /usr/include/c++/15.2.1/array \
  /usr/include/c++/15.2.1/compare \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginAPI.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/ctime /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/timex.h \
  /usr/include/bits/types/struct_tm.h \

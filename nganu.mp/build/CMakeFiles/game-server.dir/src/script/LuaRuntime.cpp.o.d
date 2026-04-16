@@ -1,7 +1,7 @@
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/script/LuaRuntime.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/script/LuaRuntime.h \
+ /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -113,7 +113,7 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: \
  /usr/include/luajit-2.1/lua.h /usr/include/luajit-2.1/luaconf.h \
  /usr/include/luajit-2.1/lauxlib.h /usr/include/luajit-2.1/lualib.h \
  /usr/include/luajit-2.1/luajit.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/ctime /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/timex.h \
  /usr/include/bits/types/struct_tm.h \

@@ -51,6 +51,7 @@ add_executable(game-server ${SERVER_SOURCES})
 
 target_include_directories(game-server PRIVATE
     src
+    ..
     vendor/enet/include
 )
 

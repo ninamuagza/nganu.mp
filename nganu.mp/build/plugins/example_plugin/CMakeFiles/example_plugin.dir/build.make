@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/fanorisky/GameProject/nganu.mp/game-server
+CMAKE_SOURCE_DIR = /home/fanorisky/GameProject/nganu.mp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/fanorisky/GameProject/nganu.mp/game-server/build
+CMAKE_BINARY_DIR = /home/fanorisky/GameProject/nganu.mp/build
 
 # Include any dependencies generated for this target.
 include plugins/example_plugin/CMakeFiles/example_plugin.dir/depend.make
@@ -73,18 +73,18 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/codegen:
 .PHONY : plugins/example_plugin/CMakeFiles/example_plugin.dir/codegen
 
 plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: plugins/example_plugin/CMakeFiles/example_plugin.dir/flags.make
-plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp
+plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp
 plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: plugins/example_plugin/CMakeFiles/example_plugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o"
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o -MF CMakeFiles/example_plugin.dir/plugin.cpp.o.d -o CMakeFiles/example_plugin.dir/plugin.cpp.o -c /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o"
+	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o -MF CMakeFiles/example_plugin.dir/plugin.cpp.o.d -o CMakeFiles/example_plugin.dir/plugin.cpp.o -c /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp
 
 plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/example_plugin.dir/plugin.cpp.i"
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp > CMakeFiles/example_plugin.dir/plugin.cpp.i
+	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp > CMakeFiles/example_plugin.dir/plugin.cpp.i
 
 plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/example_plugin.dir/plugin.cpp.s"
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp -o CMakeFiles/example_plugin.dir/plugin.cpp.s
+	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp -o CMakeFiles/example_plugin.dir/plugin.cpp.s
 
 # Object files for target example_plugin
 example_plugin_OBJECTS = \
@@ -93,23 +93,23 @@ example_plugin_OBJECTS = \
 # External object files for target example_plugin
 example_plugin_EXTERNAL_OBJECTS =
 
-/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o
-/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/build.make
-/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/compiler_depend.ts
-/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so: /usr/lib/libluajit-5.1.so
-/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so"
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example_plugin.dir/link.txt --verbose=$(VERBOSE)
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/build.make
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/compiler_depend.ts
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: /usr/lib/libluajit-5.1.so
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so"
+	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example_plugin.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-plugins/example_plugin/CMakeFiles/example_plugin.dir/build: /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so
+plugins/example_plugin/CMakeFiles/example_plugin.dir/build: /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so
 .PHONY : plugins/example_plugin/CMakeFiles/example_plugin.dir/build
 
 plugins/example_plugin/CMakeFiles/example_plugin.dir/clean:
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin && $(CMAKE_COMMAND) -P CMakeFiles/example_plugin.dir/cmake_clean.cmake
+	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && $(CMAKE_COMMAND) -P CMakeFiles/example_plugin.dir/cmake_clean.cmake
 .PHONY : plugins/example_plugin/CMakeFiles/example_plugin.dir/clean
 
 plugins/example_plugin/CMakeFiles/example_plugin.dir/depend:
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/fanorisky/GameProject/nganu.mp/game-server /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin /home/fanorisky/GameProject/nganu.mp/game-server/build /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin /home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin/CMakeFiles/example_plugin.dir/DependInfo.cmake "--color=$(COLOR)" example_plugin
+	cd /home/fanorisky/GameProject/nganu.mp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/fanorisky/GameProject/nganu.mp /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin /home/fanorisky/GameProject/nganu.mp/build /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/CMakeFiles/example_plugin.dir/DependInfo.cmake "--color=$(COLOR)" example_plugin
 .PHONY : plugins/example_plugin/CMakeFiles/example_plugin.dir/depend
 

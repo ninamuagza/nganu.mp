@@ -1,7 +1,7 @@
 CMakeFiles/game-server.dir/src/core/Server.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Server.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Server.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Server.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -190,29 +190,29 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: \
  /usr/include/c++/15.2.1/bits/hashtable_policy.h \
  /usr/include/c++/15.2.1/unordered_map \
  /usr/include/c++/15.2.1/bits/unordered_map.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/MapData.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/MapData.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/cstdarg /usr/include/c++/15.2.1/vector \
  /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
  /usr/include/c++/15.2.1/bits/stl_vector.h \
  /usr/include/c++/15.2.1/bits/stl_bvector.h \
  /usr/include/c++/15.2.1/bits/vector.tcc \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Runtime.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginManager.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.h \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.h \
  /usr/include/c++/15.2.1/functional \
  /usr/include/c++/15.2.1/bits/std_function.h \
  /usr/include/c++/15.2.1/array /usr/include/c++/15.2.1/compare \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginAPI.h \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h \
  /usr/include/dlfcn.h /usr/include/bits/dlfcn.h \
  /usr/include/bits/dl_find_object.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/script/LuaRuntime.h \
+ /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.h \
  /usr/include/luajit-2.1/lua.hpp /usr/include/luajit-2.1/lua.h \
  /usr/include/luajit-2.1/luaconf.h /usr/include/luajit-2.1/lauxlib.h \
  /usr/include/luajit-2.1/lualib.h /usr/include/luajit-2.1/luajit.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/network/Network.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/enet.h \
+ /home/fanorisky/GameProject/nganu.mp/src/network/Network.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h \
  /usr/include/c++/15.2.1/stdlib.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/unix.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/unix.h \
  /usr/include/sys/time.h /usr/include/sys/socket.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
@@ -224,12 +224,13 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/types.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/protocol.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/list.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/callbacks.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/script/Builtins.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/network/Packet.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/types.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/protocol.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h \
+ /home/fanorisky/GameProject/nganu.mp/src/script/Builtins.h \
+ /home/fanorisky/GameProject/nganu.mp/src/network/Packet.h \
+ /home/fanorisky/GameProject/nganu.mp/../shared/Protocol.h \
  /usr/include/c++/15.2.1/chrono /usr/include/c++/15.2.1/thread \
  /usr/include/c++/15.2.1/bits/std_thread.h \
  /usr/include/c++/15.2.1/bits/this_thread_sleep.h \

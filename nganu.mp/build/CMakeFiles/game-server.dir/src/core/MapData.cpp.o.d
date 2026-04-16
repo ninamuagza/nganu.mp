@@ -1,8 +1,8 @@
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/MapData.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/MapData.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/MapData.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \

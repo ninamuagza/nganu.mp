@@ -88,6 +88,7 @@ private:
     std::unordered_map<int, std::string> playerNames_;
     std::unordered_map<int, std::string> playerMapIds_;
     std::unordered_map<int, uint64_t> playerLastMoveAtMs_;
+    std::unordered_map<int, uint64_t> playerLastSeenAtMs_;
     std::unordered_map<int, std::unordered_set<int>> playerActiveTriggers_;
     std::string       lastPlayerText_;
 
@@ -102,6 +103,8 @@ private:
     PlayerPosition defaultSpawnPosition(int playerid, const std::string& mapId) const;
     bool teleportPlayerWithinMap(int playerid, PlayerPosition nextPosition, const std::string& reason);
     void updatePlayerTriggers(int playerid);
+    void disconnectTimedOutPlayers();
+    void cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPeer);
     void sendSnapshotToPeer(void* peer, const std::string& mapId);
     void sendPlayerJoinToPeer(void* peer, int playerid);
     void broadcastPlayerJoin(int playerid, int exceptPlayerid = -1);
@@ -111,6 +114,7 @@ private:
     void sendUpdateManifestToPeer(void* peer);
     void sendAssetBlobToPeer(void* peer, const std::string& assetKey);
     void sendMapTransfer(int playerid, const std::string& mapId, float x, float y);
+    void sendAuthoritativePlayerPosition(int playerid);
     void broadcastPlayerName(int playerid);
     void sendPlayerNameToPeer(void* peer, int playerid);
 

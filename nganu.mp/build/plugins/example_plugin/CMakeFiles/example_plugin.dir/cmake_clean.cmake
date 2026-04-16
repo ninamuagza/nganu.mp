@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/example_plugin.dir/link.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.pdb"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin.so"
+  "/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.pdb"
+  "/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so"
   "CMakeFiles/example_plugin.dir/plugin.cpp.o"
   "CMakeFiles/example_plugin.dir/plugin.cpp.o.d"
 )

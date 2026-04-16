@@ -1,7 +1,7 @@
 CMakeFiles/enet_static.dir/vendor/enet/list.c.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/enet.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h \
  /usr/include/stdlib.h /usr/include/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
@@ -26,7 +26,7 @@ CMakeFiles/enet_static.dir/vendor/enet/list.c.o: \
  /usr/include/bits/atomic_wide_counter.h /usr/include/bits/struct_mutex.h \
  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/unix.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/unix.h \
  /usr/include/sys/time.h /usr/include/sys/socket.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
@@ -42,7 +42,7 @@ CMakeFiles/enet_static.dir/vendor/enet/list.c.o: \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/types.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/protocol.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/list.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/callbacks.h
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/types.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/protocol.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h

@@ -1,7 +1,7 @@
 CMakeFiles/game-server.dir/src/network/Network.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/network/Network.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/network/Network.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/network/Network.h \
+ /home/fanorisky/GameProject/nganu.mp/src/network/Network.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -120,9 +120,9 @@ CMakeFiles/game-server.dir/src/network/Network.cpp.o: \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/enet.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h \
  /usr/include/c++/15.2.1/stdlib.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/unix.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/unix.h \
  /usr/include/sys/time.h /usr/include/sys/socket.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
@@ -138,11 +138,11 @@ CMakeFiles/game-server.dir/src/network/Network.cpp.o: \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/types.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/protocol.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/list.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include/enet/callbacks.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/types.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/protocol.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
+ /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/ctime /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/timex.h \
  /usr/include/bits/types/struct_tm.h \

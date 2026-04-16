@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/fanorisky/GameProject/nganu.mp/game-server/bin/game-server"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/bin/game-server.pdb"
+  "/home/fanorisky/GameProject/nganu.mp/bin/game-server"
+  "/home/fanorisky/GameProject/nganu.mp/bin/game-server.pdb"
   "CMakeFiles/game-server.dir/link.d"
   "CMakeFiles/game-server.dir/src/core/MapData.cpp.o"
   "CMakeFiles/game-server.dir/src/core/MapData.cpp.o.d"

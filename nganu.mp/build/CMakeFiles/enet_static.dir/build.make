@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/fanorisky/GameProject/nganu.mp/game-server
+CMAKE_SOURCE_DIR = /home/fanorisky/GameProject/nganu.mp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/fanorisky/GameProject/nganu.mp/game-server/build
+CMAKE_BINARY_DIR = /home/fanorisky/GameProject/nganu.mp/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/enet_static.dir/depend.make
@@ -73,116 +73,116 @@ CMakeFiles/enet_static.dir/codegen:
 .PHONY : CMakeFiles/enet_static.dir/codegen
 
 CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c
+CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c
 CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c
 
 CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c > CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c > CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c -o CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c -o CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/compress.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/compress.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c
+CMakeFiles/enet_static.dir/vendor/enet/compress.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c
 CMakeFiles/enet_static.dir/vendor/enet/compress.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/enet_static.dir/vendor/enet/compress.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/compress.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/compress.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/compress.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/enet_static.dir/vendor/enet/compress.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/compress.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/compress.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/compress.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c
 
 CMakeFiles/enet_static.dir/vendor/enet/compress.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/compress.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c > CMakeFiles/enet_static.dir/vendor/enet/compress.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c > CMakeFiles/enet_static.dir/vendor/enet/compress.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/compress.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/compress.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c -o CMakeFiles/enet_static.dir/vendor/enet/compress.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c -o CMakeFiles/enet_static.dir/vendor/enet/compress.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/host.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/host.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c
+CMakeFiles/enet_static.dir/vendor/enet/host.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c
 CMakeFiles/enet_static.dir/vendor/enet/host.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/enet_static.dir/vendor/enet/host.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/host.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/host.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/host.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/enet_static.dir/vendor/enet/host.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/host.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/host.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/host.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c
 
 CMakeFiles/enet_static.dir/vendor/enet/host.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/host.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c > CMakeFiles/enet_static.dir/vendor/enet/host.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c > CMakeFiles/enet_static.dir/vendor/enet/host.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/host.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/host.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c -o CMakeFiles/enet_static.dir/vendor/enet/host.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c -o CMakeFiles/enet_static.dir/vendor/enet/host.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/list.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/list.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c
+CMakeFiles/enet_static.dir/vendor/enet/list.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c
 CMakeFiles/enet_static.dir/vendor/enet/list.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/enet_static.dir/vendor/enet/list.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/list.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/list.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/list.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/enet_static.dir/vendor/enet/list.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/list.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/list.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/list.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c
 
 CMakeFiles/enet_static.dir/vendor/enet/list.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/list.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c > CMakeFiles/enet_static.dir/vendor/enet/list.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c > CMakeFiles/enet_static.dir/vendor/enet/list.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/list.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/list.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c -o CMakeFiles/enet_static.dir/vendor/enet/list.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c -o CMakeFiles/enet_static.dir/vendor/enet/list.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/packet.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/packet.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c
+CMakeFiles/enet_static.dir/vendor/enet/packet.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c
 CMakeFiles/enet_static.dir/vendor/enet/packet.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/enet_static.dir/vendor/enet/packet.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/packet.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/packet.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/packet.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/enet_static.dir/vendor/enet/packet.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/packet.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/packet.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/packet.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c
 
 CMakeFiles/enet_static.dir/vendor/enet/packet.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/packet.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c > CMakeFiles/enet_static.dir/vendor/enet/packet.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c > CMakeFiles/enet_static.dir/vendor/enet/packet.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/packet.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/packet.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c -o CMakeFiles/enet_static.dir/vendor/enet/packet.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c -o CMakeFiles/enet_static.dir/vendor/enet/packet.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/peer.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/peer.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c
+CMakeFiles/enet_static.dir/vendor/enet/peer.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 CMakeFiles/enet_static.dir/vendor/enet/peer.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/enet_static.dir/vendor/enet/peer.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/peer.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/peer.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/peer.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/enet_static.dir/vendor/enet/peer.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/peer.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/peer.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/peer.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 
 CMakeFiles/enet_static.dir/vendor/enet/peer.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/peer.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c > CMakeFiles/enet_static.dir/vendor/enet/peer.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c > CMakeFiles/enet_static.dir/vendor/enet/peer.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/peer.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/peer.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c -o CMakeFiles/enet_static.dir/vendor/enet/peer.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c -o CMakeFiles/enet_static.dir/vendor/enet/peer.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c
+CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c
 CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c
 
 CMakeFiles/enet_static.dir/vendor/enet/protocol.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/protocol.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c > CMakeFiles/enet_static.dir/vendor/enet/protocol.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c > CMakeFiles/enet_static.dir/vendor/enet/protocol.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/protocol.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/protocol.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c -o CMakeFiles/enet_static.dir/vendor/enet/protocol.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c -o CMakeFiles/enet_static.dir/vendor/enet/protocol.c.s
 
 CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: CMakeFiles/enet_static.dir/flags.make
-CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c
+CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 CMakeFiles/enet_static.dir/vendor/enet/unix.c.o: CMakeFiles/enet_static.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/enet_static.dir/vendor/enet/unix.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/unix.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/unix.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/unix.c.o -c /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/enet_static.dir/vendor/enet/unix.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/enet_static.dir/vendor/enet/unix.c.o -MF CMakeFiles/enet_static.dir/vendor/enet/unix.c.o.d -o CMakeFiles/enet_static.dir/vendor/enet/unix.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 CMakeFiles/enet_static.dir/vendor/enet/unix.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/enet_static.dir/vendor/enet/unix.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c > CMakeFiles/enet_static.dir/vendor/enet/unix.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c > CMakeFiles/enet_static.dir/vendor/enet/unix.c.i
 
 CMakeFiles/enet_static.dir/vendor/enet/unix.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/enet_static.dir/vendor/enet/unix.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c -o CMakeFiles/enet_static.dir/vendor/enet/unix.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c -o CMakeFiles/enet_static.dir/vendor/enet/unix.c.s
 
 # Object files for target enet_static
 enet_static_OBJECTS = \
@@ -208,7 +208,7 @@ libenet_static.a: CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o
 libenet_static.a: CMakeFiles/enet_static.dir/vendor/enet/unix.c.o
 libenet_static.a: CMakeFiles/enet_static.dir/build.make
 libenet_static.a: CMakeFiles/enet_static.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C static library libenet_static.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C static library libenet_static.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/enet_static.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/enet_static.dir/link.txt --verbose=$(VERBOSE)
 
@@ -221,6 +221,6 @@ CMakeFiles/enet_static.dir/clean:
 .PHONY : CMakeFiles/enet_static.dir/clean
 
 CMakeFiles/enet_static.dir/depend:
-	cd /home/fanorisky/GameProject/nganu.mp/game-server/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/fanorisky/GameProject/nganu.mp/game-server /home/fanorisky/GameProject/nganu.mp/game-server /home/fanorisky/GameProject/nganu.mp/game-server/build /home/fanorisky/GameProject/nganu.mp/game-server/build /home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/enet_static.dir/DependInfo.cmake "--color=$(COLOR)" enet_static
+	cd /home/fanorisky/GameProject/nganu.mp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/fanorisky/GameProject/nganu.mp /home/fanorisky/GameProject/nganu.mp /home/fanorisky/GameProject/nganu.mp/build /home/fanorisky/GameProject/nganu.mp/build /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/enet_static.dir/DependInfo.cmake "--color=$(COLOR)" enet_static
 .PHONY : CMakeFiles/enet_static.dir/depend
 

@@ -136,6 +136,41 @@ std::vector<std::string> SplitEscaped(const std::string& value, char delim) {
     return parts;
 }
 
+std::optional<std::pair<std::string, std::string>> SplitPropertyAssignment(const std::string& value, char delim) {
+    std::string key;
+    std::string remainder;
+    bool escaping = false;
+    bool foundDelim = false;
+    for (char ch : value) {
+        if (escaping) {
+            if (foundDelim) {
+                remainder.push_back(ch);
+            } else {
+                key.push_back(ch);
+            }
+            escaping = false;
+            continue;
+        }
+        if (ch == '\\') {
+            escaping = true;
+            continue;
+        }
+        if (!foundDelim && ch == delim) {
+            foundDelim = true;
+            continue;
+        }
+        if (foundDelim) {
+            remainder.push_back(ch);
+        } else {
+            key.push_back(ch);
+        }
+    }
+    if (!foundDelim) {
+        return std::nullopt;
+    }
+    return std::make_pair(key, remainder);
+}
+
 Color ParseHexColor(const std::string& value, Color fallback) {
     std::string hex = value;
     if (!hex.empty() && hex[0] == '#') {
@@ -393,11 +428,11 @@ bool World::LoadFromMapAsset(const std::string& rawAsset) {
                 return false;
             }
             for (size_t i = 6; i < parts.size(); ++i) {
-                const std::vector<std::string> propParts = SplitEscaped(parts[i], ':');
-                if (propParts.size() < 2) {
+                const auto prop = SplitPropertyAssignment(parts[i], ':');
+                if (!prop.has_value()) {
                     continue;
                 }
-                object.properties[propParts[0]] = propParts[1];
+                object.properties[prop->first] = prop->second;
             }
             nextObjects.push_back(std::move(object));
         } else if (key == "stamp") {
@@ -939,12 +974,12 @@ void World::LoadAtlasMetadataForRef(const std::string& assetRef) {
 
         WorldAtlasTileMeta meta;
         for (size_t i = 4; i < parts.size(); ++i) {
-            const std::vector<std::string> propParts = SplitEscaped(parts[i], ':');
-            if (propParts.size() < 2) continue;
-            if (propParts[0] == "collision" && propParts[1] == "block") {
+            const auto prop = SplitPropertyAssignment(parts[i], ':');
+            if (!prop.has_value()) continue;
+            if (prop->first == "collision" && prop->second == "block") {
                 meta.blocksMovement = true;
-            } else if (propParts[0] == "tag") {
-                meta.tag = propParts[1];
+            } else if (prop->first == "tag") {
+                meta.tag = prop->second;
             }
         }
         atlasTileMeta_[AtlasMetaKey(ref.file, x, y, w, h)] = std::move(meta);

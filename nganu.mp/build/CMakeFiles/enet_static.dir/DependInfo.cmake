@@ -8,14 +8,14 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c" "CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c" "CMakeFiles/enet_static.dir/vendor/enet/compress.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/compress.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c" "CMakeFiles/enet_static.dir/vendor/enet/host.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/host.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c" "CMakeFiles/enet_static.dir/vendor/enet/list.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/list.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c" "CMakeFiles/enet_static.dir/vendor/enet/packet.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/packet.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c" "CMakeFiles/enet_static.dir/vendor/enet/peer.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/peer.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c" "CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o.d"
-  "/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c" "CMakeFiles/enet_static.dir/vendor/enet/unix.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/unix.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c" "CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/callbacks.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c" "CMakeFiles/enet_static.dir/vendor/enet/compress.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/compress.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c" "CMakeFiles/enet_static.dir/vendor/enet/host.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/host.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c" "CMakeFiles/enet_static.dir/vendor/enet/list.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/list.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c" "CMakeFiles/enet_static.dir/vendor/enet/packet.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/packet.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c" "CMakeFiles/enet_static.dir/vendor/enet/peer.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/peer.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c" "CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/protocol.c.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c" "CMakeFiles/enet_static.dir/vendor/enet/unix.c.o" "gcc" "CMakeFiles/enet_static.dir/vendor/enet/unix.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

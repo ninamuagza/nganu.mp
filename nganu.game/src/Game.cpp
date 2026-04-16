@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cctype>
+#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <sstream>
@@ -11,10 +12,236 @@
 
 namespace {
 Color BackgroundSky() { return Color {197, 226, 233, 255}; }
+Color BackgroundHorizon() { return Color {168, 208, 214, 255}; }
+Color BackgroundDeep() { return Color {105, 138, 155, 255}; }
 Color LocalColor() { return Color {255, 205, 96, 255}; }
 Color PanelColor() { return Color {20, 29, 34, 215}; }
 Color AccentColor() { return Color {111, 219, 159, 255}; }
 Color LoginCardColor() { return Color {18, 28, 33, 228}; }
+Color OutlineColor() { return Color {231, 241, 236, 46}; }
+Color SoftCardColor() { return Color {24, 37, 42, 204}; }
+Font g_uiFont {};
+bool g_ownsUiFont = false;
+
+struct HudLayout {
+    float topBarHeight = 56.0f;
+    float margin = 16.0f;
+    float gap = 12.0f;
+    Rectangle contentFrame {};
+    Rectangle questPanel {};
+    Rectangle partyPanel {};
+    Rectangle chatPanel {};
+    Rectangle debugPanel {};
+    bool compact = false;
+    bool singleColumn = false;
+    bool shortScreen = false;
+    int titleFont = 20;
+    int bodyFont = 18;
+    int smallFont = 15;
+    int chatFont = 15;
+};
+
+float UiScaleForScreen(float width, float height) {
+    const float widthScale = width / 1280.0f;
+    const float heightScale = height / 720.0f;
+    return std::clamp(std::min(widthScale, heightScale), 0.62f, 1.20f);
+}
+
+float FitPanelHeight(float available, float minimum, float preferred) {
+    if (available <= 0.0f) {
+        return 0.0f;
+    }
+    if (available < minimum) {
+        return std::max(44.0f, available);
+    }
+    return std::min(preferred, available);
+}
+
+Rectangle GameplayViewport(float screenWidth, float screenHeight) {
+    return Rectangle {0.0f, 0.0f, screenWidth, screenHeight};
+}
+
+HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDebug) {
+    HudLayout layout;
+    const float scale = UiScaleForScreen(screenWidth, screenHeight);
+    const Rectangle viewport = GameplayViewport(screenWidth, screenHeight);
+    const float aspect = (screenHeight > 0.0f) ? (screenWidth / screenHeight) : (16.0f / 9.0f);
+    const float outerMarginX = std::clamp(screenWidth * (aspect > 2.0f ? 0.055f : 0.028f), 14.0f, 96.0f);
+    const float outerMarginY = std::clamp(screenHeight * 0.024f, 12.0f, 30.0f);
+    const float safeWidthCap = std::min(viewport.width - outerMarginX * 2.0f,
+                                        viewport.height * (aspect > 2.0f ? 1.52f : 1.68f));
+    const Rectangle safeFrame {
+        viewport.x + std::max(outerMarginX, (viewport.width - safeWidthCap) * 0.5f),
+        viewport.y + outerMarginY,
+        std::max(260.0f, safeWidthCap),
+        std::max(260.0f, viewport.height - outerMarginY * 2.0f)
+    };
+
+    layout.compact = safeFrame.width < 1100.0f || safeFrame.height < 720.0f;
+    layout.singleColumn = safeFrame.width < 820.0f || safeFrame.height < 540.0f;
+    layout.shortScreen = safeFrame.height < 620.0f;
+    const bool tiny = safeFrame.width < 660.0f || safeFrame.height < 500.0f;
+    layout.margin = std::clamp(18.0f * scale, 10.0f, 22.0f);
+    layout.gap = tiny ? 8.0f : std::clamp(12.0f * scale, 8.0f, 14.0f);
+    layout.topBarHeight = layout.singleColumn ? (tiny ? 84.0f : 88.0f) : (layout.compact ? (layout.shortScreen ? 64.0f : 70.0f) : 56.0f);
+    layout.titleFont = tiny ? 18 : (layout.compact ? 19 : 20);
+    layout.bodyFont = tiny ? 16 : 18;
+    layout.smallFont = tiny ? 13 : (layout.compact ? 14 : 15);
+    layout.chatFont = tiny ? 13 : 15;
+
+    layout.contentFrame = Rectangle {
+        safeFrame.x,
+        safeFrame.y + layout.topBarHeight + layout.margin,
+        safeFrame.width,
+        std::max(0.0f, safeFrame.height - layout.topBarHeight - layout.margin)
+    };
+    const float contentTop = layout.contentFrame.y;
+    const float contentBottom = layout.contentFrame.y + layout.contentFrame.height;
+    const float contentLeft = layout.contentFrame.x;
+    const float contentRight = layout.contentFrame.x + layout.contentFrame.width;
+    const float contentHeight = layout.contentFrame.height;
+
+    if (layout.singleColumn) {
+        const float panelWidth = layout.contentFrame.width;
+        const float availableHeight = std::max(160.0f, contentHeight);
+        const float questHeight = FitPanelHeight(availableHeight * 0.21f, 82.0f, layout.shortScreen ? 92.0f : 110.0f);
+        const float partyHeight = FitPanelHeight((availableHeight - questHeight - layout.gap) * 0.19f, 70.0f, layout.shortScreen ? 84.0f : 96.0f);
+        float remainingHeight = contentBottom - (contentTop + questHeight + layout.gap + partyHeight + layout.gap);
+        float debugHeight = 0.0f;
+        if (includeDebug) {
+            debugHeight = FitPanelHeight(remainingHeight * 0.26f, 90.0f, layout.shortScreen ? 102.0f : 120.0f);
+            remainingHeight -= debugHeight + layout.gap;
+        }
+        const float chatHeight = FitPanelHeight(remainingHeight, 108.0f, layout.shortScreen ? 160.0f : 210.0f);
+        const float chatY = contentBottom - chatHeight;
+        const float debugY = includeDebug ? (chatY - layout.gap - debugHeight) : chatY;
+
+        layout.questPanel = Rectangle {contentLeft, contentTop, panelWidth, questHeight};
+        layout.partyPanel = Rectangle {contentLeft, layout.questPanel.y + layout.questPanel.height + layout.gap, panelWidth, partyHeight};
+        layout.chatPanel = Rectangle {contentLeft, chatY, panelWidth, chatHeight};
+        layout.debugPanel = includeDebug
+            ? Rectangle {contentLeft, debugY, panelWidth, debugHeight}
+            : Rectangle {};
+        return layout;
+    }
+
+    const float partyWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.24f : 0.22f), 220.0f, 290.0f);
+    const float questWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.50f : 0.54f), 340.0f, 560.0f);
+    const float questHeight = FitPanelHeight(contentHeight * 0.20f, 106.0f, layout.compact ? 122.0f : 140.0f);
+    const float partyHeight = FitPanelHeight(contentHeight * 0.24f, 132.0f, layout.compact ? 150.0f : 182.0f);
+    layout.questPanel = Rectangle {contentLeft, contentTop, questWidth, questHeight};
+    layout.partyPanel = Rectangle {contentRight - partyWidth, contentTop, partyWidth, partyHeight};
+
+    const float chatWidth = std::clamp(questWidth + std::min(64.0f, std::max(0.0f, layout.contentFrame.width - questWidth - partyWidth - layout.gap)),
+                                       400.0f,
+                                       620.0f);
+    const bool sideDebug = includeDebug && layout.contentFrame.width >= 1040.0f && contentHeight >= 560.0f;
+    const float debugWidth = sideDebug
+        ? std::clamp(layout.contentFrame.width - chatWidth - layout.gap, 280.0f, 360.0f)
+        : std::min(320.0f, partyWidth);
+    const float debugHeight = includeDebug ? FitPanelHeight(contentHeight * (sideDebug ? 0.30f : 0.22f), 118.0f, sideDebug ? 210.0f : 156.0f) : 0.0f;
+    const float availableChatHeight = contentBottom - (layout.questPanel.y + layout.questPanel.height) - layout.gap;
+    const float chatHeight = FitPanelHeight(availableChatHeight, layout.shortScreen ? 132.0f : 164.0f, layout.compact ? 208.0f : 248.0f);
+    layout.chatPanel = Rectangle {contentLeft, contentBottom - chatHeight, chatWidth, chatHeight};
+
+    if (sideDebug && includeDebug) {
+        layout.debugPanel = Rectangle {
+            contentRight - debugWidth,
+            contentBottom - debugHeight,
+            debugWidth,
+            debugHeight
+        };
+    } else if (includeDebug) {
+        layout.debugPanel = Rectangle {
+            contentRight - debugWidth,
+            layout.partyPanel.y + layout.partyPanel.height + layout.gap,
+            debugWidth,
+            debugHeight
+        };
+        const float maxDebugY = layout.chatPanel.y - layout.gap - debugHeight;
+        layout.debugPanel.y = std::min(layout.debugPanel.y, maxDebugY);
+    }
+    return layout;
+}
+
+Rectangle ChatInputRect(const Rectangle& panel) {
+    const float inputHeight = panel.height < 180.0f ? 28.0f : 30.0f;
+    const float inset = panel.width < 340.0f ? 12.0f : 14.0f;
+    return Rectangle {panel.x + inset, panel.y + panel.height - inputHeight - 14.0f, panel.width - inset * 2.0f, inputHeight};
+}
+
+Rectangle ChatMessageAreaRect(const Rectangle& panel) {
+    const Rectangle inputBox = ChatInputRect(panel);
+    const float inset = panel.width < 340.0f ? 14.0f : 16.0f;
+    const float topOffset = panel.height < 170.0f ? 42.0f : 50.0f;
+    return Rectangle {
+        panel.x + inset,
+        panel.y + topOffset,
+        panel.width - inset * 2.0f,
+        inputBox.y - (panel.y + topOffset) - 8.0f
+    };
+}
+
+void LoadGameUiFont() {
+    if (g_ownsUiFont || g_uiFont.texture.id > 0) {
+        return;
+    }
+
+    const std::filesystem::path repoRoot = std::filesystem::path(NGANU_REPO_ROOT).lexically_normal();
+    const std::vector<std::filesystem::path> candidates {
+        repoRoot / "nganu.game" / "assets" / "fonts" / "Rubik.ttf",
+        repoRoot / "nganu.game" / "assets" / "fonts" / "OpenSans-Regular.ttf",
+        repoRoot / "nganu.game" / "assets" / "fonts" / "OpenSans-SemiBold.ttf",
+        repoRoot / "nganu.game" / "assets" / "fonts" / "RedHatDisplay-Regular.otf"
+    };
+
+    for (const auto& path : candidates) {
+        if (!std::filesystem::exists(path)) {
+            continue;
+        }
+
+        g_uiFont = LoadFontEx(path.string().c_str(), 64, nullptr, 0);
+        g_ownsUiFont = g_uiFont.texture.id > 0;
+        if (g_ownsUiFont) {
+            GenTextureMipmaps(&g_uiFont.texture);
+            SetTextureFilter(g_uiFont.texture, TEXTURE_FILTER_TRILINEAR);
+            TraceLog(LOG_INFO, "UI FONT: Loaded custom UI font from %s", path.string().c_str());
+            return;
+        }
+    }
+
+    g_uiFont = GetFontDefault();
+    SetTextureFilter(g_uiFont.texture, TEXTURE_FILTER_BILINEAR);
+    TraceLog(LOG_WARNING, "UI FONT: Falling back to raylib default font");
+}
+
+void UnloadGameUiFont() {
+    if (g_ownsUiFont && g_uiFont.texture.id > 0) {
+        UnloadFont(g_uiFont);
+    }
+    g_uiFont = Font {};
+    g_ownsUiFont = false;
+}
+
+const Font& UiFontRef() {
+    if (g_uiFont.texture.id <= 0) {
+        LoadGameUiFont();
+    }
+    static Font defaultFont = GetFontDefault();
+    return g_uiFont.texture.id > 0 ? g_uiFont : defaultFont;
+}
+
+int MeasureUiText(const std::string& text, int fontSize) {
+    return static_cast<int>(std::round(MeasureTextEx(UiFontRef(), text.c_str(), static_cast<float>(fontSize), 0.0f).x));
+}
+
+void DrawUiText(const std::string& text, float x, float y, int fontSize, Color color) {
+    DrawTextEx(UiFontRef(), text.c_str(), Vector2 {x, y}, static_cast<float>(fontSize), 0.0f, color);
+}
+
+void DrawUiText(const char* text, float x, float y, int fontSize, Color color) {
+    DrawTextEx(UiFontRef(), text, Vector2 {x, y}, static_cast<float>(fontSize), 0.0f, color);
+}
 
 Vector2 NormalizeOrZero(Vector2 value) {
     const float length = std::sqrt((value.x * value.x) + (value.y * value.y));
@@ -49,6 +276,7 @@ int HexNibble(char ch) {
 }
 
 Game::Game() {
+    LoadGameUiFont();
     player_.name = "Fanorisky";
     player_.position = Vector2 {160.0f, 160.0f};
     player_.bodyColor = LocalColor();
@@ -75,6 +303,14 @@ Game::Game() {
     ConfigureWorldDrivenGameplay();
 
     AddChatLine("[System] Booting nganu.game client");
+}
+
+Game::~Game() {
+    UnloadGameUiFont();
+}
+
+void Game::Shutdown() {
+    network_.Disconnect();
 }
 
 void Game::Update(float dt) {
@@ -344,9 +580,10 @@ void Game::UpdatePlayer(float dt) {
 }
 
 void Game::UpdateCamera(float dt) {
+    const Rectangle viewport = GameplayViewport(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()));
     camera_.offset = Vector2 {
-        static_cast<float>(GetScreenWidth()) * 0.5f,
-        static_cast<float>(GetScreenHeight()) * 0.5f
+        viewport.x + viewport.width * 0.5f,
+        viewport.y + viewport.height * 0.5f
     };
 
     const float smoothing = std::clamp(dt * 6.0f, 0.0f, 1.0f);
@@ -485,6 +722,10 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         hasPendingSpawnPosition_ = true;
         AddChatLine("[System] Transferring to map " + event.mapId);
         BeginMapBootstrapForAsset("map:" + event.mapId, "Loading map " + event.mapId + "...");
+        break;
+    case NetworkEvent::Type::PlayerPosition:
+        player_.position = Vector2 {event.x, event.y};
+        lastSentPosition_ = player_.position;
         break;
     case NetworkEvent::Type::SnapshotPlayer:
     case NetworkEvent::Type::PlayerJoined: {
@@ -921,19 +1162,13 @@ void Game::UpdateChatInput() {
 }
 
 void Game::UpdateChatScroll(float dt) {
-    const float screenHeight = static_cast<float>(GetScreenHeight());
-    const Rectangle panel {18.0f, screenHeight - 214.0f, 430.0f, 194.0f};
-    const Rectangle inputBox {panel.x + 14.0f, panel.y + panel.height - 46.0f, panel.width - 28.0f, 30.0f};
-    const Rectangle messageArea {
-        panel.x + 16.0f,
-        panel.y + 50.0f,
-        panel.width - 32.0f,
-        inputBox.y - (panel.y + 50.0f) - 10.0f
-    };
+    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const Rectangle panel = layout.chatPanel;
+    const Rectangle messageArea = ChatMessageAreaRect(panel);
 
-    const int rowHeight = 18;
+    const int rowHeight = layout.chatFont + 4;
     const int visibleRows = std::max(1, static_cast<int>(messageArea.height) / rowHeight);
-    const float maxScroll = static_cast<float>(std::max(0, static_cast<int>(BuildChatRows(messageArea.width, 15).size()) - visibleRows));
+    const float maxScroll = static_cast<float>(std::max(0, static_cast<int>(BuildChatRows(messageArea.width, layout.chatFont).size()) - visibleRows));
 
     if (CheckCollisionPointRec(GetMousePosition(), messageArea)) {
         const float wheel = GetMouseWheelMove();
@@ -1036,7 +1271,9 @@ bool Game::IsNearPosition(Vector2 a, Vector2 b, float distance) const {
 }
 
 void Game::Draw() const {
-    ClearBackground(BackgroundSky());
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    ClearBackground(BackgroundDeep());
 
     if (uiMode_ == UiMode::Boot || uiMode_ == UiMode::RetryWait) {
         DrawBootScreen();
@@ -1048,41 +1285,73 @@ void Game::Draw() const {
         return;
     }
 
+    DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), BackgroundSky(), BackgroundHorizon());
+    DrawCircleGradient(static_cast<int>(screenWidth * 0.18f),
+                       static_cast<int>(screenHeight * 0.10f),
+                       std::max(screenWidth, screenHeight) * 0.28f,
+                       Fade(WHITE, 0.18f),
+                       Fade(WHITE, 0.0f));
+    DrawCircleGradient(static_cast<int>(screenWidth * 0.84f),
+                       static_cast<int>(screenHeight * 0.18f),
+                       std::max(screenWidth, screenHeight) * 0.20f,
+                       Fade(Color {229, 244, 240, 120}, 0.22f),
+                       Fade(WHITE, 0.0f));
     DrawScene();
     DrawHud();
 }
 
 void Game::DrawLoginScreen() const {
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    const float scale = UiScaleForScreen(screenWidth, screenHeight);
+    const bool compact = screenWidth < 860.0f;
+    const bool tiny = screenWidth < 680.0f || screenHeight < 620.0f;
+    const float cardPadding = tiny ? 18.0f : 28.0f;
+    const float fieldHeight = tiny ? 40.0f : 44.0f;
+    const float labelOffset = tiny ? 18.0f : 22.0f;
+    const int titleFont = tiny ? 26 : (compact ? 30 : 34);
+    const int subtitleFont = tiny ? 16 : (compact ? 18 : 20);
+    const int bodyFont = tiny ? 15 : 16;
+    const int fieldFont = tiny ? 19 : 22;
+    const int buttonFont = tiny ? 21 : 24;
+    const int infoFont = tiny ? 15 : 17;
+    const float cardWidth = std::min(tiny ? 520.0f : 580.0f, screenWidth - (tiny ? 24.0f : 36.0f));
+    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 520.0f : 500.0f), screenHeight - (tiny ? 24.0f : 36.0f));
 
-    DrawRectangleGradientV(0, 0, screenWidth, screenHeight, Color {209, 236, 227, 255}, Color {138, 180, 160, 255});
-    DrawCircle(screenWidth - 180, 140, 150.0f, Fade(WHITE, 0.18f));
-    DrawCircle(120, screenHeight - 120, 180.0f, Fade(Color {54, 110, 77, 255}, 0.16f));
+    DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {209, 236, 227, 255}, Color {138, 180, 160, 255});
+    DrawCircle(static_cast<int>(screenWidth - 180.0f), 140, 150.0f, Fade(WHITE, 0.18f));
+    DrawCircle(120, static_cast<int>(screenHeight - 120.0f), 180.0f, Fade(Color {54, 110, 77, 255}, 0.16f));
+    DrawCircleGradient(static_cast<int>(screenWidth * 0.5f), static_cast<int>(screenHeight * 0.22f), 180.0f * scale, Fade(Color {255, 255, 255, 40}, 0.55f), Fade(WHITE, 0.0f));
 
     const Rectangle card {
-        static_cast<float>(screenWidth) * 0.5f - 260.0f,
-        static_cast<float>(screenHeight) * 0.5f - 240.0f,
-        520.0f,
-        480.0f
+        std::max(12.0f, (screenWidth - cardWidth) * 0.5f),
+        std::max(12.0f, (screenHeight - cardHeight) * 0.5f),
+        cardWidth,
+        cardHeight
     };
 
     DrawRectangleRounded(card, 0.08f, 10, LoginCardColor());
-    DrawText("nganu.game", static_cast<int>(card.x + 28.0f), static_cast<int>(card.y + 28.0f), 34, RAYWHITE);
-    DrawText("Main menu and spawn gate", static_cast<int>(card.x + 30.0f), static_cast<int>(card.y + 68.0f), 20, Fade(RAYWHITE, 0.78f));
+    DrawRectangleRoundedLinesEx(card, 0.08f, 10, 1.5f, OutlineColor());
+    DrawRectangleRounded(Rectangle {card.x + cardPadding - 10.0f, card.y + cardPadding - 10.0f, card.width - (cardPadding * 2.0f) + 20.0f, tiny ? 78.0f : 90.0f}, 0.14f, 10, Fade(WHITE, 0.04f));
+    DrawUiText("nganu.game", card.x + cardPadding, card.y + cardPadding - 2.0f, titleFont, RAYWHITE);
+    DrawUiText("Minimal client, live content bootstrap", card.x + cardPadding + 2.0f, card.y + cardPadding + 34.0f, subtitleFont, Fade(RAYWHITE, 0.78f));
+    DrawUiText("Login only opens after server manifest and map are ready.", card.x + cardPadding + 2.0f, card.y + cardPadding + (tiny ? 56.0f : 62.0f), bodyFont, Fade(RAYWHITE, 0.56f));
 
-    const Rectangle nameBox {card.x + 28.0f, card.y + 120.0f, 464.0f, 44.0f};
-    const Rectangle hostBox {card.x + 28.0f, card.y + 192.0f, 340.0f, 44.0f};
-    const Rectangle portBox {card.x + 386.0f, card.y + 192.0f, 106.0f, 44.0f};
-    const Rectangle buttonBox {card.x + 28.0f, card.y + 270.0f, 464.0f, 48.0f};
+    const float innerX = card.x + cardPadding;
+    const float innerWidth = card.width - cardPadding * 2.0f;
+    const float hostWidth = (compact || tiny) ? innerWidth : innerWidth - 120.0f;
+    const Rectangle nameBox {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
+    const Rectangle hostBox {innerX, nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
+    const Rectangle portBox {compact || tiny ? innerX : hostBox.x + hostBox.width + 14.0f, compact || tiny ? hostBox.y + fieldHeight + 28.0f : hostBox.y, compact || tiny ? innerWidth : 106.0f, fieldHeight};
+    const Rectangle buttonBox {innerX, portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
 
     auto drawField = [&](const Rectangle& box, const char* label, const std::string& value, bool active) {
-        DrawText(label, static_cast<int>(box.x), static_cast<int>(box.y - 22.0f), 18, Fade(RAYWHITE, 0.72f));
+        DrawUiText(label, box.x, box.y - labelOffset, tiny ? 16 : 18, Fade(RAYWHITE, 0.72f));
         DrawRectangleRounded(box, 0.18f, 8, active ? Fade(AccentColor(), 0.18f) : Fade(WHITE, 0.07f));
         DrawRectangleRoundedLinesEx(box, 0.18f, 8, 2.0f, active ? AccentColor() : Fade(RAYWHITE, 0.20f));
         const std::string content = active ? (value.empty() ? "_" : value + "_") : value;
-        const std::string clipped = EllipsizeText(content, 22, box.width - 28.0f);
-        DrawText(clipped.c_str(), static_cast<int>(box.x + 14.0f), static_cast<int>(box.y + 12.0f), 22, RAYWHITE);
+        const std::string clipped = EllipsizeText(content, fieldFont, box.width - 28.0f);
+        DrawUiText(clipped, box.x + 14.0f, box.y + (tiny ? 10.0f : 12.0f), fieldFont, RAYWHITE);
     };
 
     drawField(nameBox, "Player Name", loginName_, loginField_ == LoginField::Name);
@@ -1090,13 +1359,14 @@ void Game::DrawLoginScreen() const {
     drawField(portBox, "Port", loginPort_, loginField_ == LoginField::Port);
 
     DrawRectangleRounded(buttonBox, 0.22f, 8, AccentColor());
-    DrawText(uiMode_ == UiMode::LoggingIn ? "Spawning..." : "Enter World",
-             static_cast<int>(buttonBox.x + 154.0f),
-             static_cast<int>(buttonBox.y + 13.0f),
-             24,
-             Color {15, 31, 25, 255});
+    const std::string buttonText = uiMode_ == UiMode::LoggingIn ? "Spawning..." : "Enter World";
+    DrawUiText(buttonText,
+               buttonBox.x + (buttonBox.width - static_cast<float>(MeasureUiText(buttonText, buttonFont))) * 0.5f,
+               buttonBox.y + (tiny ? 11.0f : 13.0f),
+               buttonFont,
+               Color {15, 31, 25, 255});
 
-    const Rectangle manifestBox {card.x + 28.0f, card.y + 328.0f, 464.0f, 74.0f};
+    const Rectangle manifestBox {innerX, buttonBox.y + buttonBox.height + (tiny ? 16.0f : 12.0f), innerWidth, tiny ? 78.0f : (compact ? 84.0f : 74.0f)};
     DrawRectangleRounded(manifestBox, 0.15f, 8, Fade(WHITE, 0.05f));
     const std::string serverLabel = manifest_.valid
         ? ("Server: " + (manifest_.serverName.empty() ? std::string("Unknown") : manifest_.serverName))
@@ -1107,42 +1377,54 @@ void Game::DrawLoginScreen() const {
     const std::string revisionLabel = manifest_.valid
         ? ("Revision: " + (manifest_.revision.empty() ? std::string("n/a") : manifest_.revision))
         : "Revision: unavailable";
-    DrawText(EllipsizeText(serverLabel, 17, manifestBox.width - 22.0f).c_str(), static_cast<int>(manifestBox.x + 12.0f), static_cast<int>(manifestBox.y + 10.0f), 17, Fade(RAYWHITE, 0.86f));
-    DrawText(EllipsizeText(worldLabel, 17, manifestBox.width - 22.0f).c_str(), static_cast<int>(manifestBox.x + 12.0f), static_cast<int>(manifestBox.y + 30.0f), 17, Fade(RAYWHITE, 0.74f));
-    DrawText(EllipsizeText(revisionLabel, 17, manifestBox.width - 22.0f).c_str(), static_cast<int>(manifestBox.x + 12.0f), static_cast<int>(manifestBox.y + 50.0f), 17, Fade(RAYWHITE, 0.74f));
+    DrawUiText(EllipsizeText(serverLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f, infoFont, Fade(RAYWHITE, 0.86f));
+    DrawUiText(EllipsizeText(worldLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f + static_cast<float>(infoFont + 3), infoFont, Fade(RAYWHITE, 0.74f));
+    DrawUiText(EllipsizeText(revisionLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f + static_cast<float>((infoFont + 3) * 2), infoFont, Fade(RAYWHITE, 0.74f));
 
-    DrawWrappedText(loginStatus_, Rectangle {card.x + 28.0f, card.y + 412.0f, 464.0f, 42.0f}, 18, Fade(RAYWHITE, 0.82f), 2);
-    DrawText("Tab to switch fields, Enter to login, F5 to re-check update", static_cast<int>(card.x + 28.0f), static_cast<int>(card.y + 438.0f), 16, Fade(RAYWHITE, 0.60f));
+    DrawWrappedText(loginStatus_, Rectangle {innerX, card.y + card.height - (tiny ? 88.0f : 72.0f), innerWidth, tiny ? 52.0f : 40.0f}, tiny ? 16 : 18, Fade(RAYWHITE, 0.82f), tiny ? 3 : 2);
+    DrawUiText(compact ? "Tab switch, Enter login, F5 re-check" : "Tab to switch fields, Enter to login, F5 to re-check update",
+               innerX,
+               card.y + card.height - (tiny ? 28.0f : 34.0f),
+               tiny ? 14 : 16,
+               Fade(RAYWHITE, 0.60f));
 }
 
 void Game::DrawBootScreen() const {
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
-    DrawRectangleGradientV(0, 0, screenWidth, screenHeight, Color {205, 232, 236, 255}, Color {118, 153, 171, 255});
-    DrawCircle(screenWidth - 220, 120, 140.0f, Fade(WHITE, 0.16f));
-    DrawCircle(160, screenHeight - 140, 170.0f, Fade(Color {35, 62, 84, 255}, 0.14f));
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    const float scale = UiScaleForScreen(screenWidth, screenHeight);
+    const bool compact = screenWidth < 760.0f || screenHeight < 620.0f;
+    const bool tiny = screenWidth < 640.0f || screenHeight < 520.0f;
+    const float cardPadding = tiny ? 18.0f : 30.0f;
+    const float cardWidth = std::min(tiny ? 500.0f : 540.0f, screenWidth - (tiny ? 24.0f : 36.0f));
+    const float cardHeight = std::min(tiny ? 300.0f : 320.0f, screenHeight - (tiny ? 24.0f : 36.0f));
+    DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {205, 232, 236, 255}, Color {118, 153, 171, 255});
+    DrawCircle(static_cast<int>(screenWidth - 220.0f), 120, 140.0f, Fade(WHITE, 0.16f));
+    DrawCircle(160, static_cast<int>(screenHeight - 140.0f), 170.0f, Fade(Color {35, 62, 84, 255}, 0.14f));
+    DrawCircleGradient(static_cast<int>(screenWidth * 0.34f), static_cast<int>(screenHeight * 0.30f), 210.0f * scale, Fade(Color {255, 255, 255, 34}, 0.55f), Fade(WHITE, 0.0f));
 
     const Rectangle card {
-        static_cast<float>(screenWidth) * 0.5f - 250.0f,
-        static_cast<float>(screenHeight) * 0.5f - 150.0f,
-        500.0f,
-        300.0f
+        std::max(12.0f, (screenWidth - cardWidth) * 0.5f),
+        std::max(12.0f, (screenHeight - cardHeight) * 0.5f),
+        cardWidth,
+        cardHeight
     };
 
     DrawRectangleRounded(card, 0.08f, 10, LoginCardColor());
-    DrawText("nganu.game", static_cast<int>(card.x + 30.0f), static_cast<int>(card.y + 28.0f), 34, RAYWHITE);
-    DrawText("Boot update check", static_cast<int>(card.x + 30.0f), static_cast<int>(card.y + 70.0f), 22, Fade(RAYWHITE, 0.78f));
+    DrawRectangleRoundedLinesEx(card, 0.08f, 10, 1.5f, OutlineColor());
+    DrawUiText("nganu.game", card.x + cardPadding, card.y + cardPadding - 2.0f, tiny ? 26 : 34, RAYWHITE);
+    DrawUiText("Boot update check", card.x + cardPadding, card.y + cardPadding + (tiny ? 26.0f : 40.0f), compact ? 18 : 22, Fade(RAYWHITE, 0.78f));
 
-    const Rectangle infoBox {card.x + 30.0f, card.y + 112.0f, card.width - 60.0f, 92.0f};
+    const Rectangle infoBox {card.x + cardPadding, card.y + cardPadding + (tiny ? 70.0f : 82.0f), card.width - cardPadding * 2.0f, tiny ? 80.0f : 92.0f};
     DrawRectangleRounded(infoBox, 0.16f, 8, Fade(WHITE, 0.06f));
-    DrawWrappedText(loginStatus_, infoBox, 22, RAYWHITE, 3);
+    DrawWrappedText(loginStatus_, infoBox, tiny ? 17 : 22, RAYWHITE, compact ? 4 : 3);
 
     std::string footer = "Trying " + loginHost_ + ":" + loginPort_;
     if (uiMode_ == UiMode::RetryWait) {
         footer = "Retrying in " + std::to_string(static_cast<int>(std::ceil(retryCountdown_))) + " seconds";
     }
-    DrawText(EllipsizeText(footer, 18, card.width - 60.0f).c_str(), static_cast<int>(card.x + 30.0f), static_cast<int>(card.y + 224.0f), 18, AccentColor());
-    DrawText("Content comes from the server manifest before menu access", static_cast<int>(card.x + 30.0f), static_cast<int>(card.y + 254.0f), 16, Fade(RAYWHITE, 0.58f));
+    DrawUiText(EllipsizeText(footer, compact ? 16 : 18, card.width - cardPadding * 2.0f), card.x + cardPadding, card.y + card.height - (tiny ? 70.0f : 96.0f), compact ? 16 : 18, AccentColor());
+    DrawUiText("Content comes from the server manifest before menu access", card.x + cardPadding, card.y + card.height - (tiny ? 42.0f : 66.0f), tiny ? 14 : 16, Fade(RAYWHITE, 0.58f));
 }
 
 void Game::DrawScene() const {
@@ -1169,13 +1451,13 @@ void Game::DrawScene() const {
             if (object.kind == "portal") {
                 const Vector2 center = world_.objectCenter(object);
                 DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawText(world_.objectProperty(object, "title").value_or("Portal").c_str(),
-                         static_cast<int>(center.x - 54.0f),
-                         static_cast<int>(center.y - 44.0f),
-                         16,
-                         Fade(RAYWHITE, 0.88f));
+                DrawUiText(world_.objectProperty(object, "title").value_or("Portal"),
+                           center.x - 54.0f,
+                           center.y - 44.0f,
+                           16,
+                           Fade(RAYWHITE, 0.88f));
                 if (IsNearPosition(player_.position, center, 88.0f)) {
-                    DrawText("E Travel", static_cast<int>(center.x - 28.0f), static_cast<int>(center.y + 24.0f), 16, AccentColor());
+                    DrawUiText("E Travel", center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
         }
@@ -1203,13 +1485,13 @@ void Game::DrawScene() const {
             if (object.kind == "portal") {
                 const Vector2 center = world_.objectCenter(object);
                 DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawText(world_.objectProperty(object, "title").value_or("Portal").c_str(),
-                         static_cast<int>(center.x - 54.0f),
-                         static_cast<int>(center.y - 44.0f),
-                         16,
-                         Fade(RAYWHITE, 0.88f));
+                DrawUiText(world_.objectProperty(object, "title").value_or("Portal"),
+                           center.x - 54.0f,
+                           center.y - 44.0f,
+                           16,
+                           Fade(RAYWHITE, 0.88f));
                 if (IsNearPosition(player_.position, center, 88.0f)) {
-                    DrawText("E Travel", static_cast<int>(center.x - 28.0f), static_cast<int>(center.y + 24.0f), 16, AccentColor());
+                    DrawUiText("E Travel", center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
         }
@@ -1241,7 +1523,7 @@ void Game::DrawAvatar(const Avatar& avatar, bool localPlayer) const {
     if (!drewSprite) {
         DrawCircleLinesV(avatar.position, avatar.radius, outline);
     }
-    DrawText(avatar.name.c_str(), static_cast<int>(avatar.position.x - 28.0f), static_cast<int>(avatar.position.y - 34.0f), 16, RAYWHITE);
+    DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
 }
 
 void Game::DrawNpc(const Npc& npc) const {
@@ -1265,10 +1547,10 @@ void Game::DrawNpc(const Npc& npc) const {
         DrawCircleLinesV(drawPosition, npc.radius, Color {255, 244, 171, 255});
     }
 
-    DrawText(drawName.c_str(), static_cast<int>(drawPosition.x - 24.0f), static_cast<int>(drawPosition.y - 40.0f), 16, Color {255, 244, 171, 255});
-    DrawText(drawTitle.c_str(), static_cast<int>(drawPosition.x - 36.0f), static_cast<int>(drawPosition.y - 58.0f), 14, Fade(RAYWHITE, 0.72f));
+    DrawUiText(drawName, drawPosition.x - 24.0f, drawPosition.y - 40.0f, 16, Color {255, 244, 171, 255});
+    DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
     if (IsNearPosition(player_.position, drawPosition, 72.0f)) {
-        DrawText("E", static_cast<int>(drawPosition.x - 4.0f), static_cast<int>(drawPosition.y - 84.0f), 20, AccentColor());
+        DrawUiText("E", drawPosition.x - 4.0f, drawPosition.y - 84.0f, 20, AccentColor());
     }
 }
 
@@ -1284,14 +1566,30 @@ void Game::DrawHud() const {
 }
 
 void Game::DrawTopBar() const {
-    const int screenWidth = GetScreenWidth();
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const HudLayout layout = ComputeHudLayout(screenWidth, static_cast<float>(GetScreenHeight()), showDebug_);
+    const bool compact = layout.compact;
+    const bool singleColumn = layout.singleColumn;
+    const float statusWidth = singleColumn ? layout.contentFrame.width
+                                           : std::clamp(layout.contentFrame.width * (compact ? 0.52f : 0.44f), 360.0f, 470.0f);
+    const Rectangle statusPanel {
+        singleColumn ? layout.contentFrame.x : (layout.contentFrame.x + layout.contentFrame.width - statusWidth),
+        singleColumn ? (layout.topBarHeight - 42.0f) : (compact ? 36.0f : 10.0f),
+        statusWidth,
+        singleColumn ? 32.0f : (compact ? 30.0f : 34.0f)
+    };
 
-    DrawRectangle(0, 0, screenWidth, 54, Fade(BLACK, 0.22f));
-    DrawRectangle(0, 0, screenWidth, 54, Fade(Color {13, 21, 24, 255}, 0.82f));
-    DrawText("nganu.game", 24, 16, 24, RAYWHITE);
-    DrawText("Prototype MMORPG 2D Top-Down", 190, 18, 18, Fade(RAYWHITE, 0.8f));
+    DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.topBarHeight), Fade(BLACK, 0.22f));
+    DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.topBarHeight), Fade(Color {13, 21, 24, 255}, 0.82f));
+    DrawUiText("nganu.game", layout.contentFrame.x, singleColumn ? 10.0f : 12.0f, singleColumn ? 22 : 24, RAYWHITE);
+    const float subtitleX = layout.contentFrame.x + 166.0f;
+    const float subtitleMaxWidth = statusPanel.x - subtitleX - 18.0f;
+    if (!compact && subtitleMaxWidth > 120.0f) {
+        DrawUiText(EllipsizeText("Prototype MMORPG 2D Top-Down", 18, subtitleMaxWidth), subtitleX, 16.0f, 18, Fade(RAYWHITE, 0.8f));
+    } else if (!singleColumn) {
+        DrawUiText("Dynamic world client", layout.contentFrame.x + 2.0f, 40.0f, 16, Fade(RAYWHITE, 0.72f));
+    }
 
-    const Rectangle statusPanel {static_cast<float>(screenWidth - 470), 10.0f, 452.0f, 34.0f};
     DrawRectangleRounded(statusPanel, 0.35f, 8, Fade(WHITE, 0.06f));
     const WorldObject* activeRegion = world_.regionAt(player_.position);
     const std::string region = activeRegion
@@ -1301,28 +1599,36 @@ void Game::DrawTopBar() const {
     const std::string climate = activeRegion
         ? world_.objectProperty(*activeRegion, "climate").value_or(world_.property("climate").value_or("temperate"))
         : world_.property("climate").value_or("temperate");
-    DrawText(EllipsizeText("Region: " + region, 18, 132.0f).c_str(), static_cast<int>(statusPanel.x + 18.0f), 18, 18, AccentColor());
-    DrawText(EllipsizeText("Map: " + mapId, 16, 114.0f).c_str(), static_cast<int>(statusPanel.x + 152.0f), 19, 16, Fade(RAYWHITE, 0.70f));
-    DrawText(EllipsizeText(climate, 16, 72.0f).c_str(), static_cast<int>(statusPanel.x + 272.0f), 19, 16, Fade(RAYWHITE, 0.62f));
-    const std::string statusText = EllipsizeText(network_.StatusText(), 18, 96.0f);
-    DrawText(statusText.c_str(), static_cast<int>(statusPanel.x + 352.0f), 18, 18, Fade(RAYWHITE, 0.8f));
+    if (singleColumn) {
+        const int statusFont = 14;
+        const std::string line1 = EllipsizeText("Region: " + region, statusFont, statusPanel.width - 116.0f);
+        const std::string line2 = EllipsizeText("Map: " + mapId + "  " + climate, 13, statusPanel.width - 22.0f);
+        const std::string statusText = EllipsizeText(network_.StatusText(), statusFont, 88.0f);
+        DrawUiText(line1, statusPanel.x + 10.0f, statusPanel.y + 4.0f, statusFont, AccentColor());
+        DrawUiText(statusText, statusPanel.x + statusPanel.width - 10.0f - static_cast<float>(MeasureUiText(statusText, statusFont)), statusPanel.y + 4.0f, statusFont, Fade(RAYWHITE, 0.80f));
+        DrawUiText(line2, layout.contentFrame.x, 38.0f, 13, Fade(RAYWHITE, 0.66f));
+    } else {
+        const int statusFont = compact ? 15 : 18;
+        DrawUiText(EllipsizeText("Region: " + region, statusFont, statusPanel.width * 0.34f), statusPanel.x + 14.0f, statusPanel.y + 8.0f, statusFont, AccentColor());
+        DrawUiText(EllipsizeText("Map: " + mapId, compact ? 14 : 16, statusPanel.width * 0.24f), statusPanel.x + statusPanel.width * 0.36f, statusPanel.y + 9.0f, compact ? 14 : 16, Fade(RAYWHITE, 0.70f));
+        DrawUiText(EllipsizeText(climate, compact ? 14 : 16, statusPanel.width * 0.18f), statusPanel.x + statusPanel.width * 0.63f, statusPanel.y + 9.0f, compact ? 14 : 16, Fade(RAYWHITE, 0.62f));
+        const std::string statusText = EllipsizeText(network_.StatusText(), statusFont, statusPanel.width * 0.16f);
+        DrawUiText(statusText, statusPanel.x + statusPanel.width * 0.82f, statusPanel.y + 8.0f, statusFont, Fade(RAYWHITE, 0.8f));
+    }
 }
 
 void Game::DrawChatPanel() const {
-    const float screenHeight = static_cast<float>(GetScreenHeight());
-    const Rectangle panel {18.0f, screenHeight - 214.0f, 430.0f, 194.0f};
-    DrawRectangleRounded(panel, 0.08f, 8, PanelColor());
-    DrawText("World Chat", static_cast<int>(panel.x + 18.0f), static_cast<int>(panel.y + 16.0f), 20, RAYWHITE);
+    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const Rectangle panel = layout.chatPanel;
+    const float headerPadding = layout.singleColumn ? 14.0f : 18.0f;
+    DrawRectangleRounded(panel, 0.08f, 8, SoftCardColor());
+    DrawRectangleRoundedLinesEx(panel, 0.08f, 8, 1.5f, OutlineColor());
+    DrawUiText("World Chat", panel.x + headerPadding, panel.y + (layout.singleColumn ? 12.0f : 16.0f), layout.titleFont, RAYWHITE);
 
-    const Rectangle inputBox {panel.x + 14.0f, panel.y + panel.height - 46.0f, panel.width - 28.0f, 30.0f};
-    const Rectangle messageArea {
-        panel.x + 16.0f,
-        panel.y + 50.0f,
-        panel.width - 32.0f,
-        inputBox.y - (panel.y + 50.0f) - 10.0f
-    };
-    const int fontSize = 15;
-    const int rowHeight = 18;
+    const Rectangle inputBox = ChatInputRect(panel);
+    const Rectangle messageArea = ChatMessageAreaRect(panel);
+    const int fontSize = layout.chatFont;
+    const int rowHeight = fontSize + 4;
     const int visibleRows = std::max(1, static_cast<int>(messageArea.height) / rowHeight);
     const std::vector<ChatRow> rows = BuildChatRows(messageArea.width, fontSize);
     const int totalLines = static_cast<int>(rows.size());
@@ -1349,7 +1655,7 @@ void Game::DrawChatPanel() const {
             color.a = static_cast<unsigned char>(color.a * (0.55f + appear * 0.45f));
         }
 
-        DrawText(rows[i].text.c_str(), static_cast<int>(messageArea.x), static_cast<int>(lineY), fontSize, color);
+        DrawUiText(rows[i].text, messageArea.x, lineY, fontSize, color);
     }
     EndScissorMode();
 
@@ -1363,88 +1669,93 @@ void Game::DrawChatPanel() const {
         const Rectangle scrollThumb {scrollTrack.x, scrollTrack.y + maxThumbTravel * scrollRatio, 4.0f, thumbHeight};
         DrawRectangleRounded(scrollTrack, 0.8f, 6, Fade(WHITE, 0.10f));
         DrawRectangleRounded(scrollThumb, 0.8f, 6, Fade(AccentColor(), 0.85f));
-        DrawText(scrollOffset > 0.5f ? "Scroll: history" : "Scroll: latest",
-                 static_cast<int>(panel.x + panel.width - 116.0f),
-                 static_cast<int>(panel.y + 18.0f),
-                 12,
-                 Fade(RAYWHITE, 0.5f));
+        if (panel.width > 280.0f) {
+            DrawUiText(scrollOffset > 0.5f ? "Scroll: history" : "Scroll: latest",
+                       panel.x + panel.width - 116.0f,
+                       panel.y + (layout.singleColumn ? 14.0f : 18.0f),
+                       12,
+                       Fade(RAYWHITE, 0.5f));
+        }
     }
 
     DrawRectangleRounded(inputBox, 0.25f, 8, Fade(WHITE, 0.07f));
-    const std::string prompt = chatFocused_ ? (chatInput_.empty() ? "_" : chatInput_ + "_") : "Press Enter to open chat";
-    const std::string promptText = EllipsizeText(prompt, 15, inputBox.width - 24.0f);
-    DrawText(promptText.c_str(), static_cast<int>(inputBox.x + 12.0f), static_cast<int>(inputBox.y + 7.0f), 15, chatFocused_ ? AccentColor() : Fade(RAYWHITE, 0.55f));
+    const std::string prompt = chatFocused_ ? (chatInput_.empty() ? "_" : chatInput_ + "_") : (layout.singleColumn ? "Enter chat" : "Press Enter to open chat");
+    const std::string promptText = EllipsizeText(prompt, layout.smallFont, inputBox.width - 24.0f);
+    DrawUiText(promptText, inputBox.x + 12.0f, inputBox.y + (layout.singleColumn ? 8.0f : 7.0f), layout.smallFont, chatFocused_ ? AccentColor() : Fade(RAYWHITE, 0.55f));
 }
 
 void Game::DrawPartyPanel() const {
-    const float screenWidth = static_cast<float>(GetScreenWidth());
-    const Rectangle panel {screenWidth - 242.0f, 82.0f, 222.0f, 176.0f};
-    DrawRectangleRounded(panel, 0.1f, 8, PanelColor());
-    DrawText("Online Players", static_cast<int>(panel.x + 22.0f), static_cast<int>(panel.y + 20.0f), 20, RAYWHITE);
-    const std::string localName = EllipsizeText(player_.name, 18, panel.width - 44.0f);
-    DrawText(localName.c_str(), static_cast<int>(panel.x + 22.0f), static_cast<int>(panel.y + 54.0f), 18, AccentColor());
+    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const Rectangle panel = layout.partyPanel;
+    DrawRectangleRounded(panel, 0.1f, 8, SoftCardColor());
+    DrawRectangleRoundedLinesEx(panel, 0.1f, 8, 1.5f, OutlineColor());
+    DrawUiText("Online Players", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
+    const std::string localName = EllipsizeText(player_.name, layout.bodyFont, panel.width - 36.0f);
+    DrawUiText(localName, panel.x + 18.0f, panel.y + 16.0f + static_cast<float>(layout.titleFont + 10), layout.bodyFont, AccentColor());
 
-    int lineY = static_cast<int>(panel.y + 80.0f);
+    int lineY = static_cast<int>(panel.y + 16.0f + layout.titleFont + layout.bodyFont + 22.0f);
     int shown = 0;
     for (const auto& [playerId, remote] : remotePlayers_) {
         if (shown >= 3) break;
-        const std::string remoteName = EllipsizeText(remote.avatar.name, 18, panel.width - 44.0f);
-        DrawText(remoteName.c_str(), static_cast<int>(panel.x + 22.0f), lineY, 18, Fade(RAYWHITE, 0.85f));
-        lineY += 26;
+        const std::string remoteName = EllipsizeText(remote.avatar.name, layout.bodyFont, panel.width - 36.0f);
+        DrawUiText(remoteName, panel.x + 18.0f, static_cast<float>(lineY), layout.bodyFont, Fade(RAYWHITE, 0.85f));
+        lineY += layout.bodyFont + 8;
         ++shown;
     }
 }
 
 void Game::DrawQuestPanel() const {
-    const Rectangle panel {18.0f, 76.0f, 320.0f, 132.0f};
-    DrawRectangleRounded(panel, 0.1f, 8, PanelColor());
-    DrawText("Objective", 36, 96, 20, RAYWHITE);
-    DrawText("Server Objective", 36, 126, 18, AccentColor());
+    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const Rectangle panel = layout.questPanel;
+    DrawRectangleRounded(panel, 0.1f, 8, SoftCardColor());
+    DrawRectangleRoundedLinesEx(panel, 0.1f, 8, 1.5f, OutlineColor());
+    DrawUiText("Objective", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
+    DrawUiText("Server Objective", panel.x + 18.0f, panel.y + 16.0f + static_cast<float>(layout.titleFont + 8), layout.bodyFont, AccentColor());
     DrawWrappedText(currentObjective_.empty() ? "No active objective." : currentObjective_,
-                    Rectangle {36.0f, 150.0f, 284.0f, 48.0f},
-                    17,
+                    Rectangle {panel.x + 18.0f, panel.y + 16.0f + static_cast<float>(layout.titleFont + layout.bodyFont + 22), panel.width - 36.0f, panel.height - (layout.titleFont + layout.bodyFont + 42.0f)},
+                    layout.bodyFont - 1,
                     Fade(RAYWHITE, 0.78f),
-                    3);
+                    layout.singleColumn ? 4 : 3);
 }
 
 void Game::DrawDebugPanel() const {
-    const float screenWidth = static_cast<float>(GetScreenWidth());
-    const float screenHeight = static_cast<float>(GetScreenHeight());
-    const Rectangle panel {screenWidth - 368.0f, screenHeight - 240.0f, 348.0f, 220.0f};
-    DrawRectangleRounded(panel, 0.08f, 8, PanelColor());
-    DrawText("Debug", static_cast<int>(panel.x + 20.0f), static_cast<int>(panel.y + 18.0f), 20, RAYWHITE);
+    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const Rectangle panel = layout.debugPanel;
+    DrawRectangleRounded(panel, 0.08f, 8, SoftCardColor());
+    DrawRectangleRoundedLinesEx(panel, 0.08f, 8, 1.5f, OutlineColor());
+    DrawUiText("Debug", panel.x + 18.0f, panel.y + 14.0f, layout.titleFont, RAYWHITE);
 
     char line[192];
     std::snprintf(line, sizeof(line), "Id: %d  Remote: %zu", localPlayerId_, remotePlayers_.size());
-    DrawText(line, static_cast<int>(panel.x + 20.0f), static_cast<int>(panel.y + 50.0f), 18, Fade(RAYWHITE, 0.82f));
+    DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + 12), layout.bodyFont, Fade(RAYWHITE, 0.82f));
     std::snprintf(line, sizeof(line), "Player: %.1f, %.1f", player_.position.x, player_.position.y);
-    DrawText(line, static_cast<int>(panel.x + 20.0f), static_cast<int>(panel.y + 74.0f), 18, Fade(RAYWHITE, 0.82f));
+    DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + layout.bodyFont + 18), layout.bodyFont, Fade(RAYWHITE, 0.82f));
     std::snprintf(line, sizeof(line), "Map: %s  Layers: %zu", world_.mapId().c_str(), world_.layers().size());
-    DrawText(line, static_cast<int>(panel.x + 20.0f), static_cast<int>(panel.y + 98.0f), 18, Fade(RAYWHITE, 0.82f));
+    DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 2), layout.bodyFont, Fade(RAYWHITE, 0.82f));
     std::snprintf(line, sizeof(line), "Objects: %zu  Music: %s", world_.objects().size(), world_.property("music").value_or("n/a").c_str());
-    DrawText(line, static_cast<int>(panel.x + 20.0f), static_cast<int>(panel.y + 122.0f), 18, Fade(RAYWHITE, 0.82f));
-    DrawText(EllipsizeText(("Revision: " + (manifest_.revision.empty() ? std::string("n/a") : manifest_.revision)), 18, panel.width - 40.0f).c_str(),
-             static_cast<int>(panel.x + 20.0f),
-             static_cast<int>(panel.y + 146.0f),
-             18,
-             Fade(RAYWHITE, 0.82f));
-    DrawText(EllipsizeText(("Asset Source: " + lastMapAssetSource_), 18, panel.width - 40.0f).c_str(),
-             static_cast<int>(panel.x + 20.0f),
-             static_cast<int>(panel.y + 170.0f),
-             18,
-             Fade(RAYWHITE, 0.82f));
+    DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 3), layout.bodyFont, Fade(RAYWHITE, 0.82f));
+    DrawUiText(EllipsizeText(("Revision: " + (manifest_.revision.empty() ? std::string("n/a") : manifest_.revision)), layout.bodyFont, panel.width - 36.0f),
+               panel.x + 18.0f,
+               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 4),
+               layout.bodyFont,
+               Fade(RAYWHITE, 0.82f));
+    DrawUiText(EllipsizeText(("Asset Source: " + lastMapAssetSource_), layout.bodyFont, panel.width - 36.0f),
+               panel.x + 18.0f,
+               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 5),
+               layout.bodyFont,
+               Fade(RAYWHITE, 0.82f));
     if (!pendingMapId_.empty() && pendingMapId_ != world_.mapId()) {
-        DrawText(EllipsizeText(("Pending Map: " + pendingMapId_), 18, panel.width - 40.0f).c_str(),
-                 static_cast<int>(panel.x + 20.0f),
-                 static_cast<int>(panel.y + 194.0f),
-                 18,
-                 AccentColor());
+        DrawUiText(EllipsizeText(("Pending Map: " + pendingMapId_), layout.bodyFont, panel.width - 36.0f),
+                   panel.x + 18.0f,
+                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 6),
+                   layout.bodyFont,
+                   AccentColor());
     } else {
-        DrawText(EllipsizeText(("Applied Asset: " + (lastAppliedMapAssetKey_.empty() ? std::string("n/a") : lastAppliedMapAssetKey_)), 18, panel.width - 40.0f).c_str(),
-                 static_cast<int>(panel.x + 20.0f),
-                 static_cast<int>(panel.y + 194.0f),
-                 18,
-                 AccentColor());
+        DrawUiText(EllipsizeText(("Applied Asset: " + (lastAppliedMapAssetKey_.empty() ? std::string("n/a") : lastAppliedMapAssetKey_)), layout.bodyFont, panel.width - 36.0f),
+                   panel.x + 18.0f,
+                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 6),
+                   layout.bodyFont,
+                   AccentColor());
     }
 }
 
@@ -1472,7 +1783,7 @@ void Game::DrawWrappedText(const std::string& text, Rectangle bounds, int fontSi
 
     while (stream >> word) {
         const std::string candidate = line.empty() ? word : line + " " + word;
-        if (MeasureText(candidate.c_str(), fontSize) <= static_cast<int>(bounds.width)) {
+        if (MeasureUiText(candidate, fontSize) <= static_cast<int>(bounds.width)) {
             line = candidate;
             continue;
         }
@@ -1498,7 +1809,7 @@ void Game::DrawWrappedText(const std::string& text, Rectangle bounds, int fontSi
 
     BeginScissorMode(static_cast<int>(bounds.x), static_cast<int>(bounds.y), static_cast<int>(bounds.width), static_cast<int>(bounds.height));
     for (size_t i = 0; i < lines.size(); ++i) {
-        DrawText(lines[i].c_str(), static_cast<int>(bounds.x), static_cast<int>(bounds.y) + static_cast<int>(i) * lineHeight, fontSize, color);
+        DrawUiText(lines[i], bounds.x, bounds.y + static_cast<float>(i * lineHeight), fontSize, color);
     }
     EndScissorMode();
 }
@@ -1508,14 +1819,14 @@ std::string Game::EllipsizeText(const std::string& text, int fontSize, float max
         return "";
     }
 
-    if (MeasureText(text.c_str(), fontSize) <= static_cast<int>(maxWidth)) {
+    if (MeasureUiText(text, fontSize) <= static_cast<int>(maxWidth)) {
         return text;
     }
 
     const std::string ellipsis = "...";
     std::string clipped = text;
     while (!clipped.empty() &&
-           MeasureText((clipped + ellipsis).c_str(), fontSize) > static_cast<int>(maxWidth)) {
+           MeasureUiText(clipped + ellipsis, fontSize) > static_cast<int>(maxWidth)) {
         clipped.pop_back();
     }
 
@@ -1538,7 +1849,7 @@ std::vector<ChatRow> Game::BuildChatRows(float maxWidth, int fontSize) const {
         while (stream >> word) {
             std::string& target = usingSecondLine ? secondLine : current;
             const std::string candidate = (target == firstPrefix || target == continuationPrefix) ? target + word : target + " " + word;
-            if (MeasureText(candidate.c_str(), fontSize) <= static_cast<int>(maxWidth)) {
+            if (MeasureUiText(candidate, fontSize) <= static_cast<int>(maxWidth)) {
                 target = candidate;
                 continue;
             }
@@ -1546,7 +1857,7 @@ std::vector<ChatRow> Game::BuildChatRows(float maxWidth, int fontSize) const {
             if (!usingSecondLine) {
                 usingSecondLine = true;
                 const std::string secondCandidate = secondLine + word;
-                if (MeasureText(secondCandidate.c_str(), fontSize) <= static_cast<int>(maxWidth)) {
+                if (MeasureUiText(secondCandidate, fontSize) <= static_cast<int>(maxWidth)) {
                     secondLine = secondCandidate;
                 } else {
                     secondLine = EllipsizeText(secondCandidate, fontSize, maxWidth);

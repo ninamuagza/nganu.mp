@@ -3,15 +3,15 @@
 
 # compile C with /usr/bin/cc
 # compile CXX with /usr/bin/c++
-C_DEFINES = 
+C_DEFINES = -DNGANU_REPO_ROOT=\"/home/fanorisky/GameProject/nganu.game/..\"
 
-C_INCLUDES = -I/home/fanorisky/GameProject/nganu.game/src -I/home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include
+C_INCLUDES = -I/home/fanorisky/GameProject/nganu.game/src -I/home/fanorisky/GameProject/nganu.game/.. -I/home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include
 
 C_FLAGS = -O3 -DNDEBUG -std=gnu11 -I/usr/include
 
-CXX_DEFINES = 
+CXX_DEFINES = -DNGANU_REPO_ROOT=\"/home/fanorisky/GameProject/nganu.game/..\"
 
-CXX_INCLUDES = -I/home/fanorisky/GameProject/nganu.game/src -I/home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include
+CXX_INCLUDES = -I/home/fanorisky/GameProject/nganu.game/src -I/home/fanorisky/GameProject/nganu.game/.. -I/home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include
 
 CXX_FLAGS = -O3 -DNDEBUG -std=c++17 -I/usr/include
 

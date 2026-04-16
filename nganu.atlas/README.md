@@ -7,13 +7,13 @@ Editor atlas dan map ringan berbasis `raylib` untuk membantu memilih source rect
 
 Versi awal ini fokus ke:
 
-- scan atlas dari `../nganu.mp/game-server/assets/map_images`
-- scan atlas dari `../nganu.mp/game-server/assets/characters`
+- scan atlas dari `../nganu.mp/assets/map_images`
+- scan atlas dari `../nganu.mp/assets/characters`
 - pilih domain asset `map` atau `character`
 - pilih source rect yang snap ke grid
 - atur ukuran grid dan ukuran selection
 - copy ref atlas ke clipboard
-- buka map dari `../nganu.mp/game-server/assets/maps`
+- buka map dari `../nganu.mp/assets/maps`
 - paint `stamp=` tile ke layer map aktif
 - toggle area `blocked` dan `water` per tile
 - set `spawn`

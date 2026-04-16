@@ -32,6 +32,41 @@ std::vector<std::string> splitEscaped(const std::string& value, char delim) {
     return parts;
 }
 
+std::optional<std::pair<std::string, std::string>> splitPropertyAssignment(const std::string& value, char delim) {
+    std::string key;
+    std::string remainder;
+    bool escaping = false;
+    bool foundDelim = false;
+    for (char ch : value) {
+        if (escaping) {
+            if (foundDelim) {
+                remainder.push_back(ch);
+            } else {
+                key.push_back(ch);
+            }
+            escaping = false;
+            continue;
+        }
+        if (ch == '\\') {
+            escaping = true;
+            continue;
+        }
+        if (!foundDelim && ch == delim) {
+            foundDelim = true;
+            continue;
+        }
+        if (foundDelim) {
+            remainder.push_back(ch);
+        } else {
+            key.push_back(ch);
+        }
+    }
+    if (!foundDelim) {
+        return std::nullopt;
+    }
+    return std::make_pair(key, remainder);
+}
+
 bool parseRect(const std::string& value, MapData::Rect& out) {
     std::istringstream stream(value);
     std::string token;
@@ -178,9 +213,9 @@ bool MapData::loadFromFile(const std::string& path, Logger& logger) {
             object.width = std::stof(parts[4]);
             object.height = std::stof(parts[5]);
             for (size_t i = 6; i < parts.size(); ++i) {
-                const auto propParts = splitEscaped(parts[i], ':');
-                if (propParts.size() < 2) continue;
-                object.properties[propParts[0]] = propParts[1];
+                const auto prop = splitPropertyAssignment(parts[i], ':');
+                if (!prop.has_value()) continue;
+                object.properties[prop->first] = prop->second;
             }
             auto spriteIt = object.properties.find("sprite");
             if (spriteIt != object.properties.end() && !spriteIt->second.empty()) {
@@ -262,12 +297,12 @@ void MapData::loadAtlasMetadata(const std::filesystem::path& atlasRoot, Logger& 
 
             AtlasTileMeta meta;
             for (size_t i = 4; i < parts.size(); ++i) {
-                const auto propParts = splitEscaped(parts[i], ':');
-                if (propParts.size() < 2) continue;
-                if (propParts[0] == "collision" && propParts[1] == "block") {
+                const auto prop = splitPropertyAssignment(parts[i], ':');
+                if (!prop.has_value()) continue;
+                if (prop->first == "collision" && prop->second == "block") {
                     meta.blocksMovement = true;
-                } else if (propParts[0] == "tag") {
-                    meta.tag = propParts[1];
+                } else if (prop->first == "tag") {
+                    meta.tag = prop->second;
                 }
             }
             atlasTileMeta_[atlasMetaKey(file, x, y, w, h)] = std::move(meta);

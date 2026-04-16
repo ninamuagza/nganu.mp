@@ -1,4 +1,4 @@
-# Install script for directory: /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin
+# Install script for directory: /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,6 +45,6 @@ endif()
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/home/fanorisky/GameProject/nganu.mp/game-server/build/plugins/example_plugin/install_local_manifest.txt"
+  file(WRITE "/home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

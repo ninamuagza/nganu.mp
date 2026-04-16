@@ -6,14 +6,14 @@ nganu-game: \
   CMakeFiles/nganu-game.dir/src/Game.cpp.o \
   CMakeFiles/nganu-game.dir/src/World.cpp.o \
   CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o \
-  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o \
+  CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o \
   /usr/lib/libraylib.so \
   /usr/lib/libraylib.so \
   /usr/lib/libstdc++.so \
@@ -58,21 +58,21 @@ CMakeFiles/nganu-game.dir/src/World.cpp.o:
 
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o:
 
-CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o:
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o:
 
 /usr/lib/libraylib.so:
 

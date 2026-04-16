@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/include
+C_INCLUDES = -I/home/fanorisky/GameProject/nganu.mp/vendor/enet/include
 
 C_FLAGS = -O3 -DNDEBUG -std=gnu11
 

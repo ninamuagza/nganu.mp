@@ -72,9 +72,11 @@ struct AssetBlob {
 class Game {
 public:
     Game();
+    ~Game();
 
     void Update(float dt);
     void Draw() const;
+    void Shutdown();
 
 private:
     enum class UiMode {

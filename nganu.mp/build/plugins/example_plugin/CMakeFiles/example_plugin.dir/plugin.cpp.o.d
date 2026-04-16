@@ -1,7 +1,7 @@
 plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/plugins/example_plugin/plugin.cpp \
+ /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/plugin/PluginAPI.h \
+ /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
  /usr/include/luajit-2.1/lua.hpp /usr/include/luajit-2.1/lua.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \

@@ -1,7 +1,7 @@
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Runtime.cpp \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp \
  /usr/include/stdc-predef.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Runtime.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -113,7 +113,7 @@ CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: \
  /usr/include/c++/15.2.1/bits/enable_special_members.h \
  /usr/include/c++/15.2.1/bits/node_handle.h \
  /usr/include/c++/15.2.1/bits/erase_if.h \
- /home/fanorisky/GameProject/nganu.mp/game-server/src/core/Logger.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/ctime /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/timex.h \
  /usr/include/bits/types/struct_tm.h \

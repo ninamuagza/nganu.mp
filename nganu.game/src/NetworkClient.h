@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Protocol.h"
+#include "shared/Protocol.h"
 
 #include <enet/enet.h>
 #include <cstdint>
@@ -19,6 +19,7 @@ struct NetworkEvent {
         PlayerJoined,
         PlayerLeft,
         PlayerMoved,
+        PlayerPosition,
         ChatMessage,
         ServerText,
         PlayerName,

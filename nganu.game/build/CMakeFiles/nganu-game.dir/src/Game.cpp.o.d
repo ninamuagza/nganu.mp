@@ -3,7 +3,7 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.o: \
  /usr/include/stdc-predef.h \
  /home/fanorisky/GameProject/nganu.game/src/Game.h \
  /home/fanorisky/GameProject/nganu.game/src/NetworkClient.h \
- /home/fanorisky/GameProject/nganu.game/src/Protocol.h \
+ /home/fanorisky/GameProject/nganu.game/../shared/Protocol.h \
  /usr/include/c++/15.2.1/cstddef \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
@@ -21,7 +21,7 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.o: \
  /usr/include/bits/time64.h /usr/include/bits/wchar.h \
  /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/enet.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/enet.h \
  /usr/include/c++/15.2.1/stdlib.h /usr/include/c++/15.2.1/cstdlib \
  /usr/include/stdlib.h /usr/include/bits/waitflags.h \
  /usr/include/bits/waitstatus.h /usr/include/bits/floatn.h \
@@ -42,7 +42,7 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.o: \
  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
  /usr/include/c++/15.2.1/bits/std_abs.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/unix.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/unix.h \
  /usr/include/sys/time.h /usr/include/sys/socket.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
@@ -58,10 +58,10 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.o: \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/types.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/protocol.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/list.h \
- /home/fanorisky/GameProject/nganu.game/../nganu.mp/game-server/vendor/enet/include/enet/callbacks.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/types.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/protocol.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/list.h \
+ /home/fanorisky/GameProject/nganu.game/../nganu.mp/vendor/enet/include/enet/callbacks.h \
  /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/bits/stringfwd.h \

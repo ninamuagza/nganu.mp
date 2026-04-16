@@ -22,24 +22,25 @@ add_executable(nganu-game
     src/Game.cpp
     src/World.cpp
     src/NetworkClient.cpp
-    ../nganu.mp/game-server/vendor/enet/callbacks.c
-    ../nganu.mp/game-server/vendor/enet/compress.c
-    ../nganu.mp/game-server/vendor/enet/host.c
-    ../nganu.mp/game-server/vendor/enet/list.c
-    ../nganu.mp/game-server/vendor/enet/packet.c
-    ../nganu.mp/game-server/vendor/enet/peer.c
-    ../nganu.mp/game-server/vendor/enet/protocol.c
+    ../nganu.mp/vendor/enet/callbacks.c
+    ../nganu.mp/vendor/enet/compress.c
+    ../nganu.mp/vendor/enet/host.c
+    ../nganu.mp/vendor/enet/list.c
+    ../nganu.mp/vendor/enet/packet.c
+    ../nganu.mp/vendor/enet/peer.c
+    ../nganu.mp/vendor/enet/protocol.c
 )
 
 if (WIN32)
-    target_sources(nganu-game PRIVATE ../nganu.mp/game-server/vendor/enet/win32.c)
+    target_sources(nganu-game PRIVATE ../nganu.mp/vendor/enet/win32.c)
 else()
-    target_sources(nganu-game PRIVATE ../nganu.mp/game-server/vendor/enet/unix.c)
+    target_sources(nganu-game PRIVATE ../nganu.mp/vendor/enet/unix.c)
 endif()
 
 target_include_directories(nganu-game PRIVATE
     src
-    ../nganu.mp/game-server/vendor/enet/include
+    ..
+    ../nganu.mp/vendor/enet/include
 )
 
 if (TARGET raylib)
@@ -55,3 +56,5 @@ endif()
 if (WIN32)
     target_link_libraries(nganu-game PRIVATE ws2_32 winmm)
 endif()
+
+target_compile_definitions(nganu-game PRIVATE NGANU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")

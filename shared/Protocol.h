@@ -20,7 +20,8 @@ enum class GameStateType : uint8_t {
     SERVER_TEXT = 0x04,
     PLAYER_NAME = 0x05,
     OBJECTIVE_TEXT = 0x06,
-    MAP_TRANSFER = 0x07
+    MAP_TRANSFER = 0x07,
+    PLAYER_POSITION = 0x08
 };
 
 enum class PluginMessageType : uint8_t {
@@ -31,7 +32,7 @@ enum class PluginMessageType : uint8_t {
     ASSET_BLOB = 0x23
 };
 
-namespace Packet {
+namespace Protocol {
 
 inline PacketOpcode readOpcode(const void* data, size_t len) {
     if (len < 1) return static_cast<PacketOpcode>(0);
@@ -46,4 +47,4 @@ inline size_t payloadLen(size_t totalLen) {
     return (totalLen > 0) ? totalLen - 1 : 0;
 }
 
-}  // namespace Packet
+} // namespace Protocol

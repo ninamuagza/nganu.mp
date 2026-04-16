@@ -102,9 +102,12 @@ void NetworkClient::Disconnect() {
     awaitingConnect_ = false;
     connectTimeout_ = 0.0f;
     enet_peer_disconnect(peer_, 0);
+    enet_host_flush(client_);
 
     ENetEvent event {};
-    while (enet_host_service(client_, &event, 50) > 0) {
+    const uint32_t disconnectWaitMs = 250;
+    uint32_t waitedMs = 0;
+    while (waitedMs < disconnectWaitMs && enet_host_service(client_, &event, 50) > 0) {
         if (event.type == ENET_EVENT_TYPE_RECEIVE) {
             enet_packet_destroy(event.packet);
         }
@@ -112,6 +115,7 @@ void NetworkClient::Disconnect() {
             peer_ = nullptr;
             break;
         }
+        waitedMs += 50;
     }
 
     if (peer_) {
@@ -208,11 +212,11 @@ void NetworkClient::PushEvent(NetworkEvent event) {
 void NetworkClient::HandlePacket(const void* data, size_t len) {
     if (len < 1) return;
 
-    switch (Packet::readOpcode(data, len)) {
+    switch (Protocol::readOpcode(data, len)) {
     case PacketOpcode::HANDSHAKE: {
-        if (Packet::payloadLen(len) != sizeof(int32_t)) return;
+        if (Protocol::payloadLen(len) != sizeof(int32_t)) return;
         int32_t localId = 0;
-        std::memcpy(&localId, Packet::payload(data), sizeof(localId));
+        std::memcpy(&localId, Protocol::payload(data), sizeof(localId));
         NetworkEvent event {};
         event.type = NetworkEvent::Type::Handshake;
         event.playerId = static_cast<int>(localId);
@@ -220,39 +224,39 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
         break;
     }
     case PacketOpcode::PLAYER_MOVE: {
-        if (Packet::payloadLen(len) != sizeof(int32_t) + sizeof(float) * 2) return;
+        if (Protocol::payloadLen(len) != sizeof(int32_t) + sizeof(float) * 2) return;
         NetworkEvent event {};
         event.type = NetworkEvent::Type::PlayerMoved;
-        std::memcpy(&event.playerId, Packet::payload(data), sizeof(int32_t));
-        std::memcpy(&event.x, Packet::payload(data) + sizeof(int32_t), sizeof(float));
-        std::memcpy(&event.y, Packet::payload(data) + sizeof(int32_t) + sizeof(float), sizeof(float));
+        std::memcpy(&event.playerId, Protocol::payload(data), sizeof(int32_t));
+        std::memcpy(&event.x, Protocol::payload(data) + sizeof(int32_t), sizeof(float));
+        std::memcpy(&event.y, Protocol::payload(data) + sizeof(int32_t) + sizeof(float), sizeof(float));
         PushEvent(std::move(event));
         break;
     }
     case PacketOpcode::CHAT_MESSAGE: {
-        if (Packet::payloadLen(len) < sizeof(int32_t) + 1) return;
+        if (Protocol::payloadLen(len) < sizeof(int32_t) + 1) return;
         NetworkEvent event {};
         event.type = NetworkEvent::Type::ChatMessage;
-        std::memcpy(&event.senderId, Packet::payload(data), sizeof(int32_t));
-        const char* text = reinterpret_cast<const char*>(Packet::payload(data) + sizeof(int32_t));
-        const size_t textLen = Packet::payloadLen(len) - sizeof(int32_t);
+        std::memcpy(&event.senderId, Protocol::payload(data), sizeof(int32_t));
+        const char* text = reinterpret_cast<const char*>(Protocol::payload(data) + sizeof(int32_t));
+        const size_t textLen = Protocol::payloadLen(len) - sizeof(int32_t);
         event.text.assign(text, textLen);
         PushEvent(std::move(event));
         break;
     }
     case PacketOpcode::GAME_STATE: {
-        if (Packet::payloadLen(len) < 1) return;
-        const uint8_t* payload = Packet::payload(data);
+        if (Protocol::payloadLen(len) < 1) return;
+        const uint8_t* payload = Protocol::payload(data);
         const GameStateType type = static_cast<GameStateType>(payload[0]);
 
         switch (type) {
         case GameStateType::SNAPSHOT: {
-            if (Packet::payloadLen(len) < 1 + sizeof(uint16_t)) return;
+            if (Protocol::payloadLen(len) < 1 + sizeof(uint16_t)) return;
             uint16_t count = 0;
             std::memcpy(&count, payload + 1, sizeof(count));
             size_t offset = 1 + sizeof(count);
             for (uint16_t i = 0; i < count; ++i) {
-                if (offset + sizeof(int32_t) + sizeof(float) * 2 + sizeof(uint8_t) > Packet::payloadLen(len)) break;
+                if (offset + sizeof(int32_t) + sizeof(float) * 2 + sizeof(uint8_t) > Protocol::payloadLen(len)) break;
                 NetworkEvent event {};
                 event.type = NetworkEvent::Type::SnapshotPlayer;
                 std::memcpy(&event.playerId, payload + offset, sizeof(int32_t));
@@ -263,7 +267,7 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
                 offset += sizeof(float);
                 const uint8_t nameLen = *(payload + offset);
                 offset += sizeof(uint8_t);
-                if (offset + nameLen > Packet::payloadLen(len)) break;
+                if (offset + nameLen > Protocol::payloadLen(len)) break;
                 event.text.assign(reinterpret_cast<const char*>(payload + offset), nameLen);
                 offset += nameLen;
                 PushEvent(std::move(event));
@@ -271,7 +275,7 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
             break;
         }
         case GameStateType::PLAYER_JOIN: {
-            if (Packet::payloadLen(len) != 1 + sizeof(int32_t) + sizeof(float) * 2) return;
+            if (Protocol::payloadLen(len) != 1 + sizeof(int32_t) + sizeof(float) * 2) return;
             NetworkEvent event {};
             event.type = NetworkEvent::Type::PlayerJoined;
             std::memcpy(&event.playerId, payload + 1, sizeof(int32_t));
@@ -281,7 +285,7 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
             break;
         }
         case GameStateType::PLAYER_LEAVE: {
-            if (Packet::payloadLen(len) != 1 + sizeof(int32_t)) return;
+            if (Protocol::payloadLen(len) != 1 + sizeof(int32_t)) return;
             NetworkEvent event {};
             event.type = NetworkEvent::Type::PlayerLeft;
             std::memcpy(&event.playerId, payload + 1, sizeof(int32_t));
@@ -289,19 +293,19 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
             break;
         }
         case GameStateType::SERVER_TEXT: {
-            if (Packet::payloadLen(len) < 2) return;
+            if (Protocol::payloadLen(len) < 2) return;
             NetworkEvent event {};
             event.type = NetworkEvent::Type::ServerText;
-            event.text.assign(reinterpret_cast<const char*>(payload + 1), Packet::payloadLen(len) - 1);
+            event.text.assign(reinterpret_cast<const char*>(payload + 1), Protocol::payloadLen(len) - 1);
             PushEvent(std::move(event));
             break;
         }
         case GameStateType::PLAYER_NAME: {
-            if (Packet::payloadLen(len) < 1 + sizeof(int32_t) + sizeof(uint8_t)) return;
+            if (Protocol::payloadLen(len) < 1 + sizeof(int32_t) + sizeof(uint8_t)) return;
             int32_t playerId = 0;
             std::memcpy(&playerId, payload + 1, sizeof(playerId));
             const uint8_t nameLen = *(payload + 1 + sizeof(playerId));
-            if (Packet::payloadLen(len) != 1 + sizeof(playerId) + sizeof(uint8_t) + nameLen) return;
+            if (Protocol::payloadLen(len) != 1 + sizeof(playerId) + sizeof(uint8_t) + nameLen) return;
 
             NetworkEvent event {};
             event.type = NetworkEvent::Type::PlayerName;
@@ -313,12 +317,12 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
         case GameStateType::OBJECTIVE_TEXT: {
             NetworkEvent event {};
             event.type = NetworkEvent::Type::ObjectiveText;
-            event.text.assign(reinterpret_cast<const char*>(payload + 1), Packet::payloadLen(len) - 1);
+            event.text.assign(reinterpret_cast<const char*>(payload + 1), Protocol::payloadLen(len) - 1);
             PushEvent(std::move(event));
             break;
         }
         case GameStateType::MAP_TRANSFER: {
-            if (Packet::payloadLen(len) < 1 + sizeof(float) * 2 + sizeof(uint8_t)) return;
+            if (Protocol::payloadLen(len) < 1 + sizeof(float) * 2 + sizeof(uint8_t)) return;
             NetworkEvent event {};
             event.type = NetworkEvent::Type::MapTransfer;
             size_t offset = 1;
@@ -328,8 +332,17 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
             offset += sizeof(float);
             const uint8_t mapLen = *(payload + offset);
             offset += sizeof(uint8_t);
-            if (offset + mapLen > Packet::payloadLen(len)) return;
+            if (offset + mapLen > Protocol::payloadLen(len)) return;
             event.mapId.assign(reinterpret_cast<const char*>(payload + offset), mapLen);
+            PushEvent(std::move(event));
+            break;
+        }
+        case GameStateType::PLAYER_POSITION: {
+            if (Protocol::payloadLen(len) != 1 + sizeof(float) * 2) return;
+            NetworkEvent event {};
+            event.type = NetworkEvent::Type::PlayerPosition;
+            std::memcpy(&event.x, payload + 1, sizeof(float));
+            std::memcpy(&event.y, payload + 1 + sizeof(float), sizeof(float));
             PushEvent(std::move(event));
             break;
         }
@@ -339,19 +352,19 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
         break;
     }
     case PacketOpcode::PLUGIN_MESSAGE: {
-        if (Packet::payloadLen(len) < 1) return;
-        const PluginMessageType type = static_cast<PluginMessageType>(Packet::payload(data)[0]);
+        if (Protocol::payloadLen(len) < 1) return;
+        const PluginMessageType type = static_cast<PluginMessageType>(Protocol::payload(data)[0]);
         if (type == PluginMessageType::UPDATE_MANIFEST) {
             NetworkEvent event {};
             event.type = NetworkEvent::Type::AssetManifest;
-            event.text.assign(reinterpret_cast<const char*>(Packet::payload(data) + 1), Packet::payloadLen(len) - 1);
+            event.text.assign(reinterpret_cast<const char*>(Protocol::payload(data) + 1), Protocol::payloadLen(len) - 1);
             PushEvent(std::move(event));
             break;
         }
         if (type == PluginMessageType::ASSET_BLOB) {
             NetworkEvent event {};
             event.type = NetworkEvent::Type::AssetBlob;
-            event.text.assign(reinterpret_cast<const char*>(Packet::payload(data) + 1), Packet::payloadLen(len) - 1);
+            event.text.assign(reinterpret_cast<const char*>(Protocol::payload(data) + 1), Protocol::payloadLen(len) - 1);
             PushEvent(std::move(event));
             break;
         }

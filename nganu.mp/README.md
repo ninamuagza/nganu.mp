@@ -14,18 +14,18 @@ A minimal, production-ready game server built from scratch in C/C++17.
 ## Building
 
 ```bash
-cd game-server
+cd nganu.mp
 pkg-config --modversion luajit   # should print the installed LuaJIT version
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --parallel
 ```
 
-Binaries are placed in `game-server/bin/`.
+Binaries are placed in `nganu.mp/bin/`.
 
 ## Running
 
 ```bash
-cd game-server
+cd nganu.mp
 ./bin/game-server          # start the server with server.cfg
 ./bin/game-server --test   # smoke test using server.test.cfg when present
 ```
@@ -37,7 +37,7 @@ if a required plugin fails to load.
 ## Project Structure
 
 ```
-game-server/
+nganu.mp/
 ├── src/                  # Server source code
 │   ├── main.cpp
 │   ├── core/             # Server, Runtime, Logger

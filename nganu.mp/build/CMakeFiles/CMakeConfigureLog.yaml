@@ -20,7 +20,7 @@ events:
     names:
       - "uname"
     candidate_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -39,7 +39,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
       - "/bin/"
     searched_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/uname"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/uname"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/uname"
       - "/home/fanorisky/.local/bin/uname"
       - "/home/fanorisky/.bun/bin/uname"
@@ -49,7 +49,7 @@ events:
     found: "/usr/bin/uname"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -95,7 +95,7 @@ events:
       - "make"
       - "smake"
     candidate_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -113,7 +113,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gmake"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gmake"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gmake"
       - "/home/fanorisky/.local/bin/gmake"
       - "/home/fanorisky/.bun/bin/gmake"
@@ -130,7 +130,7 @@ events:
       - "/usr/lib/rustup/bin/gmake"
       - "/home/fanorisky/Android/sdk/platform-tools/gmake"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gmake"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/make"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/make"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/make"
       - "/home/fanorisky/.local/bin/make"
       - "/home/fanorisky/.bun/bin/make"
@@ -140,7 +140,7 @@ events:
     found: "/usr/bin/make"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -184,7 +184,7 @@ events:
       - "icx"
       - "clang"
     candidate_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -202,7 +202,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/cc"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/cc"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/cc"
       - "/home/fanorisky/.local/bin/cc"
       - "/home/fanorisky/.bun/bin/cc"
@@ -212,7 +212,7 @@ events:
     found: "/usr/bin/cc"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -257,7 +257,7 @@ events:
     found: "/usr/share/cmake/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -295,7 +295,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
       
       The C compiler identification is GNU, found in:
-        /home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/4.2.3/CompilerIdC/a.out
+        /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/4.2.3/CompilerIdC/a.out
       
   -
     kind: "find-v1"
@@ -318,7 +318,7 @@ events:
       - "ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -337,7 +337,7 @@ events:
     found: "/usr/bin/ar"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -376,7 +376,7 @@ events:
       - "ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -395,7 +395,7 @@ events:
     found: "/usr/bin/ranlib"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -434,7 +434,7 @@ events:
       - "strip"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -453,7 +453,7 @@ events:
     found: "/usr/bin/strip"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -492,7 +492,7 @@ events:
       - "ld"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -511,7 +511,7 @@ events:
     found: "/usr/bin/ld"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -550,7 +550,7 @@ events:
       - "nm"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -569,7 +569,7 @@ events:
     found: "/usr/bin/nm"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -608,7 +608,7 @@ events:
       - "objdump"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -627,7 +627,7 @@ events:
     found: "/usr/bin/objdump"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -666,7 +666,7 @@ events:
       - "objcopy"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -685,7 +685,7 @@ events:
     found: "/usr/bin/objcopy"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -724,7 +724,7 @@ events:
       - "readelf"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -743,7 +743,7 @@ events:
     found: "/usr/bin/readelf"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -782,7 +782,7 @@ events:
       - "dlltool"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -800,7 +800,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/dlltool"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/dlltool"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/dlltool"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/dlltool"
       - "/home/fanorisky/.local/bin/dlltool"
       - "/home/fanorisky/.bun/bin/dlltool"
@@ -819,7 +819,7 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -858,7 +858,7 @@ events:
       - "addr2line"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -877,7 +877,7 @@ events:
     found: "/usr/bin/addr2line"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -916,7 +916,7 @@ events:
       - "tapi"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -934,7 +934,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/tapi"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/tapi"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/tapi"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/tapi"
       - "/home/fanorisky/.local/bin/tapi"
       - "/home/fanorisky/.bun/bin/tapi"
@@ -953,7 +953,7 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -995,7 +995,7 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -1013,7 +1013,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar-15.2"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar-15.2"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar-15.2"
       - "/home/fanorisky/.local/bin/gcc-ar-15.2"
       - "/home/fanorisky/.bun/bin/gcc-ar-15.2"
@@ -1030,7 +1030,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ar-15.2"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ar-15.2"
       - "/usr/bin/gcc-ar-15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar-15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar-15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar-15"
       - "/home/fanorisky/.local/bin/gcc-ar-15"
       - "/home/fanorisky/.bun/bin/gcc-ar-15"
@@ -1047,7 +1047,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ar-15"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ar-15"
       - "/usr/bin/gcc-ar15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar15"
       - "/home/fanorisky/.local/bin/gcc-ar15"
       - "/home/fanorisky/.bun/bin/gcc-ar15"
@@ -1066,7 +1066,7 @@ events:
     found: "/usr/bin/gcc-ar"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1108,7 +1108,7 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -1126,7 +1126,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib-15.2"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib-15.2"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib-15.2"
       - "/home/fanorisky/.local/bin/gcc-ranlib-15.2"
       - "/home/fanorisky/.bun/bin/gcc-ranlib-15.2"
@@ -1143,7 +1143,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ranlib-15.2"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ranlib-15.2"
       - "/usr/bin/gcc-ranlib-15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib-15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib-15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib-15"
       - "/home/fanorisky/.local/bin/gcc-ranlib-15"
       - "/home/fanorisky/.bun/bin/gcc-ranlib-15"
@@ -1160,7 +1160,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ranlib-15"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ranlib-15"
       - "/usr/bin/gcc-ranlib15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib15"
       - "/home/fanorisky/.local/bin/gcc-ranlib15"
       - "/home/fanorisky/.bun/bin/gcc-ranlib15"
@@ -1179,7 +1179,7 @@ events:
     found: "/usr/bin/gcc-ranlib"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1230,7 +1230,7 @@ events:
     found: "/usr/bin/c++"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1275,7 +1275,7 @@ events:
     found: "/usr/share/cmake/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1313,7 +1313,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
       
       The CXX compiler identification is GNU, found in:
-        /home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/4.2.3/CompilerIdCXX/a.out
+        /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/4.2.3/CompilerIdCXX/a.out
       
   -
     kind: "find-v1"
@@ -1339,7 +1339,7 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -1357,7 +1357,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar-15.2"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar-15.2"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar-15.2"
       - "/home/fanorisky/.local/bin/gcc-ar-15.2"
       - "/home/fanorisky/.bun/bin/gcc-ar-15.2"
@@ -1374,7 +1374,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ar-15.2"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ar-15.2"
       - "/usr/bin/gcc-ar-15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar-15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar-15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar-15"
       - "/home/fanorisky/.local/bin/gcc-ar-15"
       - "/home/fanorisky/.bun/bin/gcc-ar-15"
@@ -1391,7 +1391,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ar-15"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ar-15"
       - "/usr/bin/gcc-ar15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ar15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ar15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ar15"
       - "/home/fanorisky/.local/bin/gcc-ar15"
       - "/home/fanorisky/.bun/bin/gcc-ar15"
@@ -1410,7 +1410,7 @@ events:
     found: "/usr/bin/gcc-ar"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1452,7 +1452,7 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -1470,7 +1470,7 @@ events:
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib-15.2"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib-15.2"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib-15.2"
       - "/home/fanorisky/.local/bin/gcc-ranlib-15.2"
       - "/home/fanorisky/.bun/bin/gcc-ranlib-15.2"
@@ -1487,7 +1487,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ranlib-15.2"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ranlib-15.2"
       - "/usr/bin/gcc-ranlib-15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib-15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib-15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib-15"
       - "/home/fanorisky/.local/bin/gcc-ranlib-15"
       - "/home/fanorisky/.bun/bin/gcc-ranlib-15"
@@ -1504,7 +1504,7 @@ events:
       - "/home/fanorisky/Android/sdk/platform-tools/gcc-ranlib-15"
       - "/home/fanorisky/Android/sdk/cmdline-tools/latest/bin/gcc-ranlib-15"
       - "/usr/bin/gcc-ranlib15"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/gcc-ranlib15"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/gcc-ranlib15"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/gcc-ranlib15"
       - "/home/fanorisky/.local/bin/gcc-ranlib15"
       - "/home/fanorisky/.bun/bin/gcc-ranlib15"
@@ -1523,7 +1523,7 @@ events:
     found: "/usr/bin/gcc-ranlib"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -1550,8 +1550,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA"
-      binary: "/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA"
+      source: "/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi"
+      binary: "/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
@@ -1560,13 +1560,13 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA'
+        Change Dir: '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_f8062/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_f8062.dir/build.make CMakeFiles/cmTC_f8062.dir/build
-        make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA'
-        Building C object CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o
-        /usr/bin/cc   -v -o CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_e621e/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_e621e.dir/build.make CMakeFiles/cmTC_e621e.dir/build
+        make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi'
+        Building C object CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o
+        /usr/bin/cc   -v -o CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         Target: x86_64-pc-linux-gnu
@@ -1574,8 +1574,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20260209 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f8062.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccEp2jfU.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_e621e.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccOSDikz.s
         GNU C23 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20260209, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1589,14 +1589,14 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 4a3176b8a5098bb872007d0a1d5e5fb3
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/'
-         as -v --64 -o CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o /tmp/ccEp2jfU.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/'
+         as -v --64 -o CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o /tmp/ccOSDikz.s
         GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.'
-        Linking C executable cmTC_f8062
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f8062.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_e621e
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e621e.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -1607,14 +1607,14 @@ events:
         gcc version 15.2.1 20260209 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f8062' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f8062.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDOI0GN.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f8062 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e621e' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e621e.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclxZdoA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e621e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20260209
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDOI0GN.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f8062 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclxZdoA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e621e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f8062' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f8062.'
-        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -o cmTC_f8062
-        make[1]: Leaving directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e621e' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e621e.'
+        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -o cmTC_e621e
+        make[1]: Leaving directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi'
         
       exitCode: 0
   -
@@ -1649,13 +1649,13 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA']
+        ignore line: [Change Dir: '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_f8062/fast]
-        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_f8062.dir/build.make CMakeFiles/cmTC_f8062.dir/build]
-        ignore line: [make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-o3UtIA']
-        ignore line: [Building C object CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_e621e/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_e621e.dir/build.make CMakeFiles/cmTC_e621e.dir/build]
+        ignore line: [make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-2AIJpi']
+        ignore line: [Building C object CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1663,8 +1663,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f8062.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccEp2jfU.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_e621e.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccOSDikz.s]
         ignore line: [GNU C23 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20260209  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1678,14 +1678,14 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 4a3176b8a5098bb872007d0a1d5e5fb3]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o /tmp/ccEp2jfU.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o /tmp/ccOSDikz.s]
         ignore line: [GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C executable cmTC_f8062]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f8062.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_e621e]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e621e.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -1696,13 +1696,13 @@ events:
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f8062' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f8062.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDOI0GN.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f8062 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e621e' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e621e.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclxZdoA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e621e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccDOI0GN.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/cclxZdoA.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1717,7 +1717,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_f8062] ==> ignore
+          arg [cmTC_e621e] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -1729,7 +1729,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -1744,7 +1744,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20260209]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDOI0GN.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f8062 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f8062.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclxZdoA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e621e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e621e.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1781,8 +1781,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6"
-      binary: "/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6"
+      source: "/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX"
+      binary: "/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1792,13 +1792,13 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6'
+        Change Dir: '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_6eefc/fast
-        /usr/bin/make  -f CMakeFiles/cmTC_6eefc.dir/build.make CMakeFiles/cmTC_6eefc.dir/build
-        make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6'
-        Building CXX object CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -o CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_0448e/fast
+        /usr/bin/make  -f CMakeFiles/cmTC_0448e.dir/build.make CMakeFiles/cmTC_0448e.dir/build
+        make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX'
+        Building CXX object CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -o CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         Target: x86_64-pc-linux-gnu
@@ -1806,8 +1806,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20260209 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_6eefc.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccxutIUx.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_0448e.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccl2To57.s
         GNU C++17 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20260209, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1824,14 +1824,14 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 5e3969de92aa3c12a625237f01b15b2f
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/'
-         as -v --64 -o CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccxutIUx.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/'
+         as -v --64 -o CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccl2To57.s
         GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX executable cmTC_6eefc
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6eefc.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_0448e
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0448e.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -1842,14 +1842,14 @@ events:
         gcc version 15.2.1 20260209 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6eefc' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6eefc.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclEB3TY.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6eefc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0448e' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0448e.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclwAHOp.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0448e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20260209
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclEB3TY.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6eefc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclwAHOp.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0448e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6eefc' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6eefc.'
-        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_6eefc
-        make[1]: Leaving directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0448e' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0448e.'
+        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_0448e
+        make[1]: Leaving directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX'
         
       exitCode: 0
   -
@@ -1890,13 +1890,13 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6']
+        ignore line: [Change Dir: '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_6eefc/fast]
-        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_6eefc.dir/build.make CMakeFiles/cmTC_6eefc.dir/build]
-        ignore line: [make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/game-server/build/CMakeFiles/CMakeScratch/TryCompile-C8qCU6']
-        ignore line: [Building CXX object CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_0448e/fast]
+        ignore line: [/usr/bin/make  -f CMakeFiles/cmTC_0448e.dir/build.make CMakeFiles/cmTC_0448e.dir/build]
+        ignore line: [make[1]: Entering directory '/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles/CMakeScratch/TryCompile-peUzxX']
+        ignore line: [Building CXX object CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1904,8 +1904,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_6eefc.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccxutIUx.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_0448e.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccl2To57.s]
         ignore line: [GNU C++17 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20260209  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1922,14 +1922,14 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 5e3969de92aa3c12a625237f01b15b2f]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccxutIUx.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccl2To57.s]
         ignore line: [GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX executable cmTC_6eefc]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6eefc.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_0448e]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0448e.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -1940,13 +1940,13 @@ events:
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6eefc' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6eefc.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclEB3TY.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6eefc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0448e' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0448e.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclwAHOp.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0448e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/cclEB3TY.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/cclwAHOp.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1961,7 +1961,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_6eefc] ==> ignore
+          arg [cmTC_0448e] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -1973,7 +1973,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -1984,7 +1984,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20260209]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclEB3TY.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6eefc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6eefc.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cclwAHOp.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0448e /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0448e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -2032,7 +2032,7 @@ events:
       - "pkg-config"
       - "pkgconf"
     candidate_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/"
       - "/home/fanorisky/.local/bin/"
       - "/home/fanorisky/.bun/bin/"
@@ -2067,8 +2067,8 @@ events:
       - "/opt/sbin/"
       - "/opt/"
     searched_directories:
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/pkg-config"
-      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or/pkgconf"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/pkg-config"
+      - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX/pkgconf"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/pkg-config"
       - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path/pkgconf"
       - "/home/fanorisky/.local/bin/pkg-config"
@@ -2084,7 +2084,7 @@ events:
     found: "/usr/bin/pkg-config"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"
@@ -2138,7 +2138,7 @@ events:
     found: "/usr/lib/libluajit-5.1.so"
     search_context:
       ENV{PATH}:
-        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hLc5or"
+        - "/home/fanorisky/.codex/tmp/arg0/codex-arg0hNHDCX"
         - "/usr/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
         - "/home/fanorisky/.local/bin"
         - "/home/fanorisky/.bun/bin"

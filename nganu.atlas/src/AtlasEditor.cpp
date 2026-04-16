@@ -156,10 +156,10 @@ void SetPropertyValue(PropertyCollection& properties, const std::string& key, co
 }
 
 AtlasEditor::AtlasEditor() {
-    projectRoot_ = std::filesystem::current_path().parent_path();
-    mapAssetRoot_ = projectRoot_ / "nganu.mp" / "game-server" / "assets" / "map_images";
-    characterAssetRoot_ = projectRoot_ / "nganu.mp" / "game-server" / "assets" / "characters";
-    mapsRoot_ = projectRoot_ / "nganu.mp" / "game-server" / "assets" / "maps";
+    projectRoot_ = std::filesystem::path(NGANU_REPO_ROOT).lexically_normal();
+    mapAssetRoot_ = projectRoot_ / "nganu.mp" / "assets" / "map_images";
+    characterAssetRoot_ = projectRoot_ / "nganu.mp" / "assets" / "characters";
+    mapsRoot_ = projectRoot_ / "nganu.mp" / "assets" / "maps";
     LoadUiFont();
     ScanAssets();
     ScanMaps();

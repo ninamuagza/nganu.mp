@@ -129,197 +129,197 @@ nganu-game/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/build
 .PHONY : nganu-game/fast
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.s
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.o: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.o: home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.o
 
 # target to build an object file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.o
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.i: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.i: home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.i
 
 # target to preprocess a source file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.i
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.i
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.i
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.i
 
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.s: home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.s: home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.s
 
 # target to generate assembly for a file
-home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.s
-.PHONY : home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.c.s
+home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
+.PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
 
 src/Game.o: src/Game.cpp.o
 .PHONY : src/Game.o
@@ -426,30 +426,30 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... nganu-game"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/callbacks.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/compress.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/host.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/list.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/packet.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/peer.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/protocol.s"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.o"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.i"
-	@echo "... home/fanorisky/GameProject/nganu.mp/game-server/vendor/enet/unix.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/host.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/host.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/host.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/list.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/list.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/list.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.s"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.o"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.i"
+	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.s"
 	@echo "... src/Game.o"
 	@echo "... src/Game.i"
 	@echo "... src/Game.s"
