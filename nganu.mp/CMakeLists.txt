@@ -45,6 +45,7 @@ set(SERVER_SOURCES
     src/script/Builtins.cpp
     src/network/Network.cpp
     src/network/Packet.cpp
+    src/inventory/InventoryService.cpp
 )
 
 add_executable(game-server ${SERVER_SOURCES})

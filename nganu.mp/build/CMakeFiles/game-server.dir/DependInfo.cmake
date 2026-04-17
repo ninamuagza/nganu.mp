@@ -11,6 +11,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp" "CMakeFiles/game-server.dir/src/core/MapData.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/MapData.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp" "CMakeFiles/game-server.dir/src/core/Runtime.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/Runtime.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp" "CMakeFiles/game-server.dir/src/core/Server.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/Server.cpp.o.d"
+  "/home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.cpp" "CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/main.cpp" "CMakeFiles/game-server.dir/src/main.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/main.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/network/Network.cpp" "CMakeFiles/game-server.dir/src/network/Network.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/network/Network.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/network/Packet.cpp" "CMakeFiles/game-server.dir/src/network/Packet.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/network/Packet.cpp.o.d"

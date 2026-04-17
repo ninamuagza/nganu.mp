@@ -1,0 +1,9 @@
+{
+  "window_id": "system_modal",
+  "title": "System Dialog",
+  "anchor": "center",
+  "size_w": 420,
+  "size_h": 220,
+  "min_w": 320,
+  "min_h": 180
+}

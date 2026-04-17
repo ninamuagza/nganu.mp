@@ -8,6 +8,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/game-server.dir/src/core/Runtime.cpp.o.d"
   "CMakeFiles/game-server.dir/src/core/Server.cpp.o"
   "CMakeFiles/game-server.dir/src/core/Server.cpp.o.d"
+  "CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o"
+  "CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o.d"
   "CMakeFiles/game-server.dir/src/main.cpp.o"
   "CMakeFiles/game-server.dir/src/main.cpp.o.d"
   "CMakeFiles/game-server.dir/src/network/Network.cpp.o"

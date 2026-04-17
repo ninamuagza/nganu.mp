@@ -195,6 +195,60 @@ bool NetworkClient::RequestAsset(const std::string& assetKey) {
     return enet_peer_send(peer_, 0, packet) == 0;
 }
 
+bool NetworkClient::SendInventoryOpen() {
+    if (!IsConnected()) return false;
+    const uint8_t pkt[2] {
+        static_cast<uint8_t>(PacketOpcode::INVENTORY),
+        static_cast<uint8_t>(InventoryMsgType::CMSG_OPEN)
+    };
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
+bool NetworkClient::SendInventoryClose() {
+    if (!IsConnected()) return false;
+    const uint8_t pkt[2] {
+        static_cast<uint8_t>(PacketOpcode::INVENTORY),
+        static_cast<uint8_t>(InventoryMsgType::CMSG_CLOSE)
+    };
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
+bool NetworkClient::SendMoveItem(int fromSlot, int toSlot) {
+    if (!IsConnected() || fromSlot < 0 || fromSlot > 255 || toSlot < 0 || toSlot > 255) return false;
+    const uint8_t pkt[4] {
+        static_cast<uint8_t>(PacketOpcode::INVENTORY),
+        static_cast<uint8_t>(InventoryMsgType::CMSG_MOVE_ITEM),
+        static_cast<uint8_t>(fromSlot),
+        static_cast<uint8_t>(toSlot)
+    };
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
+bool NetworkClient::SendUseItem(int slot) {
+    if (!IsConnected() || slot < 0 || slot > 255) return false;
+    const uint8_t pkt[3] {
+        static_cast<uint8_t>(PacketOpcode::INVENTORY),
+        static_cast<uint8_t>(InventoryMsgType::CMSG_USE_ITEM),
+        static_cast<uint8_t>(slot)
+    };
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
+bool NetworkClient::SendDropItem(int slot) {
+    if (!IsConnected() || slot < 0 || slot > 255) return false;
+    const uint8_t pkt[3] {
+        static_cast<uint8_t>(PacketOpcode::INVENTORY),
+        static_cast<uint8_t>(InventoryMsgType::CMSG_DROP_ITEM),
+        static_cast<uint8_t>(slot)
+    };
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
 bool NetworkClient::IsConnected() const {
     return peer_ && peer_->state == ENET_PEER_STATE_CONNECTED;
 }
@@ -366,6 +420,44 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
             event.type = NetworkEvent::Type::AssetBlob;
             event.text.assign(reinterpret_cast<const char*>(Protocol::payload(data) + 1), Protocol::payloadLen(len) - 1);
             PushEvent(std::move(event));
+            break;
+        }
+        break;
+    }
+    case PacketOpcode::INVENTORY: {
+        if (Protocol::payloadLen(len) < 1) return;
+        const uint8_t* payload = Protocol::payload(data);
+        const InventoryMsgType type = static_cast<InventoryMsgType>(payload[0]);
+        switch (type) {
+        case InventoryMsgType::SMSG_FULL_STATE: {
+            if (Protocol::payloadLen(len) < 3) return;
+            NetworkEvent event {};
+            event.type = NetworkEvent::Type::InventoryFullState;
+            event.rawBytes.assign(payload, payload + Protocol::payloadLen(len));
+            PushEvent(std::move(event));
+            break;
+        }
+        case InventoryMsgType::SMSG_SLOT_UPDATE: {
+            if (Protocol::payloadLen(len) != 8) return;
+            NetworkEvent event {};
+            event.type = NetworkEvent::Type::InventorySlotUpdate;
+            event.slotIndex = static_cast<int>(payload[1]);
+            event.occupied = payload[2] != 0;
+            event.itemDefId = static_cast<int>(payload[3] | (payload[4] << 8));
+            event.amount = static_cast<int>(payload[5] | (payload[6] << 8));
+            event.flags = payload[7];
+            PushEvent(std::move(event));
+            break;
+        }
+        case InventoryMsgType::SMSG_ERROR: {
+            if (Protocol::payloadLen(len) != 2) return;
+            NetworkEvent event {};
+            event.type = NetworkEvent::Type::InventoryError;
+            event.errCode = payload[1];
+            PushEvent(std::move(event));
+            break;
+        }
+        default:
             break;
         }
         break;

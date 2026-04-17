@@ -1,0 +1,8 @@
+{
+  "theme_id": "theme_default",
+  "window_bg": "ui:theme_default.png@288@0@32@32",
+  "panel_bg": "ui:theme_default.png@320@0@32@32",
+  "title_bar_bg": "ui:theme_default.png@352@0@32@32",
+  "button_primary": "ui:theme_default.png@384@0@32@32",
+  "button_danger": "ui:theme_default.png@416@0@32@32"
+}

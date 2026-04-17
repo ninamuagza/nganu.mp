@@ -1,9 +1,19 @@
 #pragma once
 
 #include "NetworkClient.h"
+#include "AssetManager.h"
+#include "InventoryState.h"
+#include "InventoryUi.h"
+#include "ItemDefs.h"
+#include "ObjectiveUi.h"
+#include "ModalDialogUi.h"
 #include "World.h"
+#include "ui/UiSystem.h"
+#include "ui/UiDataStore.h"
+#include "ui/UiTheme.h"
 #include "raylib.h"
 #include <filesystem>
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -20,25 +30,6 @@ struct Avatar {
 struct RemoteAvatar {
     Avatar avatar;
     Vector2 targetPosition {};
-};
-
-struct Npc {
-    std::string name;
-    std::string title;
-    Vector2 position {};
-    float radius = 16.0f;
-    Color bodyColor {};
-};
-
-struct QuestState {
-    bool offered = false;
-    bool accepted = false;
-    bool completed = false;
-    bool turnedIn = false;
-    Vector2 targetPosition {};
-    float targetRadius = 80.0f;
-    std::string title;
-    std::string description;
 };
 
 struct ChatEntry {
@@ -98,8 +89,6 @@ private:
     Avatar player_;
     std::unordered_map<int, RemoteAvatar> remotePlayers_;
     std::vector<ChatEntry> chatEntries_;
-    Npc guideNpc_;
-    QuestState starterQuest_;
     UiMode uiMode_ = UiMode::Boot;
     LoginField loginField_ = LoginField::Name;
     Camera2D camera_ {};
@@ -131,6 +120,18 @@ private:
     bool hasPendingSpawnPosition_ = false;
     std::string lastMapAssetSource_ = "none";
     std::string lastAppliedMapAssetKey_;
+    AssetManager uiAssets_;
+    ItemDefs itemDefs_;
+    ClientInventory inventory_;
+    Ui::UiSystem uiSystem_;
+    Ui::DataStore uiData_;
+    Ui::Theme uiTheme_;
+    InventoryUi* inventoryUi_ = nullptr;
+    ObjectiveUi* objectiveUi_ = nullptr;
+    ModalDialogUi* modalDialogUi_ = nullptr;
+    bool uiInputBlockingWorld_ = false;
+    bool inventoryReady_ = false;
+    bool inventoryLayoutReady_ = false;
 
     void BeginBootUpdateCheck();
     void BeginRetryWait(const std::string& reason);
@@ -153,23 +154,31 @@ private:
     bool LoadCachedAsset(const std::string& assetKey, const std::string& revision, std::string& outContent) const;
     bool HasCachedImageAsset(const std::string& assetKey, const std::string& revision) const;
     void EnsureReferencedImagesRequested();
+    void EnsureUiDataAssetsRequested();
+    void EnsureUiThemeAssetsRequested();
+    void ApplyDataAsset(const AssetBlob& asset);
+    void LoadUiTextureFromCache(const std::string& assetKey);
     void BeginMapBootstrap();
     void BeginMapBootstrapForAsset(const std::string& assetKey, const std::string& statusText);
     void ApplyMapAsset(const AssetBlob& asset);
-    void ConfigureWorldDrivenGameplay();
     std::string NameForPlayer(int playerId) const;
     std::string SpriteForAvatar(const Avatar& avatar, bool localPlayer) const;
     void UpdateChatInput();
     void UpdateChatScroll(float dt);
+    void UpdateUi(float dt);
     void UpdateNpcAndQuest();
     void UpdateRemoteSmoothing(float dt);
     void ApplyRemotePlayerState(int playerId, float x, float y);
     void ApplyPlayerName(int playerId, const std::string& name);
     bool IsNearPosition(Vector2 a, Vector2 b, float distance) const;
+    bool IsInteractableObject(const WorldObject& object) const;
+    float InteractionRangeForObject(const WorldObject& object) const;
+    std::string InteractionPromptForObject(const WorldObject& object) const;
+    std::string DisplayNameForObject(const WorldObject& object) const;
 
     void DrawScene() const;
     void DrawAvatar(const Avatar& avatar, bool localPlayer) const;
-    void DrawNpc(const Npc& npc) const;
+    void DrawNpc(const WorldObject& object) const;
     void DrawHud() const;
     void DrawLoginScreen() const;
     void DrawBootScreen() const;

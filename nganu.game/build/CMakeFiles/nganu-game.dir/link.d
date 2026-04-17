@@ -6,6 +6,15 @@ nganu-game: \
   CMakeFiles/nganu-game.dir/src/Game.cpp.o \
   CMakeFiles/nganu-game.dir/src/World.cpp.o \
   CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o \
+  CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o \
+  CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o \
+  CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o \
   CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o \
   CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o \
   CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o \
@@ -57,6 +66,24 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.o:
 CMakeFiles/nganu-game.dir/src/World.cpp.o:
 
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o:
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o:
 

@@ -1,12 +1,16 @@
 local starter_quest = dofile("scripts/quests/starter_quest.lua")
 local npc_luna = dofile("scripts/npc/luna.lua")
 local trigger_starter_road = dofile("scripts/triggers/starter_road.lua")
+local map_objects = dofile("scripts/runtime/map_objects.lua")
 
 local M = {}
 
 local object_scripts = {
     npc_luna = function(playerid, object_index)
         npc_luna.interact(playerid, object_index, starter_quest)
+    end,
+    portal_travel = function(playerid, object_index)
+        map_objects.handle_portal_travel(playerid, object_index)
     end,
 }
 
@@ -34,6 +38,7 @@ function M.OnPlayerEnterMap(playerid)
     local biome = GetPlayerMapProperty(playerid, "biome") or "the world"
     local map_id = GetPlayerMapId(playerid)
     SendPlayerMessage(playerid, string.format("Welcome to %s, %s!", biome, name))
+    SendPlayerMessage(playerid, map_objects.map_population_line(playerid))
     BroadcastMapMessage(map_id, string.format("%s entered %s.", name, map_id))
     starter_quest.sync_objective(playerid)
 end
@@ -63,8 +68,7 @@ function M.OnPlayerCommand(playerid)
     end
 
     if text == "/where" then
-        local x, y = GetPlayerPosition(playerid)
-        SendPlayerMessage(playerid, string.format("You are at %.0f, %.0f on %s", x, y, GetPlayerMapId(playerid)))
+        SendPlayerMessage(playerid, map_objects.where_line(playerid))
         return
     end
 
@@ -85,6 +89,12 @@ function M.OnMapObjectInteract(playerid, object_index)
     local handler = object_scripts[script_name]
     if handler ~= nil then
         handler(playerid, object_index)
+        return
+    end
+
+    local kind = GetPlayerMapObjectKind(playerid, object_index)
+    if kind == "prop" then
+        map_objects.describe_prop(playerid, object_index, "An old roadside marker stands here.")
     end
 end
 

@@ -1,0 +1,11 @@
+{
+  "window_id": "objective_journal",
+  "title": "Objective Journal",
+  "anchor": "top_right",
+  "offset_x": -20,
+  "offset_y": 70,
+  "size_w": 360,
+  "size_h": 220,
+  "min_w": 280,
+  "min_h": 180
+}

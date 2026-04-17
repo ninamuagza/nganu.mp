@@ -227,6 +227,30 @@ src/core/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/Server.cpp.s
 .PHONY : src/core/Server.cpp.s
 
+src/inventory/InventoryService.o: src/inventory/InventoryService.cpp.o
+.PHONY : src/inventory/InventoryService.o
+
+# target to build an object file
+src/inventory/InventoryService.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o
+.PHONY : src/inventory/InventoryService.cpp.o
+
+src/inventory/InventoryService.i: src/inventory/InventoryService.cpp.i
+.PHONY : src/inventory/InventoryService.i
+
+# target to preprocess a source file
+src/inventory/InventoryService.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.i
+.PHONY : src/inventory/InventoryService.cpp.i
+
+src/inventory/InventoryService.s: src/inventory/InventoryService.cpp.s
+.PHONY : src/inventory/InventoryService.s
+
+# target to generate assembly for a file
+src/inventory/InventoryService.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.s
+.PHONY : src/inventory/InventoryService.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -583,6 +607,9 @@ help:
 	@echo "... src/core/Server.o"
 	@echo "... src/core/Server.i"
 	@echo "... src/core/Server.s"
+	@echo "... src/inventory/InventoryService.o"
+	@echo "... src/inventory/InventoryService.i"
+	@echo "... src/inventory/InventoryService.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

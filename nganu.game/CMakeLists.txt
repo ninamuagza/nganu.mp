@@ -22,6 +22,15 @@ add_executable(nganu-game
     src/Game.cpp
     src/World.cpp
     src/NetworkClient.cpp
+    src/AssetManager.cpp
+    src/ItemDefs.cpp
+    src/InventoryUi.cpp
+    src/ObjectiveUi.cpp
+    src/ModalDialogUi.cpp
+    src/ui/UiSystem.cpp
+    src/ui/UiWindowConfig.cpp
+    src/ui/UiDataStore.cpp
+    src/ui/UiTheme.cpp
     ../nganu.mp/vendor/enet/callbacks.c
     ../nganu.mp/vendor/enet/compress.c
     ../nganu.mp/vendor/enet/host.c

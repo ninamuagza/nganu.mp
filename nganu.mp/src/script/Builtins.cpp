@@ -116,6 +116,27 @@ static int l_GetPlayerName(lua_State* state) {
     return 1;
 }
 
+static int l_IsPlayerConnected(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    lua_pushboolean(state, (g_server && g_server->isPlayerConnected(playerid)) ? 1 : 0);
+    return 1;
+}
+
+static int l_GetPlayerCount(lua_State* state) {
+    lua_pushinteger(state, g_server ? static_cast<lua_Integer>(g_server->playerCount()) : 0);
+    return 1;
+}
+
+static int l_GetMapPlayerCount(lua_State* state) {
+    size_t len = 0;
+    const char* mapId = luaL_checklstring(state, 1, &len);
+    lua_pushinteger(state,
+                    (g_server && len > 0)
+                        ? static_cast<lua_Integer>(g_server->playerCountInMap(std::string(mapId, len)))
+                        : 0);
+    return 1;
+}
+
 static int l_GetPlayerPosition(lua_State* state) {
     const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
     if (!g_server) {
@@ -272,6 +293,64 @@ static int l_GetMapObjectKind(lua_State* state) {
     return 1;
 }
 
+static int l_GetPlayerMapObjectBounds(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int objectIndex = static_cast<int>(luaL_checkinteger(state, 2));
+    if (!g_server) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 4;
+    }
+    const MapData* map = g_server->mapForPlayer(playerid);
+    if (!map) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 4;
+    }
+    const auto* object = map->objectByIndex(objectIndex);
+    if (!object) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 4;
+    }
+    lua_pushnumber(state, object->x);
+    lua_pushnumber(state, object->y);
+    lua_pushnumber(state, object->width);
+    lua_pushnumber(state, object->height);
+    return 4;
+}
+
+static int l_GetPlayerMapObjectCenter(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int objectIndex = static_cast<int>(luaL_checkinteger(state, 2));
+    if (!g_server) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 2;
+    }
+    const MapData* map = g_server->mapForPlayer(playerid);
+    if (!map) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 2;
+    }
+    const auto* object = map->objectByIndex(objectIndex);
+    if (!object) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        return 2;
+    }
+    lua_pushnumber(state, object->x + (object->width * 0.5f));
+    lua_pushnumber(state, object->y + (object->height * 0.5f));
+    return 2;
+}
+
 static int l_GetPlayerMapObjectKind(lua_State* state) {
     const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
     const int objectIndex = static_cast<int>(luaL_checkinteger(state, 2));
@@ -353,6 +432,111 @@ static int l_SetPlayerObjective(lua_State* state) {
     return 0;
 }
 
+static int l_ClearPlayerObjective(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    if (g_server) {
+        g_server->sendObjectiveText(playerid, "");
+    }
+    return 0;
+}
+
+static int l_GetInventorySlot(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int slotIndex = static_cast<int>(luaL_checkinteger(state, 2));
+    if (!g_server) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushboolean(state, 0);
+        return 4;
+    }
+
+    const auto* inv = g_server->inventory().getInventory(playerid);
+    if (!inv || slotIndex < 0 || slotIndex >= static_cast<int>(inv->slots.size())) {
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushnil(state);
+        lua_pushboolean(state, 0);
+        return 4;
+    }
+
+    const SlotState& slot = inv->slots[slotIndex];
+    lua_pushinteger(state, slot.item_def_id);
+    lua_pushinteger(state, slot.amount);
+    lua_pushinteger(state, slot.flags);
+    lua_pushboolean(state, slot.occupied ? 1 : 0);
+    return 4;
+}
+
+static int l_CountInventoryItem(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int itemDefId = static_cast<int>(luaL_checkinteger(state, 2));
+    lua_pushinteger(state, g_server ? g_server->inventory().countItem(playerid, itemDefId) : 0);
+    return 1;
+}
+
+static int l_FindInventorySlot(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int itemDefId = static_cast<int>(luaL_checkinteger(state, 2));
+    lua_pushinteger(state, g_server ? g_server->inventory().findFirstSlotWithItem(playerid, itemDefId) : -1);
+    return 1;
+}
+
+static int l_FindFreeInventorySlot(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    lua_pushinteger(state, g_server ? g_server->inventory().findFirstFreeSlot(playerid) : -1);
+    return 1;
+}
+
+static int l_SetInventorySlot(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int slotIndex = static_cast<int>(luaL_checkinteger(state, 2));
+    const int itemDefId = static_cast<int>(luaL_checkinteger(state, 3));
+    const int amount = static_cast<int>(luaL_checkinteger(state, 4));
+    const uint8_t flags = static_cast<uint8_t>(luaL_optinteger(state, 5, 7));
+    if (g_server) {
+        g_server->inventory().setSlot(playerid, slotIndex, itemDefId, amount, flags);
+    }
+    return 0;
+}
+
+static int l_ClearInventorySlot(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int slotIndex = static_cast<int>(luaL_checkinteger(state, 2));
+    if (g_server) {
+        g_server->inventory().clearSlot(playerid, slotIndex);
+    }
+    return 0;
+}
+
+static int l_AddInventoryItem(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int itemDefId = static_cast<int>(luaL_checkinteger(state, 2));
+    const int amount = static_cast<int>(luaL_checkinteger(state, 3));
+    const uint8_t flags = static_cast<uint8_t>(luaL_optinteger(state, 4, 7));
+    lua_pushboolean(state, (g_server && g_server->inventory().addItem(playerid, itemDefId, amount, flags)) ? 1 : 0);
+    return 1;
+}
+
+static int l_RemoveInventoryItem(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const int itemDefId = static_cast<int>(luaL_checkinteger(state, 2));
+    const int amount = static_cast<int>(luaL_checkinteger(state, 3));
+    lua_pushboolean(state, (g_server && g_server->inventory().removeItem(playerid, itemDefId, amount)) ? 1 : 0);
+    return 1;
+}
+
+static int l_TeleportPlayer(lua_State* state) {
+    const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
+    const float x = static_cast<float>(luaL_checknumber(state, 2));
+    const float y = static_cast<float>(luaL_checknumber(state, 3));
+    size_t len = 0;
+    const char* reason = luaL_optlstring(state, 4, "", &len);
+    lua_pushboolean(state,
+                    (g_server && g_server->teleportPlayer(playerid, x, y, std::string(reason, len))) ? 1 : 0);
+    return 1;
+}
+
 static int l_TransferPlayerMap(lua_State* state) {
     const int playerid = static_cast<int>(luaL_checkinteger(state, 1));
     size_t mapLen = 0;
@@ -383,6 +567,9 @@ void RegisterBuiltinFunctions(LuaRuntime& runtime, Logger& logger, Network& netw
     runtime.registerFunction("BroadcastMapMessage", l_BroadcastMapMessage);
     runtime.registerFunction("SetPlayerSpawnPosition", l_SetPlayerSpawnPosition);
     runtime.registerFunction("GetPlayerName", l_GetPlayerName);
+    runtime.registerFunction("IsPlayerConnected", l_IsPlayerConnected);
+    runtime.registerFunction("GetPlayerCount", l_GetPlayerCount);
+    runtime.registerFunction("GetMapPlayerCount", l_GetMapPlayerCount);
     runtime.registerFunction("GetPlayerPosition", l_GetPlayerPosition);
     runtime.registerFunction("SetPlayerName", l_SetPlayerName);
     runtime.registerFunction("GetLastPlayerText", l_GetLastPlayerText);
@@ -397,6 +584,18 @@ void RegisterBuiltinFunctions(LuaRuntime& runtime, Logger& logger, Network& netw
     runtime.registerFunction("GetPlayerMapObjectKind", l_GetPlayerMapObjectKind);
     runtime.registerFunction("GetMapObjectProperty", l_GetMapObjectProperty);
     runtime.registerFunction("GetPlayerMapObjectProperty", l_GetPlayerMapObjectProperty);
+    runtime.registerFunction("GetPlayerMapObjectBounds", l_GetPlayerMapObjectBounds);
+    runtime.registerFunction("GetPlayerMapObjectCenter", l_GetPlayerMapObjectCenter);
     runtime.registerFunction("SetPlayerObjective", l_SetPlayerObjective);
+    runtime.registerFunction("ClearPlayerObjective", l_ClearPlayerObjective);
+    runtime.registerFunction("GetInventorySlot", l_GetInventorySlot);
+    runtime.registerFunction("CountInventoryItem", l_CountInventoryItem);
+    runtime.registerFunction("FindInventorySlot", l_FindInventorySlot);
+    runtime.registerFunction("FindFreeInventorySlot", l_FindFreeInventorySlot);
+    runtime.registerFunction("SetInventorySlot", l_SetInventorySlot);
+    runtime.registerFunction("ClearInventorySlot", l_ClearInventorySlot);
+    runtime.registerFunction("AddInventoryItem", l_AddInventoryItem);
+    runtime.registerFunction("RemoveInventoryItem", l_RemoveInventoryItem);
+    runtime.registerFunction("TeleportPlayer", l_TeleportPlayer);
     runtime.registerFunction("TransferPlayerMap", l_TransferPlayerMap);
 }

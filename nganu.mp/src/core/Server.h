@@ -15,6 +15,7 @@
 #include "plugin/PluginManager.h"
 #include "script/LuaRuntime.h"
 #include "network/Network.h"
+#include "inventory/InventoryService.h"
 
 class Server {
 public:
@@ -53,22 +54,29 @@ public:
     PlayerPosition getPlayerPosition(int playerid) const;
     bool setPlayerName(int playerid, const std::string& name, bool broadcast = true);
     std::string playerName(int playerid) const;
+    bool isPlayerConnected(int playerid) const;
+    size_t playerCount() const;
+    size_t playerCountInMap(const std::string& mapId) const;
     bool isValidPlayerName(const std::string& name) const;
     const MapData& map() const { return map_; }
     const MapData* mapForId(const std::string& mapId) const;
     const MapData* mapForPlayer(int playerid) const;
     std::string playerMapId(int playerid) const;
+    InventoryService& inventory() { return inventory_; }
+    const InventoryService& inventory() const { return inventory_; }
+    bool teleportPlayer(int playerid, float x, float y, const std::string& reason = "");
     bool transferPlayerToMap(int playerid, const std::string& mapId, std::optional<PlayerPosition> overridePosition = std::nullopt);
     void sendObjectiveText(int playerid, const std::string& text);
     void setLastPlayerText(std::string text) { lastPlayerText_ = std::move(text); }
     const std::string& lastPlayerText() const { return lastPlayerText_; }
 
 private:
-    Logger        logger_;
-    Runtime       runtime_;
-    PluginManager plugins_;
-    LuaRuntime    script_;
-    Network       network_;
+    Logger           logger_;
+    Runtime          runtime_;
+    PluginManager    plugins_;
+    LuaRuntime       script_;
+    Network          network_;
+    InventoryService inventory_;
 
     std::atomic<bool> running_{false};
     int               nextPlayerId_ = 1;
@@ -117,6 +125,12 @@ private:
     void sendAuthoritativePlayerPosition(int playerid);
     void broadcastPlayerName(int playerid);
     void sendPlayerNameToPeer(void* peer, int playerid);
+
+    /* Inventory helpers */
+    void handleInventoryPacket(int playerid, const uint8_t* payload, size_t len);
+    void sendInventoryFullState(int playerid);
+    void sendInventorySlotUpdate(int playerid, const SlotState& slot);
+    void sendInventoryError(int playerid, InvActionResult err);
 
     /* Send-packet trampoline for PluginAPI */
     static void PLUGIN_CALL sendPacketTrampoline(void* peer, const void* data, size_t len, int channel);

@@ -260,6 +260,10 @@ std::string Server::playerMapId(int playerid) const {
     return it->second;
 }
 
+bool Server::teleportPlayer(int playerid, float x, float y, const std::string& reason) {
+    return teleportPlayerWithinMap(playerid, PlayerPosition {x, y}, reason);
+}
+
 bool Server::setPlayerName(int playerid, const std::string& name, bool broadcast) {
     if (!isValidPlayerName(name)) {
         return false;
@@ -278,6 +282,24 @@ std::string Server::playerName(int playerid) const {
         return it->second;
     }
     return "Player " + std::to_string(playerid);
+}
+
+bool Server::isPlayerConnected(int playerid) const {
+    return playerid > 0 && network_.peerForPlayer(playerid) != nullptr;
+}
+
+size_t Server::playerCount() const {
+    return network_.playerCount();
+}
+
+size_t Server::playerCountInMap(const std::string& mapId) const {
+    size_t count = 0;
+    for (int playerid : network_.playerIds()) {
+        if (playerMapId(playerid) == mapId) {
+            ++count;
+        }
+    }
+    return count;
 }
 
 bool Server::isValidPlayerName(const std::string& name) const {
@@ -476,6 +498,7 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
     playerLastMoveAtMs_.erase(playerid);
     playerLastSeenAtMs_.erase(playerid);
     playerActiveTriggers_.erase(playerid);
+    inventory_.removeInventory(playerid);
     releasePlayerId(playerid);
 
     if (peer) {
@@ -707,6 +730,12 @@ void Server::sendUpdateManifestToPeer(void* peer) {
 
     std::unordered_set<std::string> mapImageAssets;
     std::unordered_set<std::string> characterImageAssets;
+    manifest << "asset=data:item_defs.json\n";
+    manifest << "asset=data:ui/inventory_main.json\n";
+    manifest << "asset=data:ui/objective_journal.json\n";
+    manifest << "asset=data:ui/system_modal.json\n";
+    manifest << "asset=data:ui/theme_default.json\n";
+
     for (const std::string& mapId : mapIds) {
         manifest << "asset=map:" << mapId << "\n";
         const MapData* loadedMap = mapForId(mapId);
@@ -784,6 +813,34 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
             return;
         }
         content = hexEncode(content);
+    } else if (assetKey.rfind("ui_image:", 0) == 0) {
+        kind = "image";
+        const std::string fileName = assetKey.substr(9);
+        const std::filesystem::path imagePath = mapDirectory_.parent_path() / "ui" / fileName;
+        content = readBinaryFile(imagePath);
+        if (content.empty()) {
+            logger_.error("Server", "Failed to read UI image asset for %s", assetKey.c_str());
+            return;
+        }
+        content = hexEncode(content);
+    } else if (assetKey.rfind("ui_meta:", 0) == 0) {
+        kind = "meta";
+        const std::string fileName = assetKey.substr(8);
+        const std::filesystem::path metaPath = mapDirectory_.parent_path() / "ui" / fileName;
+        content = readTextFile(metaPath.string());
+        if (content.empty()) {
+            logger_.warn("Server", "Failed to read UI metadata asset for %s", assetKey.c_str());
+            return;
+        }
+    } else if (assetKey.rfind("data:", 0) == 0) {
+        kind = "data";
+        const std::string dataPath = assetKey.substr(5); /* strip "data:" */
+        const std::filesystem::path filePath = mapDirectory_.parent_path() / "data" / dataPath;
+        content = readTextFile(filePath.string());
+        if (content.empty()) {
+            logger_.warn("Server", "Failed to read data asset for %s", assetKey.c_str());
+            return;
+        }
     } else {
         logger_.warn("Server", "Unknown asset requested: %s", assetKey.c_str());
         return;
@@ -940,6 +997,7 @@ void Server::processNetworkEvents() {
             playerNames_[pid] = "Player " + std::to_string(pid);
             logger_.info("Server", "Player %d connected", pid);
 
+            inventory_.createInventory(pid);
             script_.callFunction("OnPlayerConnect", pid);
             script_.callFunction("OnPlayerEnterMap", pid);
             plugins_.firePlayerConnect(pid);
@@ -1073,7 +1131,12 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             const int objectIndex = activeMap->objectIndexById(objectId);
             if (objectIndex >= 0) {
                 const auto* object = activeMap->objectByIndex(objectIndex);
-                if (object && object->kind == "portal") {
+                const bool hasScript = object
+                    && object->properties.find("script") != object->properties.end()
+                    && !object->properties.at("script").empty();
+                if (hasScript) {
+                    script_.callFunction("OnMapObjectInteract", playerid, objectIndex);
+                } else if (object && object->kind == "portal") {
                     const std::string currentMapId = playerMapId(playerid);
                     auto targetMap = object->properties.find("target_map");
                     std::string destinationMapId = currentMapId;
@@ -1152,6 +1215,11 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
         break;
     case PacketOpcode::GAME_STATE:
         /* Client shouldn't send this — ignore. */
+        break;
+    case PacketOpcode::INVENTORY:
+        if (Packet::payloadLen(len) >= 1) {
+            handleInventoryPacket(playerid, Packet::payload(data), Packet::payloadLen(len));
+        }
         break;
     case PacketOpcode::PLUGIN_MESSAGE:
         if (Packet::payloadLen(len) < 1) {
@@ -1258,4 +1326,131 @@ void Server::handleCommand(const std::string& cmd) {
     } else if (!cmd.empty()) {
         logger_.warn("Server", "Unknown command: %s", cmd.c_str());
     }
+}
+
+/* ------------------------------------------------------------------ */
+/* Inventory helpers                                                  */
+/* ------------------------------------------------------------------ */
+void Server::handleInventoryPacket(int playerid, const uint8_t* payload, size_t len) {
+    if (len < 1) return;
+    const auto msgType = static_cast<InventoryMsgType>(payload[0]);
+
+    switch (msgType) {
+    case InventoryMsgType::CMSG_OPEN:
+        inventory_.setOpen(playerid, true);
+        sendInventoryFullState(playerid);
+        break;
+
+    case InventoryMsgType::CMSG_CLOSE:
+        inventory_.setOpen(playerid, false);
+        break;
+
+    case InventoryMsgType::CMSG_USE_ITEM: {
+        if (len < 2) { sendInventoryError(playerid, InvActionResult::INVALID_SLOT); break; }
+        const int slot = static_cast<int>(payload[1]);
+        const auto result = inventory_.useItem(playerid, slot);
+        if (result != InvActionResult::OK) {
+            sendInventoryError(playerid, result);
+        } else {
+            const auto* inv = inventory_.getInventory(playerid);
+            if (inv) sendInventorySlotUpdate(playerid, inv->slots[slot]);
+            script_.callFunction("OnPlayerUseItem", playerid, slot);
+        }
+        break;
+    }
+
+    case InventoryMsgType::CMSG_MOVE_ITEM: {
+        if (len < 3) { sendInventoryError(playerid, InvActionResult::INVALID_SLOT); break; }
+        const int slotFrom = static_cast<int>(payload[1]);
+        const int slotTo   = static_cast<int>(payload[2]);
+        const auto result = inventory_.moveItem(playerid, slotFrom, slotTo);
+        if (result != InvActionResult::OK) {
+            sendInventoryError(playerid, result);
+        } else {
+            const auto* inv = inventory_.getInventory(playerid);
+            if (inv) {
+                sendInventorySlotUpdate(playerid, inv->slots[slotFrom]);
+                sendInventorySlotUpdate(playerid, inv->slots[slotTo]);
+            }
+        }
+        break;
+    }
+
+    case InventoryMsgType::CMSG_DROP_ITEM: {
+        if (len < 2) { sendInventoryError(playerid, InvActionResult::INVALID_SLOT); break; }
+        const int slot = static_cast<int>(payload[1]);
+        const auto result = inventory_.dropItem(playerid, slot);
+        if (result != InvActionResult::OK) {
+            sendInventoryError(playerid, result);
+        } else {
+            const auto* inv = inventory_.getInventory(playerid);
+            if (inv) sendInventorySlotUpdate(playerid, inv->slots[slot]);
+        }
+        break;
+    }
+
+    default:
+        logger_.warn("Server", "Unknown inventory msg 0x%02X from player %d",
+                     static_cast<int>(msgType), playerid);
+        break;
+    }
+}
+
+void Server::sendInventoryFullState(int playerid) {
+    void* peer = network_.peerForPlayer(playerid);
+    if (!peer) return;
+    const auto* inv = inventory_.getInventory(playerid);
+    if (!inv) return;
+
+    /* Format: [INVENTORY opcode][SMSG_OPEN][container_id u8][slot_count u8]
+     *         per slot: [slot_index u8][occupied u8][item_def_id u16 LE][amount u16 LE][flags u8]
+     */
+    const int slotCount = static_cast<int>(inv->slots.size());
+    std::vector<uint8_t> pkt;
+    pkt.reserve(4 + slotCount * 8);
+    pkt.push_back(static_cast<uint8_t>(PacketOpcode::INVENTORY));
+    pkt.push_back(static_cast<uint8_t>(InventoryMsgType::SMSG_FULL_STATE));
+    pkt.push_back(static_cast<uint8_t>(inv->container_id & 0xFF));
+    pkt.push_back(static_cast<uint8_t>(slotCount));
+    for (const auto& slot : inv->slots) {
+        pkt.push_back(static_cast<uint8_t>(slot.slot_index));
+        pkt.push_back(slot.occupied ? 1u : 0u);
+        const uint16_t defId = static_cast<uint16_t>(slot.item_def_id);
+        pkt.push_back(static_cast<uint8_t>(defId & 0xFF));
+        pkt.push_back(static_cast<uint8_t>((defId >> 8) & 0xFF));
+        const uint16_t amount = static_cast<uint16_t>(slot.amount);
+        pkt.push_back(static_cast<uint8_t>(amount & 0xFF));
+        pkt.push_back(static_cast<uint8_t>((amount >> 8) & 0xFF));
+        pkt.push_back(slot.flags);
+    }
+    network_.sendPacket(peer, pkt.data(), pkt.size(), 0);
+}
+
+void Server::sendInventorySlotUpdate(int playerid, const SlotState& slot) {
+    void* peer = network_.peerForPlayer(playerid);
+    if (!peer) return;
+    /* Format: [INVENTORY][SMSG_SLOT_UPDATE][slot_index][occupied][def_id_lo][def_id_hi][amt_lo][amt_hi][flags] */
+    uint8_t pkt[9];
+    pkt[0] = static_cast<uint8_t>(PacketOpcode::INVENTORY);
+    pkt[1] = static_cast<uint8_t>(InventoryMsgType::SMSG_SLOT_UPDATE);
+    pkt[2] = static_cast<uint8_t>(slot.slot_index);
+    pkt[3] = slot.occupied ? 1u : 0u;
+    const uint16_t defId  = static_cast<uint16_t>(slot.item_def_id);
+    const uint16_t amount = static_cast<uint16_t>(slot.amount);
+    pkt[4] = static_cast<uint8_t>(defId & 0xFF);
+    pkt[5] = static_cast<uint8_t>((defId >> 8) & 0xFF);
+    pkt[6] = static_cast<uint8_t>(amount & 0xFF);
+    pkt[7] = static_cast<uint8_t>((amount >> 8) & 0xFF);
+    pkt[8] = slot.flags;
+    network_.sendPacket(peer, pkt, sizeof(pkt), 0);
+}
+
+void Server::sendInventoryError(int playerid, InvActionResult err) {
+    void* peer = network_.peerForPlayer(playerid);
+    if (!peer) return;
+    uint8_t pkt[3];
+    pkt[0] = static_cast<uint8_t>(PacketOpcode::INVENTORY);
+    pkt[1] = static_cast<uint8_t>(InventoryMsgType::SMSG_ERROR);
+    pkt[2] = static_cast<uint8_t>(err);
+    network_.sendPacket(peer, pkt, sizeof(pkt), 0);
 }

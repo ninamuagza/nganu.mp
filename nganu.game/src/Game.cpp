@@ -24,6 +24,7 @@ Font g_uiFont {};
 bool g_ownsUiFont = false;
 
 struct HudLayout {
+    Rectangle safeFrame {};
     float topBarHeight = 56.0f;
     float margin = 16.0f;
     float gap = 12.0f;
@@ -47,6 +48,22 @@ float UiScaleForScreen(float width, float height) {
     return std::clamp(std::min(widthScale, heightScale), 0.62f, 1.20f);
 }
 
+Rectangle SafeFrameForScreen(float screenWidth, float screenHeight, float widthCapFactor, float widthCapMin, float horizontalFill = 0.92f) {
+    const float aspect = (screenHeight > 0.0f) ? (screenWidth / screenHeight) : (16.0f / 9.0f);
+    const float sideInset = std::clamp(screenWidth * (aspect >= 2.4f ? 0.042f : aspect >= 2.0f ? 0.032f : 0.022f), 12.0f, 72.0f);
+    const float verticalInset = std::clamp(screenHeight * 0.024f, 12.0f, 28.0f);
+    const float availableWidth = std::max(320.0f, screenWidth - sideInset * 2.0f);
+    const float cappedWidth = std::max(widthCapMin, std::min(availableWidth, screenHeight * widthCapFactor));
+    const float width = std::min(availableWidth, std::max(availableWidth * horizontalFill, cappedWidth));
+
+    return Rectangle {
+        std::round((screenWidth - width) * 0.5f),
+        verticalInset,
+        std::round(width),
+        std::max(240.0f, screenHeight - verticalInset * 2.0f)
+    };
+}
+
 float FitPanelHeight(float available, float minimum, float preferred) {
     if (available <= 0.0f) {
         return 0.0f;
@@ -65,22 +82,13 @@ HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDe
     HudLayout layout;
     const float scale = UiScaleForScreen(screenWidth, screenHeight);
     const Rectangle viewport = GameplayViewport(screenWidth, screenHeight);
-    const float aspect = (screenHeight > 0.0f) ? (screenWidth / screenHeight) : (16.0f / 9.0f);
-    const float outerMarginX = std::clamp(screenWidth * (aspect > 2.0f ? 0.055f : 0.028f), 14.0f, 96.0f);
-    const float outerMarginY = std::clamp(screenHeight * 0.024f, 12.0f, 30.0f);
-    const float safeWidthCap = std::min(viewport.width - outerMarginX * 2.0f,
-                                        viewport.height * (aspect > 2.0f ? 1.52f : 1.68f));
-    const Rectangle safeFrame {
-        viewport.x + std::max(outerMarginX, (viewport.width - safeWidthCap) * 0.5f),
-        viewport.y + outerMarginY,
-        std::max(260.0f, safeWidthCap),
-        std::max(260.0f, viewport.height - outerMarginY * 2.0f)
-    };
+    const Rectangle safeFrame = SafeFrameForScreen(viewport.width, viewport.height, 1.76f, 760.0f, 0.90f);
 
-    layout.compact = safeFrame.width < 1100.0f || safeFrame.height < 720.0f;
-    layout.singleColumn = safeFrame.width < 820.0f || safeFrame.height < 540.0f;
-    layout.shortScreen = safeFrame.height < 620.0f;
-    const bool tiny = safeFrame.width < 660.0f || safeFrame.height < 500.0f;
+    layout.safeFrame = safeFrame;
+    layout.compact = safeFrame.width < 1080.0f || safeFrame.height < 720.0f;
+    layout.singleColumn = safeFrame.width < 860.0f || safeFrame.height < 570.0f;
+    layout.shortScreen = safeFrame.height < 640.0f;
+    const bool tiny = safeFrame.width < 700.0f || safeFrame.height < 520.0f;
     layout.margin = std::clamp(18.0f * scale, 10.0f, 22.0f);
     layout.gap = tiny ? 8.0f : std::clamp(12.0f * scale, 8.0f, 14.0f);
     layout.topBarHeight = layout.singleColumn ? (tiny ? 84.0f : 88.0f) : (layout.compact ? (layout.shortScreen ? 64.0f : 70.0f) : 56.0f);
@@ -125,17 +133,15 @@ HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDe
         return layout;
     }
 
-    const float partyWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.24f : 0.22f), 220.0f, 290.0f);
-    const float questWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.50f : 0.54f), 340.0f, 560.0f);
+    const float partyWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.25f : 0.22f), 220.0f, 320.0f);
+    const float questWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.52f : 0.48f), 340.0f, 580.0f);
     const float questHeight = FitPanelHeight(contentHeight * 0.20f, 106.0f, layout.compact ? 122.0f : 140.0f);
     const float partyHeight = FitPanelHeight(contentHeight * 0.24f, 132.0f, layout.compact ? 150.0f : 182.0f);
     layout.questPanel = Rectangle {contentLeft, contentTop, questWidth, questHeight};
     layout.partyPanel = Rectangle {contentRight - partyWidth, contentTop, partyWidth, partyHeight};
 
-    const float chatWidth = std::clamp(questWidth + std::min(64.0f, std::max(0.0f, layout.contentFrame.width - questWidth - partyWidth - layout.gap)),
-                                       400.0f,
-                                       620.0f);
     const bool sideDebug = includeDebug && layout.contentFrame.width >= 1040.0f && contentHeight >= 560.0f;
+    const float chatWidth = std::clamp(layout.contentFrame.width * (sideDebug ? 0.58f : 0.62f), 400.0f, 610.0f);
     const float debugWidth = sideDebug
         ? std::clamp(layout.contentFrame.width - chatWidth - layout.gap, 280.0f, 360.0f)
         : std::min(320.0f, partyWidth);
@@ -180,6 +186,27 @@ Rectangle ChatMessageAreaRect(const Rectangle& panel) {
         panel.width - inset * 2.0f,
         inputBox.y - (panel.y + topOffset) - 8.0f
     };
+}
+
+Rectangle CenteredCardInFrame(const Rectangle& frame, float preferredWidth, float maxWidth, float preferredHeight, float minHeight) {
+    const float width = std::clamp(preferredWidth, std::min(300.0f, frame.width), std::min(maxWidth, frame.width));
+    const float height = std::clamp(preferredHeight, minHeight, frame.height);
+    return Rectangle {
+        std::round(frame.x + (frame.width - width) * 0.5f),
+        std::round(frame.y + (frame.height - height) * 0.5f),
+        std::round(width),
+        std::round(height)
+    };
+}
+
+void DrawCardSurface(const Rectangle& rect, float roundness = 0.08f) {
+    DrawRectangleRounded(rect, roundness, 10, LoginCardColor());
+    DrawRectangleRoundedLinesEx(rect, roundness, 10, 1.5f, OutlineColor());
+}
+
+void DrawPanelSurface(const Rectangle& rect, float roundness = 0.10f) {
+    DrawRectangleRounded(rect, roundness, 10, SoftCardColor());
+    DrawRectangleRoundedLinesEx(rect, roundness, 10, 1.5f, OutlineColor());
 }
 
 void LoadGameUiFont() {
@@ -291,16 +318,25 @@ Game::Game() {
     camera_.rotation = 0.0f;
     camera_.zoom = 1.0f;
     lastSentPosition_ = player_.position;
-    guideNpc_.name.clear();
-    guideNpc_.title.clear();
-    guideNpc_.position = Vector2 {160.0f, 160.0f};
-    guideNpc_.radius = 16.0f;
-    guideNpc_.bodyColor = Color {120, 210, 255, 255};
-    starterQuest_.targetPosition = Vector2 {160.0f, 160.0f};
-    starterQuest_.targetRadius = 90.0f;
-    starterQuest_.title.clear();
-    starterQuest_.description.clear();
-    ConfigureWorldDrivenGameplay();
+
+    inventory_.resize(20);
+    InventoryNetCallbacks inventoryCallbacks;
+    inventoryCallbacks.sendOpen = [this]() { network_.SendInventoryOpen(); };
+    inventoryCallbacks.sendClose = [this]() { network_.SendInventoryClose(); };
+    inventoryCallbacks.sendUseItem = [this](int slot) { network_.SendUseItem(slot); };
+    inventoryCallbacks.sendMoveItem = [this](int from, int to) { network_.SendMoveItem(from, to); };
+    inventoryCallbacks.sendDropItem = [this](int slot) { network_.SendDropItem(slot); };
+    auto inventoryUi = std::make_unique<InventoryUi>(&inventory_, &itemDefs_, &uiAssets_, &uiTheme_, inventoryCallbacks);
+    inventoryUi_ = inventoryUi.get();
+    uiSystem_.Add(std::move(inventoryUi));
+
+    auto objectiveUi = std::make_unique<ObjectiveUi>(&currentObjective_, &uiTheme_, &uiAssets_);
+    objectiveUi_ = objectiveUi.get();
+    uiSystem_.Add(std::move(objectiveUi));
+
+    auto modalUi = std::make_unique<ModalDialogUi>(&uiTheme_, &uiAssets_);
+    modalDialogUi_ = modalUi.get();
+    uiSystem_.Add(std::move(modalUi));
 
     AddChatLine("[System] Booting nganu.game client");
 }
@@ -311,6 +347,7 @@ Game::~Game() {
 
 void Game::Shutdown() {
     network_.Disconnect();
+    uiAssets_.UnloadAll();
 }
 
 void Game::Update(float dt) {
@@ -348,6 +385,7 @@ void Game::Update(float dt) {
 
     UpdateChatInput();
     UpdateChatScroll(dt);
+    UpdateUi(dt);
     UpdatePlayer(dt);
     UpdateNetwork(dt);
     UpdateNpcAndQuest();
@@ -372,6 +410,18 @@ void Game::BeginBootUpdateCheck() {
     hasPendingSpawnPosition_ = false;
     lastMapAssetSource_ = "none";
     lastAppliedMapAssetKey_.clear();
+    itemDefs_.Clear();
+    uiData_.Clear();
+    uiTheme_.Clear();
+    uiAssets_.UnloadAll();
+    inventory_.resize(20);
+    inventory_.open = false;
+    inventory_.revision = 0;
+    inventoryReady_ = false;
+    inventoryLayoutReady_ = false;
+    if (inventoryUi_ != nullptr && inventoryUi_->IsOpen()) {
+        inventoryUi_->Close();
+    }
     player_.position = world_.spawnPoint();
     lastSentPosition_ = player_.position;
     camera_.target = player_.position;
@@ -529,10 +579,6 @@ void Game::StartLogin() {
     chatFocused_ = false;
     chatInput_.clear();
     sendAccumulator_ = 0.0f;
-    starterQuest_.offered = false;
-    starterQuest_.accepted = false;
-    starterQuest_.completed = false;
-    starterQuest_.turnedIn = false;
     currentObjective_.clear();
     if (!network_.SendPlayerName(player_.name)) {
         loginStatus_ = "Login failed to reach server";
@@ -549,7 +595,7 @@ void Game::UpdatePlayer(float dt) {
         player_.velocity = Vector2 {};
         return;
     }
-    if (chatFocused_) {
+    if (chatFocused_ || uiInputBlockingWorld_) {
         player_.velocity = Vector2 {};
         return;
     }
@@ -613,8 +659,9 @@ void Game::UpdateNetwork(float dt) {
     const bool movedEnough =
         std::fabs(player_.position.x - lastSentPosition_.x) > 0.5f ||
         std::fabs(player_.position.y - lastSentPosition_.y) > 0.5f;
+    const float sendInterval = movedEnough ? 0.10f : 1.0f;
 
-    if (network_.IsConnected() && sendAccumulator_ >= 0.10f && movedEnough) {
+    if (network_.IsConnected() && sendAccumulator_ >= sendInterval) {
         if (network_.SendPlayerPosition(player_.position.x, player_.position.y)) {
             lastSentPosition_ = player_.position;
         }
@@ -653,6 +700,12 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         pendingMapAssetKey_.clear();
         pendingMapId_.clear();
         hasPendingSpawnPosition_ = false;
+        inventory_.open = false;
+        inventory_.revision = 0;
+        inventoryReady_ = false;
+        if (inventoryUi_ != nullptr && inventoryUi_->IsOpen()) {
+            inventoryUi_->Close();
+        }
         AddChatLine("[System] Disconnected from server");
         if (uiMode_ == UiMode::Boot && !manifest_.valid) {
             BeginRetryWait("Server did not respond. Retrying in 10 seconds.");
@@ -674,6 +727,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         ApplyManifest(event.text);
         manifestWait_ = 0.0f;
         bootstrapRequested_ = false;
+        EnsureUiDataAssetsRequested();
         BeginMapBootstrap();
         if (mapReady_) {
             loginStatus_ = "Server ready. Press Enter to log in.";
@@ -690,6 +744,9 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
             break;
         }
         SaveAssetToCache(*blob);
+        if (blob->kind == "image" && blob->key.rfind("ui_image:", 0) == 0) {
+            LoadUiTextureFromCache(blob->key);
+        }
         if (blob->kind == "map") {
             ApplyMapAsset(*blob);
             if (mapReady_) {
@@ -706,11 +763,12 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
             if (LoadCachedAsset(lastAppliedMapAssetKey_, manifest_.revision, cachedMap)) {
                 const Vector2 keepPosition = player_.position;
                 if (world_.LoadFromMapAsset(cachedMap)) {
-                    ConfigureWorldDrivenGameplay();
                     player_.position = keepPosition;
                     lastSentPosition_ = keepPosition;
                 }
             }
+        } else if (blob->kind == "data") {
+            ApplyDataAsset(*blob);
         }
         break;
     }
@@ -766,6 +824,53 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         break;
     case NetworkEvent::Type::ObjectiveText:
         currentObjective_ = event.text;
+        break;
+    case NetworkEvent::Type::InventoryFullState: {
+        const std::vector<uint8_t>& payload = event.rawBytes;
+        if (payload.size() < 3) {
+            break;
+        }
+        inventory_.open = true;
+        inventory_.container_id = static_cast<int>(payload[1]);
+        const int slotCount = static_cast<int>(payload[2]);
+        inventory_.resize(slotCount);
+        size_t offset = 3;
+        for (int i = 0; i < slotCount; ++i) {
+            if (offset + 7 > payload.size()) break;
+            ClientSlot* slot = inventory_.slotAt(static_cast<int>(payload[offset]));
+            if (!slot) {
+                offset += 7;
+                continue;
+            }
+            slot->occupied = payload[offset + 1] != 0;
+            slot->item_def_id = static_cast<int>(payload[offset + 2] | (payload[offset + 3] << 8));
+            slot->amount = static_cast<int>(payload[offset + 4] | (payload[offset + 5] << 8));
+            slot->flags = payload[offset + 6];
+            offset += 7;
+        }
+        ++inventory_.revision;
+        inventoryReady_ = true;
+        if (inventoryUi_ != nullptr) {
+            inventoryUi_->ApplyFullState(inventory_);
+        }
+        break;
+    }
+    case NetworkEvent::Type::InventorySlotUpdate: {
+        ClientSlot* slot = inventory_.slotAt(event.slotIndex);
+        if (!slot) break;
+        slot->occupied = event.occupied;
+        slot->item_def_id = event.itemDefId;
+        slot->amount = event.amount;
+        slot->flags = event.flags;
+        ++inventory_.revision;
+        inventoryReady_ = true;
+        if (inventoryUi_ != nullptr) {
+            inventoryUi_->ApplySlotUpdate(event.slotIndex, event.occupied, event.itemDefId, event.amount, event.flags);
+        }
+        break;
+    }
+    case NetworkEvent::Type::InventoryError:
+        AddChatLine("[Inventory] Action rejected by server (" + std::to_string(event.errCode) + ").");
         break;
     }
 }
@@ -897,6 +1002,12 @@ std::filesystem::path Game::ImageCachePathForAsset(const std::string& assetKey, 
     } else if (filename.rfind("character_image:", 0) == 0) {
         filename = filename.substr(16);
         bucket = "character";
+    } else if (filename.rfind("ui_image:", 0) == 0) {
+        filename = filename.substr(9);
+        bucket = "ui";
+    } else if (filename.rfind("ui_meta:", 0) == 0) {
+        filename = filename.substr(8);
+        bucket = "ui";
     }
     return CacheDirectory() / "assets" / bucket / (revision.empty() ? "unknown" : revision) / filename;
 }
@@ -1016,7 +1127,6 @@ void Game::ApplyMapAsset(const AssetBlob& asset) {
         return;
     }
 
-    ConfigureWorldDrivenGameplay();
     player_.position = hasPendingSpawnPosition_ ? pendingSpawnPosition_ : world_.spawnPoint();
     lastSentPosition_ = player_.position;
     camera_.target = player_.position;
@@ -1056,52 +1166,96 @@ void Game::EnsureReferencedImagesRequested() {
     }
 }
 
-void Game::ConfigureWorldDrivenGameplay() {
-    guideNpc_.name.clear();
-    guideNpc_.title.clear();
-    guideNpc_.radius = 16.0f;
-    guideNpc_.bodyColor = Color {120, 210, 255, 255};
-
-    starterQuest_.targetRadius = 90.0f;
-    starterQuest_.title.clear();
-    starterQuest_.description.clear();
-
-    for (const WorldObject& object : world_.objects()) {
-        if (object.kind == "npc" && object.id == "luna") {
-            guideNpc_.position = Vector2 {
-                object.bounds.x + (object.bounds.width * 0.5f),
-                object.bounds.y + (object.bounds.height * 0.5f)
-            };
-            auto titleIt = object.properties.find("title");
-            if (titleIt != object.properties.end() && !titleIt->second.empty()) {
-                guideNpc_.title = titleIt->second;
-            }
-            auto nameIt = object.properties.find("name");
-            if (nameIt != object.properties.end() && !nameIt->second.empty()) {
-                guideNpc_.name = nameIt->second;
-            }
-        }
-
-        if (object.kind == "trigger" && object.id == "starter_road_marker") {
-            starterQuest_.targetPosition = Vector2 {
-                object.bounds.x + (object.bounds.width * 0.5f),
-                object.bounds.y + (object.bounds.height * 0.5f)
-            };
-            starterQuest_.targetRadius = std::max(object.bounds.width, object.bounds.height) * 0.5f;
-            auto questIt = object.properties.find("quest");
-            if (questIt != object.properties.end() && !questIt->second.empty()) {
-                starterQuest_.description = questIt->second;
-            }
-            auto titleIt = object.properties.find("title");
-            if (titleIt != object.properties.end() && !titleIt->second.empty()) {
-                starterQuest_.title = titleIt->second;
-            }
-            auto descIt = object.properties.find("description");
-            if (descIt != object.properties.end() && !descIt->second.empty()) {
-                starterQuest_.description = descIt->second;
-            }
-        }
+void Game::EnsureUiDataAssetsRequested() {
+    if (!network_.IsConnected() || manifest_.revision.empty()) {
+        return;
     }
+
+    for (const std::string& assetKey : manifest_.assets) {
+        if (assetKey.rfind("data:", 0) != 0) {
+            continue;
+        }
+
+        std::string cached;
+        if (LoadCachedAsset(assetKey, manifest_.revision, cached)) {
+            AssetBlob cachedBlob;
+            cachedBlob.key = assetKey;
+            cachedBlob.kind = "data";
+            cachedBlob.revision = manifest_.revision;
+            cachedBlob.content = cached;
+            ApplyDataAsset(cachedBlob);
+            continue;
+        }
+
+        network_.RequestAsset(assetKey);
+    }
+}
+
+void Game::EnsureUiThemeAssetsRequested() {
+    if (!network_.IsConnected()) {
+        return;
+    }
+
+    for (const std::string& textureKey : uiTheme_.ReferencedTextureKeys()) {
+        if (textureKey.rfind("ui:", 0) != 0) {
+            continue;
+        }
+        const std::string assetKey = "ui_image:" + textureKey.substr(3);
+        if (HasCachedImageAsset(assetKey, manifest_.revision)) {
+            LoadUiTextureFromCache(assetKey);
+            continue;
+        }
+        network_.RequestAsset(assetKey);
+    }
+}
+
+void Game::ApplyDataAsset(const AssetBlob& asset) {
+    if (asset.kind != "data") {
+        return;
+    }
+
+    if (asset.key == "data:item_defs.json") {
+        itemDefs_.LoadFromJson(asset.content);
+        AddChatLine("[System] Item definitions ready: " + std::to_string(itemDefs_.Count()));
+        return;
+    }
+
+    if (asset.key.rfind("data:ui/", 0) == 0) {
+        uiData_.Store(asset.key, asset.content);
+        if (asset.key == "data:ui/theme_default.json") {
+            if (uiTheme_.LoadFromJson(asset.content)) {
+                EnsureUiThemeAssetsRequested();
+                AddChatLine("[System] UI theme ready: theme_default");
+            }
+        }
+        const Ui::DataDocument* document = uiData_.FindByAssetKey(asset.key);
+        if (document && document->windowConfig.has_value()) {
+            Ui::Widget* widget = uiSystem_.Find(document->windowConfig->windowId);
+            if (widget != nullptr) {
+                widget->ApplyWindowConfig(*document->windowConfig);
+            }
+            if (document->windowConfig->windowId == "inventory_main") {
+                inventoryLayoutReady_ = true;
+            }
+        }
+        AddChatLine("[System] UI document loaded: " + asset.key);
+    }
+}
+
+void Game::LoadUiTextureFromCache(const std::string& assetKey) {
+    if (assetKey.rfind("ui_image:", 0) != 0) {
+        return;
+    }
+    const std::filesystem::path path = ImageCachePathForAsset(assetKey, manifest_.revision);
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        return;
+    }
+    std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    if (bytes.empty()) {
+        return;
+    }
+    uiAssets_.LoadFromBytes("ui:" + assetKey.substr(9), bytes);
 }
 
 std::string Game::SpriteForAvatar(const Avatar& avatar, bool localPlayer) const {
@@ -1193,18 +1347,44 @@ void Game::UpdateChatScroll(float dt) {
     }
 }
 
+void Game::UpdateUi(float dt) {
+    if (uiMode_ != UiMode::World) {
+        uiInputBlockingWorld_ = false;
+        return;
+    }
+
+    if (IsKeyPressed(KEY_I) && inventoryUi_ != nullptr) {
+        inventoryUi_->Toggle();
+    }
+    if (IsKeyPressed(KEY_J) && objectiveUi_ != nullptr) {
+        objectiveUi_->Toggle();
+    }
+    if (IsKeyPressed(KEY_M) && modalDialogUi_ != nullptr) {
+        const std::string worldName = world_.worldName().empty() ? world_.mapId() : world_.worldName();
+        modalDialogUi_->Show("Layer Test",
+                             "This modal sits above window-layer UI.\n\n"
+                             "World: " + worldName + "\n"
+                             "Windows below should not receive world input while this is open.");
+    }
+
+    uiSystem_.Update(dt);
+    uiInputBlockingWorld_ = uiSystem_.ConsumedInput() || uiSystem_.HasVisibleWidget();
+}
+
 void Game::UpdateNpcAndQuest() {
-    if (chatFocused_) return;
+    if (chatFocused_ || uiInputBlockingWorld_) return;
 
     if (IsKeyPressed(KEY_E)) {
         const WorldObject* nearest = nullptr;
-        float nearestDistanceSq = 92.0f * 92.0f;
+        float nearestDistanceSq = std::numeric_limits<float>::max();
         for (const WorldObject& object : world_.objects()) {
-            if (object.kind != "npc" && object.kind != "portal") continue;
+            if (!IsInteractableObject(object)) continue;
             const Vector2 center = world_.objectCenter(object);
             const float dx = player_.position.x - center.x;
             const float dy = player_.position.y - center.y;
             const float distSq = dx * dx + dy * dy;
+            const float maxDistance = InteractionRangeForObject(object);
+            if (distSq > maxDistance * maxDistance) continue;
             if (distSq <= nearestDistanceSq) {
                 nearest = &object;
                 nearestDistanceSq = distSq;
@@ -1270,6 +1450,54 @@ bool Game::IsNearPosition(Vector2 a, Vector2 b, float distance) const {
     return (dx * dx) + (dy * dy) <= distance * distance;
 }
 
+bool Game::IsInteractableObject(const WorldObject& object) const {
+    const std::optional<std::string> interact = world_.objectProperty(object, "interact");
+    if (interact.has_value()) {
+        return *interact != "false" && *interact != "0" && !interact->empty();
+    }
+    return object.kind == "npc" || object.kind == "portal";
+}
+
+float Game::InteractionRangeForObject(const WorldObject& object) const {
+    const std::optional<std::string> value = world_.objectProperty(object, "interact_radius");
+    if (value.has_value()) {
+        try {
+            return std::max(24.0f, std::stof(*value));
+        } catch (...) {
+        }
+    }
+    return std::clamp(std::max(object.bounds.width, object.bounds.height) * 0.5f + 40.0f, 56.0f, 120.0f);
+}
+
+std::string Game::InteractionPromptForObject(const WorldObject& object) const {
+    const std::optional<std::string> prompt = world_.objectProperty(object, "prompt");
+    if (prompt.has_value() && !prompt->empty()) {
+        return "E " + *prompt;
+    }
+    if (object.kind == "portal") {
+        return "E Travel";
+    }
+    if (object.kind == "npc") {
+        return "E Talk";
+    }
+    return "E Interact";
+}
+
+std::string Game::DisplayNameForObject(const WorldObject& object) const {
+    const std::optional<std::string> title = world_.objectProperty(object, "title");
+    if (title.has_value() && !title->empty()) {
+        return *title;
+    }
+    const std::optional<std::string> name = world_.objectProperty(object, "name");
+    if (name.has_value() && !name->empty()) {
+        return *name;
+    }
+    if (!object.id.empty()) {
+        return object.id;
+    }
+    return object.kind;
+}
+
 void Game::Draw() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
@@ -1304,8 +1532,9 @@ void Game::DrawLoginScreen() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
     const float scale = UiScaleForScreen(screenWidth, screenHeight);
-    const bool compact = screenWidth < 860.0f;
-    const bool tiny = screenWidth < 680.0f || screenHeight < 620.0f;
+    const Rectangle safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
+    const bool compact = safeFrame.width < 760.0f;
+    const bool tiny = safeFrame.width < 620.0f || safeFrame.height < 560.0f;
     const float cardPadding = tiny ? 18.0f : 28.0f;
     const float fieldHeight = tiny ? 40.0f : 44.0f;
     const float labelOffset = tiny ? 18.0f : 22.0f;
@@ -1315,23 +1544,17 @@ void Game::DrawLoginScreen() const {
     const int fieldFont = tiny ? 19 : 22;
     const int buttonFont = tiny ? 21 : 24;
     const int infoFont = tiny ? 15 : 17;
-    const float cardWidth = std::min(tiny ? 520.0f : 580.0f, screenWidth - (tiny ? 24.0f : 36.0f));
-    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 520.0f : 500.0f), screenHeight - (tiny ? 24.0f : 36.0f));
+    const float cardWidth = std::min(tiny ? 520.0f : 620.0f, safeFrame.width);
+    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 540.0f : 520.0f), safeFrame.height);
 
     DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {209, 236, 227, 255}, Color {138, 180, 160, 255});
     DrawCircle(static_cast<int>(screenWidth - 180.0f), 140, 150.0f, Fade(WHITE, 0.18f));
     DrawCircle(120, static_cast<int>(screenHeight - 120.0f), 180.0f, Fade(Color {54, 110, 77, 255}, 0.16f));
     DrawCircleGradient(static_cast<int>(screenWidth * 0.5f), static_cast<int>(screenHeight * 0.22f), 180.0f * scale, Fade(Color {255, 255, 255, 40}, 0.55f), Fade(WHITE, 0.0f));
 
-    const Rectangle card {
-        std::max(12.0f, (screenWidth - cardWidth) * 0.5f),
-        std::max(12.0f, (screenHeight - cardHeight) * 0.5f),
-        cardWidth,
-        cardHeight
-    };
+    const Rectangle card = CenteredCardInFrame(safeFrame, cardWidth, 620.0f, cardHeight, tiny ? 420.0f : 460.0f);
 
-    DrawRectangleRounded(card, 0.08f, 10, LoginCardColor());
-    DrawRectangleRoundedLinesEx(card, 0.08f, 10, 1.5f, OutlineColor());
+    DrawCardSurface(card);
     DrawRectangleRounded(Rectangle {card.x + cardPadding - 10.0f, card.y + cardPadding - 10.0f, card.width - (cardPadding * 2.0f) + 20.0f, tiny ? 78.0f : 90.0f}, 0.14f, 10, Fade(WHITE, 0.04f));
     DrawUiText("nganu.game", card.x + cardPadding, card.y + cardPadding - 2.0f, titleFont, RAYWHITE);
     DrawUiText("Minimal client, live content bootstrap", card.x + cardPadding + 2.0f, card.y + cardPadding + 34.0f, subtitleFont, Fade(RAYWHITE, 0.78f));
@@ -1393,25 +1616,20 @@ void Game::DrawBootScreen() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
     const float scale = UiScaleForScreen(screenWidth, screenHeight);
-    const bool compact = screenWidth < 760.0f || screenHeight < 620.0f;
-    const bool tiny = screenWidth < 640.0f || screenHeight < 520.0f;
+    const Rectangle safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.18f, 480.0f, 0.86f);
+    const bool compact = safeFrame.width < 720.0f || safeFrame.height < 620.0f;
+    const bool tiny = safeFrame.width < 580.0f || safeFrame.height < 520.0f;
     const float cardPadding = tiny ? 18.0f : 30.0f;
-    const float cardWidth = std::min(tiny ? 500.0f : 540.0f, screenWidth - (tiny ? 24.0f : 36.0f));
-    const float cardHeight = std::min(tiny ? 300.0f : 320.0f, screenHeight - (tiny ? 24.0f : 36.0f));
+    const float cardWidth = std::min(tiny ? 500.0f : 560.0f, safeFrame.width);
+    const float cardHeight = std::min(tiny ? 300.0f : 332.0f, safeFrame.height);
     DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {205, 232, 236, 255}, Color {118, 153, 171, 255});
     DrawCircle(static_cast<int>(screenWidth - 220.0f), 120, 140.0f, Fade(WHITE, 0.16f));
     DrawCircle(160, static_cast<int>(screenHeight - 140.0f), 170.0f, Fade(Color {35, 62, 84, 255}, 0.14f));
     DrawCircleGradient(static_cast<int>(screenWidth * 0.34f), static_cast<int>(screenHeight * 0.30f), 210.0f * scale, Fade(Color {255, 255, 255, 34}, 0.55f), Fade(WHITE, 0.0f));
 
-    const Rectangle card {
-        std::max(12.0f, (screenWidth - cardWidth) * 0.5f),
-        std::max(12.0f, (screenHeight - cardHeight) * 0.5f),
-        cardWidth,
-        cardHeight
-    };
+    const Rectangle card = CenteredCardInFrame(safeFrame, cardWidth, 560.0f, cardHeight, tiny ? 280.0f : 300.0f);
 
-    DrawRectangleRounded(card, 0.08f, 10, LoginCardColor());
-    DrawRectangleRoundedLinesEx(card, 0.08f, 10, 1.5f, OutlineColor());
+    DrawCardSurface(card);
     DrawUiText("nganu.game", card.x + cardPadding, card.y + cardPadding - 2.0f, tiny ? 26 : 34, RAYWHITE);
     DrawUiText("Boot update check", card.x + cardPadding, card.y + cardPadding + (tiny ? 26.0f : 40.0f), compact ? 18 : 22, Fade(RAYWHITE, 0.78f));
 
@@ -1448,16 +1666,16 @@ void Game::DrawScene() const {
         }
         if ((object.kind == "prop" || object.kind == "portal") && world_.objectZLayer(object) <= 0) {
             world_.DrawObjectSprite(object);
-            if (object.kind == "portal") {
+            if (IsInteractableObject(object)) {
                 const Vector2 center = world_.objectCenter(object);
                 DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawUiText(world_.objectProperty(object, "title").value_or("Portal"),
+                DrawUiText(DisplayNameForObject(object),
                            center.x - 54.0f,
                            center.y - 44.0f,
                            16,
                            Fade(RAYWHITE, 0.88f));
-                if (IsNearPosition(player_.position, center, 88.0f)) {
-                    DrawUiText("E Travel", center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
+                if (IsNearPosition(player_.position, center, InteractionRangeForObject(object))) {
+                    DrawUiText(InteractionPromptForObject(object), center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
         }
@@ -1471,8 +1689,14 @@ void Game::DrawScene() const {
         DrawAvatar(remote.avatar, false);
     }
 
-    if (!guideNpc_.name.empty() || world_.findObjectById("luna") != nullptr) {
-        DrawNpc(guideNpc_);
+    for (const WorldObject& object : world_.objects()) {
+        if (object.kind != "npc") {
+            continue;
+        }
+        if (!CheckCollisionRecs(object.bounds, visibleArea)) {
+            continue;
+        }
+        DrawNpc(object);
     }
     DrawAvatar(player_, true);
 
@@ -1482,16 +1706,16 @@ void Game::DrawScene() const {
         }
         if ((object.kind == "prop" || object.kind == "portal") && world_.objectZLayer(object) > 0) {
             world_.DrawObjectSprite(object);
-            if (object.kind == "portal") {
+            if (IsInteractableObject(object)) {
                 const Vector2 center = world_.objectCenter(object);
                 DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawUiText(world_.objectProperty(object, "title").value_or("Portal"),
+                DrawUiText(DisplayNameForObject(object),
                            center.x - 54.0f,
                            center.y - 44.0f,
                            16,
                            Fade(RAYWHITE, 0.88f));
-                if (IsNearPosition(player_.position, center, 88.0f)) {
-                    DrawUiText("E Travel", center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
+                if (IsNearPosition(player_.position, center, InteractionRangeForObject(object))) {
+                    DrawUiText(InteractionPromptForObject(object), center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
         }
@@ -1526,31 +1750,33 @@ void Game::DrawAvatar(const Avatar& avatar, bool localPlayer) const {
     DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
 }
 
-void Game::DrawNpc(const Npc& npc) const {
-    const WorldObject* guideObject = world_.findObjectById("luna");
-    const Vector2 drawPosition = guideObject ? world_.objectCenter(*guideObject) : npc.position;
-    const std::string drawName = guideObject ? world_.objectProperty(*guideObject, "name").value_or(npc.name) : npc.name;
-    const std::string drawTitle = guideObject ? world_.objectProperty(*guideObject, "title").value_or(npc.title) : npc.title;
+void Game::DrawNpc(const WorldObject& object) const {
+    const Vector2 drawPosition = world_.objectCenter(object);
+    const std::string drawName = world_.objectProperty(object, "name").value_or(DisplayNameForObject(object));
+    const std::string drawTitle = world_.objectProperty(object, "title").value_or("");
+    const float radius = std::max(12.0f, std::min(object.bounds.width, object.bounds.height) * 0.32f);
 
     DrawEllipse(
         static_cast<int>(drawPosition.x),
-        static_cast<int>(drawPosition.y + npc.radius + 8.0f),
-        npc.radius * 1.2f,
-        npc.radius * 0.65f,
+        static_cast<int>(drawPosition.y + radius + 8.0f),
+        radius * 1.2f,
+        radius * 0.65f,
         Fade(BLACK, 0.22f)
     );
 
-    const bool drewSprite = guideObject ? world_.DrawObjectSprite(*guideObject) : false;
+    const bool drewSprite = world_.DrawObjectSprite(object);
     if (!drewSprite) {
-        DrawCircleV(drawPosition, npc.radius, npc.bodyColor);
-        DrawCircleV(Vector2 {drawPosition.x, drawPosition.y - 4.0f}, npc.radius * 0.5f, Color {251, 235, 205, 255});
-        DrawCircleLinesV(drawPosition, npc.radius, Color {255, 244, 171, 255});
+        DrawCircleV(drawPosition, radius, Color {120, 210, 255, 255});
+        DrawCircleV(Vector2 {drawPosition.x, drawPosition.y - 4.0f}, radius * 0.5f, Color {251, 235, 205, 255});
+        DrawCircleLinesV(drawPosition, radius, Color {255, 244, 171, 255});
     }
 
     DrawUiText(drawName, drawPosition.x - 24.0f, drawPosition.y - 40.0f, 16, Color {255, 244, 171, 255});
-    DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
-    if (IsNearPosition(player_.position, drawPosition, 72.0f)) {
-        DrawUiText("E", drawPosition.x - 4.0f, drawPosition.y - 84.0f, 20, AccentColor());
+    if (!drawTitle.empty()) {
+        DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
+    }
+    if (IsNearPosition(player_.position, drawPosition, InteractionRangeForObject(object))) {
+        DrawUiText(InteractionPromptForObject(object), drawPosition.x - 20.0f, drawPosition.y - 84.0f, 16, AccentColor());
     }
 }
 
@@ -1563,31 +1789,39 @@ void Game::DrawHud() const {
     if (showDebug_) {
         DrawDebugPanel();
     }
+
+    uiSystem_.Draw();
 }
 
 void Game::DrawTopBar() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
-    const HudLayout layout = ComputeHudLayout(screenWidth, static_cast<float>(GetScreenHeight()), showDebug_);
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    const HudLayout layout = ComputeHudLayout(screenWidth, screenHeight, showDebug_);
     const bool compact = layout.compact;
     const bool singleColumn = layout.singleColumn;
     const float statusWidth = singleColumn ? layout.contentFrame.width
                                            : std::clamp(layout.contentFrame.width * (compact ? 0.52f : 0.44f), 360.0f, 470.0f);
     const Rectangle statusPanel {
         singleColumn ? layout.contentFrame.x : (layout.contentFrame.x + layout.contentFrame.width - statusWidth),
-        singleColumn ? (layout.topBarHeight - 42.0f) : (compact ? 36.0f : 10.0f),
+        layout.safeFrame.y + (singleColumn ? (layout.topBarHeight - 42.0f) : (compact ? 36.0f : 10.0f)),
         statusWidth,
         singleColumn ? 32.0f : (compact ? 30.0f : 34.0f)
     };
 
-    DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.topBarHeight), Fade(BLACK, 0.22f));
-    DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.topBarHeight), Fade(Color {13, 21, 24, 255}, 0.82f));
-    DrawUiText("nganu.game", layout.contentFrame.x, singleColumn ? 10.0f : 12.0f, singleColumn ? 22 : 24, RAYWHITE);
-    const float subtitleX = layout.contentFrame.x + 166.0f;
+    DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.safeFrame.y + layout.topBarHeight), Fade(BLACK, 0.16f));
+    DrawRectangleGradientV(0,
+                           0,
+                           static_cast<int>(screenWidth),
+                           static_cast<int>(layout.safeFrame.y + layout.topBarHeight),
+                           Fade(Color {13, 21, 24, 255}, 0.88f),
+                           Fade(Color {13, 21, 24, 255}, 0.74f));
+    DrawUiText("nganu.game", layout.safeFrame.x, layout.safeFrame.y + (singleColumn ? 10.0f : 12.0f), singleColumn ? 22 : 24, RAYWHITE);
+    const float subtitleX = layout.safeFrame.x + 166.0f;
     const float subtitleMaxWidth = statusPanel.x - subtitleX - 18.0f;
     if (!compact && subtitleMaxWidth > 120.0f) {
-        DrawUiText(EllipsizeText("Prototype MMORPG 2D Top-Down", 18, subtitleMaxWidth), subtitleX, 16.0f, 18, Fade(RAYWHITE, 0.8f));
+        DrawUiText(EllipsizeText("Prototype MMORPG 2D Top-Down", 18, subtitleMaxWidth), subtitleX, layout.safeFrame.y + 16.0f, 18, Fade(RAYWHITE, 0.8f));
     } else if (!singleColumn) {
-        DrawUiText("Dynamic world client", layout.contentFrame.x + 2.0f, 40.0f, 16, Fade(RAYWHITE, 0.72f));
+        DrawUiText("Dynamic world client", layout.safeFrame.x + 2.0f, layout.safeFrame.y + 40.0f, 16, Fade(RAYWHITE, 0.72f));
     }
 
     DrawRectangleRounded(statusPanel, 0.35f, 8, Fade(WHITE, 0.06f));
@@ -1606,7 +1840,7 @@ void Game::DrawTopBar() const {
         const std::string statusText = EllipsizeText(network_.StatusText(), statusFont, 88.0f);
         DrawUiText(line1, statusPanel.x + 10.0f, statusPanel.y + 4.0f, statusFont, AccentColor());
         DrawUiText(statusText, statusPanel.x + statusPanel.width - 10.0f - static_cast<float>(MeasureUiText(statusText, statusFont)), statusPanel.y + 4.0f, statusFont, Fade(RAYWHITE, 0.80f));
-        DrawUiText(line2, layout.contentFrame.x, 38.0f, 13, Fade(RAYWHITE, 0.66f));
+        DrawUiText(line2, layout.safeFrame.x, layout.safeFrame.y + 38.0f, 13, Fade(RAYWHITE, 0.66f));
     } else {
         const int statusFont = compact ? 15 : 18;
         DrawUiText(EllipsizeText("Region: " + region, statusFont, statusPanel.width * 0.34f), statusPanel.x + 14.0f, statusPanel.y + 8.0f, statusFont, AccentColor());
@@ -1621,8 +1855,7 @@ void Game::DrawChatPanel() const {
     const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
     const Rectangle panel = layout.chatPanel;
     const float headerPadding = layout.singleColumn ? 14.0f : 18.0f;
-    DrawRectangleRounded(panel, 0.08f, 8, SoftCardColor());
-    DrawRectangleRoundedLinesEx(panel, 0.08f, 8, 1.5f, OutlineColor());
+    DrawPanelSurface(panel, 0.08f);
     DrawUiText("World Chat", panel.x + headerPadding, panel.y + (layout.singleColumn ? 12.0f : 16.0f), layout.titleFont, RAYWHITE);
 
     const Rectangle inputBox = ChatInputRect(panel);
@@ -1687,8 +1920,7 @@ void Game::DrawChatPanel() const {
 void Game::DrawPartyPanel() const {
     const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
     const Rectangle panel = layout.partyPanel;
-    DrawRectangleRounded(panel, 0.1f, 8, SoftCardColor());
-    DrawRectangleRoundedLinesEx(panel, 0.1f, 8, 1.5f, OutlineColor());
+    DrawPanelSurface(panel);
     DrawUiText("Online Players", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
     const std::string localName = EllipsizeText(player_.name, layout.bodyFont, panel.width - 36.0f);
     DrawUiText(localName, panel.x + 18.0f, panel.y + 16.0f + static_cast<float>(layout.titleFont + 10), layout.bodyFont, AccentColor());
@@ -1707,8 +1939,7 @@ void Game::DrawPartyPanel() const {
 void Game::DrawQuestPanel() const {
     const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
     const Rectangle panel = layout.questPanel;
-    DrawRectangleRounded(panel, 0.1f, 8, SoftCardColor());
-    DrawRectangleRoundedLinesEx(panel, 0.1f, 8, 1.5f, OutlineColor());
+    DrawPanelSurface(panel);
     DrawUiText("Objective", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
     DrawUiText("Server Objective", panel.x + 18.0f, panel.y + 16.0f + static_cast<float>(layout.titleFont + 8), layout.bodyFont, AccentColor());
     DrawWrappedText(currentObjective_.empty() ? "No active objective." : currentObjective_,
@@ -1721,8 +1952,7 @@ void Game::DrawQuestPanel() const {
 void Game::DrawDebugPanel() const {
     const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
     const Rectangle panel = layout.debugPanel;
-    DrawRectangleRounded(panel, 0.08f, 8, SoftCardColor());
-    DrawRectangleRoundedLinesEx(panel, 0.08f, 8, 1.5f, OutlineColor());
+    DrawPanelSurface(panel, 0.08f);
     DrawUiText("Debug", panel.x + 18.0f, panel.y + 14.0f, layout.titleFont, RAYWHITE);
 
     char line[192];

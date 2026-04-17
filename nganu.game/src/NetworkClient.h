@@ -24,7 +24,11 @@ struct NetworkEvent {
         ServerText,
         PlayerName,
         ObjectiveText,
-        MapTransfer
+        MapTransfer,
+        /* Inventory */
+        InventoryFullState,
+        InventorySlotUpdate,
+        InventoryError,
     };
 
     Type type {};
@@ -34,6 +38,14 @@ struct NetworkEvent {
     float y = 0.0f;
     std::string text;
     std::string mapId;
+    /* Inventory payload (for InventoryFullState / InventorySlotUpdate) */
+    std::vector<uint8_t> rawBytes;  /* full state blob */
+    int  slotIndex  = -1;
+    bool occupied   = false;
+    int  itemDefId  = 0;
+    int  amount     = 0;
+    uint8_t flags   = 0;
+    uint8_t errCode = 0;
 };
 
 class NetworkClient {
@@ -54,6 +66,12 @@ public:
     bool SendObjectInteract(const std::string& objectId);
     bool RequestUpdateManifest();
     bool RequestAsset(const std::string& assetKey);
+    /* Inventory */
+    bool SendInventoryOpen();
+    bool SendInventoryClose();
+    bool SendMoveItem(int fromSlot, int toSlot);
+    bool SendUseItem(int slot);
+    bool SendDropItem(int slot);
 
     bool IsConnected() const;
     std::string StatusText() const { return statusText_; }

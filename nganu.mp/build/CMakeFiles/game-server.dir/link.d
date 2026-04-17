@@ -11,6 +11,7 @@
   CMakeFiles/game-server.dir/src/script/Builtins.cpp.o \
   CMakeFiles/game-server.dir/src/network/Network.cpp.o \
   CMakeFiles/game-server.dir/src/network/Packet.cpp.o \
+  CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o \
   libenet_static.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libdl.a \
   /usr/lib/libluajit-5.1.so \
@@ -65,6 +66,8 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o:
 CMakeFiles/game-server.dir/src/network/Network.cpp.o:
 
 CMakeFiles/game-server.dir/src/network/Packet.cpp.o:
+
+CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o:
 
 libenet_static.a:
 

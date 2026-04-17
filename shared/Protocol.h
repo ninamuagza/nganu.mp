@@ -4,13 +4,36 @@
 #include <cstdint>
 
 enum class PacketOpcode : uint8_t {
-    HANDSHAKE = 0x01,
-    PLAYER_DATA = 0x02,
-    GAME_STATE = 0x03,
-    PLAYER_MOVE = 0x04,
-    OBJECT_INTERACT = 0x05,
+    HANDSHAKE      = 0x01,
+    PLAYER_DATA    = 0x02,
+    GAME_STATE     = 0x03,
+    PLAYER_MOVE    = 0x04,
+    OBJECT_INTERACT= 0x05,
     PLUGIN_MESSAGE = 0x10,
-    CHAT_MESSAGE = 0x11
+    CHAT_MESSAGE   = 0x11,
+    INVENTORY      = 0x12,   /* client <-> server inventory messages */
+};
+
+enum class InventoryMsgType : uint8_t {
+    /* Client → Server */
+    CMSG_OPEN       = 0x01,
+    CMSG_CLOSE      = 0x02,
+    CMSG_USE_ITEM   = 0x03,
+    CMSG_MOVE_ITEM  = 0x04,
+    CMSG_DROP_ITEM  = 0x05,
+    /* Server → Client */
+    SMSG_OPEN       = 0x10,
+    SMSG_FULL_STATE = 0x11,
+    SMSG_SLOT_UPDATE= 0x12,
+    SMSG_ERROR      = 0x13,
+};
+
+enum class InvError : uint8_t {
+    INVALID_SLOT        = 1,
+    ITEM_NOT_FOUND      = 2,
+    TARGET_FULL         = 3,
+    ACTION_NOT_ALLOWED  = 4,
+    COOLDOWN            = 5,
 };
 
 enum class GameStateType : uint8_t {

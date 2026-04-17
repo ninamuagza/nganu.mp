@@ -228,6 +228,7 @@ CMakeFiles/game-server.dir/src/main.cpp.o: \
  /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/protocol.h \
  /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
  /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h \
+ /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.h \
  /usr/include/c++/15.2.1/cstring /usr/include/string.h \
  /usr/include/strings.h /usr/include/c++/15.2.1/fstream \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/basic_file.h \

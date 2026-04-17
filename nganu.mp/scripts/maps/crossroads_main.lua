@@ -1,4 +1,12 @@
+local map_objects = dofile("scripts/runtime/map_objects.lua")
+
 local M = {}
+
+local object_scripts = {
+    portal_travel = function(playerid, object_index)
+        map_objects.handle_portal_travel(playerid, object_index)
+    end,
+}
 
 function M.OnGameModeInit()
     print("Map script loaded: crossroads_main")
@@ -12,6 +20,7 @@ function M.OnPlayerEnterMap(playerid)
     local name = GetPlayerName(playerid)
     SendPlayerMessage(playerid, string.format("Welcome to the Crossroads, %s.", name))
     SendPlayerMessage(playerid, "Travelers pass through here. Use E near the gate marker to return.")
+    SendPlayerMessage(playerid, map_objects.map_population_line(playerid))
     SetPlayerObjective(playerid, "Explore the Crossroads or return through the gate.")
     BroadcastMapMessage(GetPlayerMapId(playerid), string.format("%s arrived at the Crossroads.", name))
 end
@@ -41,8 +50,7 @@ function M.OnPlayerCommand(playerid)
     end
 
     if text == "/where" then
-        local x, y = GetPlayerPosition(playerid)
-        SendPlayerMessage(playerid, string.format("You are at %.0f, %.0f in %s", x, y, GetPlayerMapId(playerid)))
+        SendPlayerMessage(playerid, map_objects.where_line(playerid))
         return
     end
 
@@ -50,11 +58,18 @@ function M.OnPlayerCommand(playerid)
 end
 
 function M.OnMapObjectInteract(playerid, object_index)
+    local script_name = GetPlayerMapObjectProperty(playerid, object_index, "script")
+    if script_name ~= nil and script_name ~= "" then
+        local handler = object_scripts[script_name]
+        if handler ~= nil then
+            handler(playerid, object_index)
+            return
+        end
+    end
+
     local kind = GetPlayerMapObjectKind(playerid, object_index)
     if kind == "prop" then
-        local title = GetPlayerMapObjectProperty(playerid, object_index, "title") or "Marker"
-        local note = GetPlayerMapObjectProperty(playerid, object_index, "description") or "The road splits in three directions."
-        SendPlayerMessage(playerid, "[" .. title .. "] " .. note)
+        map_objects.describe_prop(playerid, object_index, "The road splits in three directions.")
     end
 end
 

@@ -1,4 +1,6 @@
 local M = {}
+local STARTER_REWARD_ITEM_ID = 7
+local STARTER_REWARD_AMOUNT = 25
 
 local function object_text(playerid, object_index, key, fallback)
     local value = GetPlayerMapObjectProperty(playerid, object_index, key)
@@ -27,6 +29,19 @@ function M.interact(playerid, object_index, quest)
 
     if stage == 2 then
         SendPlayerMessage(playerid, "[" .. npc_name .. "] " .. object_text(playerid, object_index, "complete", "Good work."))
+        if AddInventoryItem and CountInventoryItem then
+            if AddInventoryItem(playerid, STARTER_REWARD_ITEM_ID, STARTER_REWARD_AMOUNT) then
+                local total = CountInventoryItem(playerid, STARTER_REWARD_ITEM_ID)
+                SendPlayerMessage(playerid,
+                                  string.format("[%s] Take these %d gold coins. You now carry %d.",
+                                                npc_name,
+                                                STARTER_REWARD_AMOUNT,
+                                                total))
+            else
+                SendPlayerMessage(playerid, "[" .. npc_name .. "] Your pack is full. Make room and talk to me again.")
+                return
+            end
+        end
         quest.set_stage(playerid, 3)
         quest.sync_objective(playerid)
         return

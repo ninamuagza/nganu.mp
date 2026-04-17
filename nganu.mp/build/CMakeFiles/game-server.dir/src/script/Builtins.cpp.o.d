@@ -231,6 +231,7 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: \
  /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h \
  /usr/include/dlfcn.h /usr/include/bits/dlfcn.h \
  /usr/include/bits/dl_find_object.h \
+ /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.h \
  /home/fanorisky/GameProject/nganu.mp/src/network/Packet.h \
  /home/fanorisky/GameProject/nganu.mp/../shared/Protocol.h \
  /usr/include/c++/15.2.1/chrono /usr/include/c++/15.2.1/cstring \

@@ -321,6 +321,30 @@ home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
 .PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
 
+src/AssetManager.o: src/AssetManager.cpp.o
+.PHONY : src/AssetManager.o
+
+# target to build an object file
+src/AssetManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o
+.PHONY : src/AssetManager.cpp.o
+
+src/AssetManager.i: src/AssetManager.cpp.i
+.PHONY : src/AssetManager.i
+
+# target to preprocess a source file
+src/AssetManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/AssetManager.cpp.i
+.PHONY : src/AssetManager.cpp.i
+
+src/AssetManager.s: src/AssetManager.cpp.s
+.PHONY : src/AssetManager.s
+
+# target to generate assembly for a file
+src/AssetManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/AssetManager.cpp.s
+.PHONY : src/AssetManager.cpp.s
+
 src/Game.o: src/Game.cpp.o
 .PHONY : src/Game.o
 
@@ -345,6 +369,78 @@ src/Game.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/Game.cpp.s
 .PHONY : src/Game.cpp.s
 
+src/InventoryUi.o: src/InventoryUi.cpp.o
+.PHONY : src/InventoryUi.o
+
+# target to build an object file
+src/InventoryUi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o
+.PHONY : src/InventoryUi.cpp.o
+
+src/InventoryUi.i: src/InventoryUi.cpp.i
+.PHONY : src/InventoryUi.i
+
+# target to preprocess a source file
+src/InventoryUi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.i
+.PHONY : src/InventoryUi.cpp.i
+
+src/InventoryUi.s: src/InventoryUi.cpp.s
+.PHONY : src/InventoryUi.s
+
+# target to generate assembly for a file
+src/InventoryUi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.s
+.PHONY : src/InventoryUi.cpp.s
+
+src/ItemDefs.o: src/ItemDefs.cpp.o
+.PHONY : src/ItemDefs.o
+
+# target to build an object file
+src/ItemDefs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o
+.PHONY : src/ItemDefs.cpp.o
+
+src/ItemDefs.i: src/ItemDefs.cpp.i
+.PHONY : src/ItemDefs.i
+
+# target to preprocess a source file
+src/ItemDefs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.i
+.PHONY : src/ItemDefs.cpp.i
+
+src/ItemDefs.s: src/ItemDefs.cpp.s
+.PHONY : src/ItemDefs.s
+
+# target to generate assembly for a file
+src/ItemDefs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.s
+.PHONY : src/ItemDefs.cpp.s
+
+src/ModalDialogUi.o: src/ModalDialogUi.cpp.o
+.PHONY : src/ModalDialogUi.o
+
+# target to build an object file
+src/ModalDialogUi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o
+.PHONY : src/ModalDialogUi.cpp.o
+
+src/ModalDialogUi.i: src/ModalDialogUi.cpp.i
+.PHONY : src/ModalDialogUi.i
+
+# target to preprocess a source file
+src/ModalDialogUi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.i
+.PHONY : src/ModalDialogUi.cpp.i
+
+src/ModalDialogUi.s: src/ModalDialogUi.cpp.s
+.PHONY : src/ModalDialogUi.s
+
+# target to generate assembly for a file
+src/ModalDialogUi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.s
+.PHONY : src/ModalDialogUi.cpp.s
+
 src/NetworkClient.o: src/NetworkClient.cpp.o
 .PHONY : src/NetworkClient.o
 
@@ -368,6 +464,30 @@ src/NetworkClient.s: src/NetworkClient.cpp.s
 src/NetworkClient.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.s
 .PHONY : src/NetworkClient.cpp.s
+
+src/ObjectiveUi.o: src/ObjectiveUi.cpp.o
+.PHONY : src/ObjectiveUi.o
+
+# target to build an object file
+src/ObjectiveUi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o
+.PHONY : src/ObjectiveUi.cpp.o
+
+src/ObjectiveUi.i: src/ObjectiveUi.cpp.i
+.PHONY : src/ObjectiveUi.i
+
+# target to preprocess a source file
+src/ObjectiveUi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.i
+.PHONY : src/ObjectiveUi.cpp.i
+
+src/ObjectiveUi.s: src/ObjectiveUi.cpp.s
+.PHONY : src/ObjectiveUi.s
+
+# target to generate assembly for a file
+src/ObjectiveUi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.s
+.PHONY : src/ObjectiveUi.cpp.s
 
 src/World.o: src/World.cpp.o
 .PHONY : src/World.o
@@ -417,6 +537,102 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/ui/UiDataStore.o: src/ui/UiDataStore.cpp.o
+.PHONY : src/ui/UiDataStore.o
+
+# target to build an object file
+src/ui/UiDataStore.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o
+.PHONY : src/ui/UiDataStore.cpp.o
+
+src/ui/UiDataStore.i: src/ui/UiDataStore.cpp.i
+.PHONY : src/ui/UiDataStore.i
+
+# target to preprocess a source file
+src/ui/UiDataStore.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.i
+.PHONY : src/ui/UiDataStore.cpp.i
+
+src/ui/UiDataStore.s: src/ui/UiDataStore.cpp.s
+.PHONY : src/ui/UiDataStore.s
+
+# target to generate assembly for a file
+src/ui/UiDataStore.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.s
+.PHONY : src/ui/UiDataStore.cpp.s
+
+src/ui/UiSystem.o: src/ui/UiSystem.cpp.o
+.PHONY : src/ui/UiSystem.o
+
+# target to build an object file
+src/ui/UiSystem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o
+.PHONY : src/ui/UiSystem.cpp.o
+
+src/ui/UiSystem.i: src/ui/UiSystem.cpp.i
+.PHONY : src/ui/UiSystem.i
+
+# target to preprocess a source file
+src/ui/UiSystem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.i
+.PHONY : src/ui/UiSystem.cpp.i
+
+src/ui/UiSystem.s: src/ui/UiSystem.cpp.s
+.PHONY : src/ui/UiSystem.s
+
+# target to generate assembly for a file
+src/ui/UiSystem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.s
+.PHONY : src/ui/UiSystem.cpp.s
+
+src/ui/UiTheme.o: src/ui/UiTheme.cpp.o
+.PHONY : src/ui/UiTheme.o
+
+# target to build an object file
+src/ui/UiTheme.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o
+.PHONY : src/ui/UiTheme.cpp.o
+
+src/ui/UiTheme.i: src/ui/UiTheme.cpp.i
+.PHONY : src/ui/UiTheme.i
+
+# target to preprocess a source file
+src/ui/UiTheme.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.i
+.PHONY : src/ui/UiTheme.cpp.i
+
+src/ui/UiTheme.s: src/ui/UiTheme.cpp.s
+.PHONY : src/ui/UiTheme.s
+
+# target to generate assembly for a file
+src/ui/UiTheme.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.s
+.PHONY : src/ui/UiTheme.cpp.s
+
+src/ui/UiWindowConfig.o: src/ui/UiWindowConfig.cpp.o
+.PHONY : src/ui/UiWindowConfig.o
+
+# target to build an object file
+src/ui/UiWindowConfig.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o
+.PHONY : src/ui/UiWindowConfig.cpp.o
+
+src/ui/UiWindowConfig.i: src/ui/UiWindowConfig.cpp.i
+.PHONY : src/ui/UiWindowConfig.i
+
+# target to preprocess a source file
+src/ui/UiWindowConfig.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.i
+.PHONY : src/ui/UiWindowConfig.cpp.i
+
+src/ui/UiWindowConfig.s: src/ui/UiWindowConfig.cpp.s
+.PHONY : src/ui/UiWindowConfig.s
+
+# target to generate assembly for a file
+src/ui/UiWindowConfig.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.s
+.PHONY : src/ui/UiWindowConfig.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -450,18 +666,45 @@ help:
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.o"
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.i"
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.s"
+	@echo "... src/AssetManager.o"
+	@echo "... src/AssetManager.i"
+	@echo "... src/AssetManager.s"
 	@echo "... src/Game.o"
 	@echo "... src/Game.i"
 	@echo "... src/Game.s"
+	@echo "... src/InventoryUi.o"
+	@echo "... src/InventoryUi.i"
+	@echo "... src/InventoryUi.s"
+	@echo "... src/ItemDefs.o"
+	@echo "... src/ItemDefs.i"
+	@echo "... src/ItemDefs.s"
+	@echo "... src/ModalDialogUi.o"
+	@echo "... src/ModalDialogUi.i"
+	@echo "... src/ModalDialogUi.s"
 	@echo "... src/NetworkClient.o"
 	@echo "... src/NetworkClient.i"
 	@echo "... src/NetworkClient.s"
+	@echo "... src/ObjectiveUi.o"
+	@echo "... src/ObjectiveUi.i"
+	@echo "... src/ObjectiveUi.s"
 	@echo "... src/World.o"
 	@echo "... src/World.i"
 	@echo "... src/World.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/ui/UiDataStore.o"
+	@echo "... src/ui/UiDataStore.i"
+	@echo "... src/ui/UiDataStore.s"
+	@echo "... src/ui/UiSystem.o"
+	@echo "... src/ui/UiSystem.i"
+	@echo "... src/ui/UiSystem.s"
+	@echo "... src/ui/UiTheme.o"
+	@echo "... src/ui/UiTheme.i"
+	@echo "... src/ui/UiTheme.s"
+	@echo "... src/ui/UiWindowConfig.o"
+	@echo "... src/ui/UiWindowConfig.i"
+	@echo "... src/ui/UiWindowConfig.s"
 .PHONY : help
 
 
