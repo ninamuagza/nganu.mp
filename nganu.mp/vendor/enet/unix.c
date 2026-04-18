@@ -45,6 +45,12 @@
 #endif
 #endif
 
+#ifdef __ANDROID__
+#ifndef HAS_SOCKLEN_T
+#define HAS_SOCKLEN_T 1
+#endif
+#endif
+
 #ifdef HAS_FCNTL
 #include <fcntl.h>
 #endif
@@ -627,4 +633,3 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
 }
 
 #endif
-
