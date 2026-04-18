@@ -46,6 +46,8 @@ bool InventoryService::validSlot(int playerid, int slot_index) const {
 InvActionResult InventoryService::moveItem(int playerid, int slot_from, int slot_to) {
     if (!validSlot(playerid, slot_from) || !validSlot(playerid, slot_to))
         return InvActionResult::INVALID_SLOT;
+    if (slot_from == slot_to)
+        return InvActionResult::OK;
 
     auto* inv = getInventory(playerid);
     SlotState& from = inv->slots[slot_from];
@@ -61,12 +63,9 @@ InvActionResult InventoryService::moveItem(int playerid, int slot_from, int slot
         from.slot_index = slot_from;
     } else {
         /* Swap */
-        std::swap(from.slot_index, to.slot_index); /* keep indices correct */
-        int tmp_idx_f = from.slot_index;
-        int tmp_idx_t = to.slot_index;
         std::swap(from, to);
-        from.slot_index = tmp_idx_f;
-        to.slot_index   = tmp_idx_t;
+        from.slot_index = slot_from;
+        to.slot_index   = slot_to;
     }
 
     ++inv->revision;

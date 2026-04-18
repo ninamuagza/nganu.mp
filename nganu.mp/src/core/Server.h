@@ -98,6 +98,7 @@ private:
     std::unordered_map<int, uint64_t> playerLastMoveAtMs_;
     std::unordered_map<int, uint64_t> playerLastSeenAtMs_;
     std::unordered_map<int, std::unordered_set<int>> playerActiveTriggers_;
+    std::unordered_set<std::string> allowedAssetKeys_;
     std::string       lastPlayerText_;
 
     void processNetworkEvents();
@@ -107,6 +108,7 @@ private:
     int allocatePlayerId();
     void releasePlayerId(int playerid);
     bool loadMaps();
+    void rebuildAllowedAssetKeys();
     std::string computeContentRevision() const;
     PlayerPosition defaultSpawnPosition(int playerid, const std::string& mapId) const;
     bool teleportPlayerWithinMap(int playerid, PlayerPosition nextPosition, const std::string& reason);

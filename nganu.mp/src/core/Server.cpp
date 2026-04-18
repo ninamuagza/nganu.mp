@@ -16,6 +16,7 @@
 #include <cmath>
 #include <functional>
 #include <filesystem>
+#include <optional>
 
 #ifndef _WIN32
   #include <sys/select.h>
@@ -74,6 +75,84 @@ std::string readBinaryFile(const std::filesystem::path& path) {
     return buffer.str();
 }
 
+bool isSafeRelativeAssetPath(const std::string& value) {
+    if (value.empty() || value.find('\0') != std::string::npos || value.find('\\') != std::string::npos) {
+        return false;
+    }
+
+    const std::filesystem::path path(value);
+    if (path.is_absolute() || path.has_root_name() || path.has_root_directory()) {
+        return false;
+    }
+
+    for (const auto& part : path) {
+        if (part.empty() || part == "." || part == "..") {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool pathIsInsideRoot(const std::filesystem::path& root, const std::filesystem::path& candidate) {
+    std::error_code ec;
+    const std::filesystem::path relative = std::filesystem::relative(candidate, root, ec);
+    if (ec || relative.empty() || relative.is_absolute()) {
+        return false;
+    }
+    for (const auto& part : relative) {
+        if (part == "..") {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::optional<std::filesystem::path> resolveAssetPath(const std::filesystem::path& root, const std::string& relativePath) {
+    if (!isSafeRelativeAssetPath(relativePath)) {
+        return std::nullopt;
+    }
+
+    std::error_code ec;
+    const std::filesystem::path rootPath = std::filesystem::weakly_canonical(root, ec);
+    if (ec) {
+        return std::nullopt;
+    }
+
+    const std::filesystem::path candidate = std::filesystem::weakly_canonical(rootPath / std::filesystem::path(relativePath), ec);
+    if (ec || !pathIsInsideRoot(rootPath, candidate)) {
+        return std::nullopt;
+    }
+    return candidate;
+}
+
+bool objectInteractableByClient(const MapData::Object& object) {
+    auto interact = object.properties.find("interact");
+    if (interact != object.properties.end()) {
+        return !interact->second.empty() && interact->second != "false" && interact->second != "0";
+    }
+    return object.kind == "npc" || object.kind == "portal";
+}
+
+float objectInteractionRange(const MapData::Object& object) {
+    auto range = object.properties.find("interact_radius");
+    if (range != object.properties.end()) {
+        try {
+            return std::max(24.0f, std::stof(range->second));
+        } catch (...) {
+        }
+    }
+    return std::clamp((std::max(object.width, object.height) * 0.5f) + 40.0f, 56.0f, 120.0f);
+}
+
+bool playerCanInteractWithObject(const Server::PlayerPosition& playerPosition, const MapData::Object& object) {
+    const float centerX = object.x + (object.width * 0.5f);
+    const float centerY = object.y + (object.height * 0.5f);
+    const float dx = playerPosition.x - centerX;
+    const float dy = playerPosition.y - centerY;
+    const float range = objectInteractionRange(object);
+    return (dx * dx) + (dy * dy) <= (range * range);
+}
+
 }
 
 static void signalHandler(int /*sig*/) {
@@ -121,6 +200,7 @@ bool Server::startup(const std::string& cfgPath) {
     if (!loadMaps()) {
         return false;
     }
+    rebuildAllowedAssetKeys();
     contentRevision_ = computeContentRevision();
     logger_.info("Server", "Loaded map %s (%s)", map_.mapId().c_str(), map_.worldName().c_str());
 
@@ -361,6 +441,31 @@ bool Server::loadMaps() {
     return true;
 }
 
+void Server::rebuildAllowedAssetKeys() {
+    allowedAssetKeys_.clear();
+
+    allowedAssetKeys_.insert("data:item_defs.json");
+    allowedAssetKeys_.insert("data:ui/inventory_main.json");
+    allowedAssetKeys_.insert("data:ui/objective_journal.json");
+    allowedAssetKeys_.insert("data:ui/system_modal.json");
+    allowedAssetKeys_.insert("data:ui/theme_default.json");
+    allowedAssetKeys_.insert("ui_image:theme_default.png");
+    allowedAssetKeys_.insert("ui_meta:theme_default.atlas");
+
+    for (const auto& [mapId, loadedMap] : maps_) {
+        allowedAssetKeys_.insert("map:" + mapId);
+        for (const std::string& asset : loadedMap.mapImageRefs()) {
+            if (asset.empty()) continue;
+            allowedAssetKeys_.insert("map_image:" + asset);
+            allowedAssetKeys_.insert("map_meta:" + std::filesystem::path(asset).stem().string() + ".atlas");
+        }
+        for (const std::string& asset : loadedMap.characterImageRefs()) {
+            if (asset.empty()) continue;
+            allowedAssetKeys_.insert("character_image:" + asset);
+        }
+    }
+}
+
 std::string Server::computeContentRevision() const {
     std::string combined;
     std::vector<std::string> orderedMapIds;
@@ -395,6 +500,30 @@ std::string Server::computeContentRevision() const {
             combined += readBinaryFile(mapDirectory_.parent_path() / "characters" / asset);
             combined += "\n---\n";
         }
+    }
+
+    std::vector<std::string> orderedAssets(allowedAssetKeys_.begin(), allowedAssetKeys_.end());
+    std::sort(orderedAssets.begin(), orderedAssets.end());
+    for (const std::string& assetKey : orderedAssets) {
+        combined += assetKey;
+        combined += '\n';
+        if (assetKey.rfind("data:", 0) == 0) {
+            const auto path = resolveAssetPath(mapDirectory_.parent_path() / "data", assetKey.substr(5));
+            if (path.has_value()) {
+                combined += readTextFile(path->string());
+            }
+        } else if (assetKey.rfind("ui_image:", 0) == 0) {
+            const auto path = resolveAssetPath(mapDirectory_.parent_path() / "ui", assetKey.substr(9));
+            if (path.has_value()) {
+                combined += readBinaryFile(*path);
+            }
+        } else if (assetKey.rfind("ui_meta:", 0) == 0) {
+            const auto path = resolveAssetPath(mapDirectory_.parent_path() / "ui", assetKey.substr(8));
+            if (path.has_value()) {
+                combined += readTextFile(path->string());
+            }
+        }
+        combined += "\n---\n";
     }
     return "map-" + std::to_string(std::hash<std::string> {}(combined));
 }
@@ -720,42 +849,11 @@ void Server::sendUpdateManifestToPeer(void* peer) {
     manifest << "content_revision=" << contentRevision_ << "\n";
     manifest << "world_name=" << map_.worldName() << "\n";
     manifest << "map_id=" << map_.mapId() << "\n";
-    std::vector<std::string> mapIds;
-    mapIds.reserve(maps_.size());
-    for (const auto& [mapId, loadedMap] : maps_) {
-        (void)loadedMap;
-        mapIds.push_back(mapId);
-    }
-    std::sort(mapIds.begin(), mapIds.end());
 
-    std::unordered_set<std::string> mapImageAssets;
-    std::unordered_set<std::string> characterImageAssets;
-    manifest << "asset=data:item_defs.json\n";
-    manifest << "asset=data:ui/inventory_main.json\n";
-    manifest << "asset=data:ui/objective_journal.json\n";
-    manifest << "asset=data:ui/system_modal.json\n";
-    manifest << "asset=data:ui/theme_default.json\n";
-
-    for (const std::string& mapId : mapIds) {
-        manifest << "asset=map:" << mapId << "\n";
-        const MapData* loadedMap = mapForId(mapId);
-        if (!loadedMap) continue;
-        for (const std::string& asset : loadedMap->mapImageRefs()) {
-            if (!asset.empty()) {
-                mapImageAssets.insert(asset);
-            }
-        }
-        for (const std::string& asset : loadedMap->characterImageRefs()) {
-            if (!asset.empty()) {
-                characterImageAssets.insert(asset);
-            }
-        }
-    }
-    for (const std::string& asset : mapImageAssets) {
-        manifest << "asset=map_image:" << asset << "\n";
-    }
-    for (const std::string& asset : characterImageAssets) {
-        manifest << "asset=character_image:" << asset << "\n";
+    std::vector<std::string> assets(allowedAssetKeys_.begin(), allowedAssetKeys_.end());
+    std::sort(assets.begin(), assets.end());
+    for (const std::string& asset : assets) {
+        manifest << "asset=" << asset << "\n";
     }
 
     const std::string blob = manifest.str();
@@ -768,6 +866,10 @@ void Server::sendUpdateManifestToPeer(void* peer) {
 
 void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     if (!peer || assetKey.empty()) return;
+    if (allowedAssetKeys_.find(assetKey) == allowedAssetKeys_.end()) {
+        logger_.warn("Server", "Rejected unlisted asset request: %s", assetKey.c_str());
+        return;
+    }
 
     std::string kind;
     std::string content;
@@ -787,8 +889,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("map_image:", 0) == 0) {
         kind = "image";
         const std::string fileName = assetKey.substr(10);
-        const std::filesystem::path imagePath = mapDirectory_.parent_path() / "map_images" / fileName;
-        content = readBinaryFile(imagePath);
+        const auto imagePath = resolveAssetPath(mapDirectory_.parent_path() / "map_images", fileName);
+        if (!imagePath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe map image asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readBinaryFile(*imagePath);
         if (content.empty()) {
             logger_.error("Server", "Failed to read image asset for %s", assetKey.c_str());
             return;
@@ -797,8 +903,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("map_meta:", 0) == 0) {
         kind = "meta";
         const std::string fileName = assetKey.substr(9);
-        const std::filesystem::path metaPath = mapDirectory_.parent_path() / "map_images" / fileName;
-        content = readTextFile(metaPath.string());
+        const auto metaPath = resolveAssetPath(mapDirectory_.parent_path() / "map_images", fileName);
+        if (!metaPath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe map metadata asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readTextFile(metaPath->string());
         if (content.empty()) {
             logger_.warn("Server", "Failed to read map metadata asset for %s", assetKey.c_str());
             return;
@@ -806,8 +916,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("character_image:", 0) == 0) {
         kind = "image";
         const std::string fileName = assetKey.substr(16);
-        const std::filesystem::path imagePath = mapDirectory_.parent_path() / "characters" / fileName;
-        content = readBinaryFile(imagePath);
+        const auto imagePath = resolveAssetPath(mapDirectory_.parent_path() / "characters", fileName);
+        if (!imagePath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe character image asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readBinaryFile(*imagePath);
         if (content.empty()) {
             logger_.error("Server", "Failed to read image asset for %s", assetKey.c_str());
             return;
@@ -816,8 +930,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("ui_image:", 0) == 0) {
         kind = "image";
         const std::string fileName = assetKey.substr(9);
-        const std::filesystem::path imagePath = mapDirectory_.parent_path() / "ui" / fileName;
-        content = readBinaryFile(imagePath);
+        const auto imagePath = resolveAssetPath(mapDirectory_.parent_path() / "ui", fileName);
+        if (!imagePath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe UI image asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readBinaryFile(*imagePath);
         if (content.empty()) {
             logger_.error("Server", "Failed to read UI image asset for %s", assetKey.c_str());
             return;
@@ -826,8 +944,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("ui_meta:", 0) == 0) {
         kind = "meta";
         const std::string fileName = assetKey.substr(8);
-        const std::filesystem::path metaPath = mapDirectory_.parent_path() / "ui" / fileName;
-        content = readTextFile(metaPath.string());
+        const auto metaPath = resolveAssetPath(mapDirectory_.parent_path() / "ui", fileName);
+        if (!metaPath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe UI metadata asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readTextFile(metaPath->string());
         if (content.empty()) {
             logger_.warn("Server", "Failed to read UI metadata asset for %s", assetKey.c_str());
             return;
@@ -835,8 +957,12 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     } else if (assetKey.rfind("data:", 0) == 0) {
         kind = "data";
         const std::string dataPath = assetKey.substr(5); /* strip "data:" */
-        const std::filesystem::path filePath = mapDirectory_.parent_path() / "data" / dataPath;
-        content = readTextFile(filePath.string());
+        const auto filePath = resolveAssetPath(mapDirectory_.parent_path() / "data", dataPath);
+        if (!filePath.has_value()) {
+            logger_.warn("Server", "Rejected unsafe data asset request: %s", assetKey.c_str());
+            return;
+        }
+        content = readTextFile(filePath->string());
         if (content.empty()) {
             logger_.warn("Server", "Failed to read data asset for %s", assetKey.c_str());
             return;
@@ -1131,6 +1257,18 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             const int objectIndex = activeMap->objectIndexById(objectId);
             if (objectIndex >= 0) {
                 const auto* object = activeMap->objectByIndex(objectIndex);
+                auto positionIt = playerPositions_.find(playerid);
+                if (!object || positionIt == playerPositions_.end()) {
+                    break;
+                }
+                if (!objectInteractableByClient(*object)) {
+                    logger_.warn("Server", "Rejected non-interactable object %s from player %d", object->id.c_str(), playerid);
+                    break;
+                }
+                if (!playerCanInteractWithObject(positionIt->second, *object)) {
+                    logger_.warn("Server", "Rejected out-of-range object %s from player %d", object->id.c_str(), playerid);
+                    break;
+                }
                 const bool hasScript = object
                     && object->properties.find("script") != object->properties.end()
                     && !object->properties.at("script").empty();

@@ -1,0 +1,4 @@
+[submodule "raymob/app/src/main/cpp/deps/raylib"]
+	path = raymob/app/src/main/cpp/deps/raylib
+	url = https://github.com/raysan5/raylib.git
+	branch = master

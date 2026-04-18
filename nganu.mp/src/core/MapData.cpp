@@ -67,17 +67,37 @@ std::optional<std::pair<std::string, std::string>> splitPropertyAssignment(const
     return std::make_pair(key, remainder);
 }
 
+bool parseFloat(const std::string& value, float& out) {
+    try {
+        size_t consumed = 0;
+        out = std::stof(value, &consumed);
+        return consumed == value.size() && std::isfinite(out);
+    } catch (...) {
+        return false;
+    }
+}
+
+bool parseInt(const std::string& value, int& out) {
+    try {
+        size_t consumed = 0;
+        out = std::stoi(value, &consumed);
+        return consumed == value.size();
+    } catch (...) {
+        return false;
+    }
+}
+
 bool parseRect(const std::string& value, MapData::Rect& out) {
     std::istringstream stream(value);
     std::string token;
     float parts[4] {};
     int index = 0;
     while (std::getline(stream, token, ',') && index < 4) {
-        try {
-            parts[index++] = std::stof(token);
-        } catch (...) {
+        float part = 0.0f;
+        if (!parseFloat(token, part)) {
             return false;
         }
+        parts[index++] = part;
     }
     if (index != 4) {
         return false;
@@ -164,8 +184,15 @@ bool MapData::loadFromFile(const std::string& path, Logger& logger) {
     waterAreas_.clear();
     atlasTileMeta_.clear();
 
+    auto failLine = [&](int lineNumber, const char* reason) {
+        logger.error("MapData", "Invalid map file %s at line %d: %s", path.c_str(), lineNumber, reason);
+        return false;
+    };
+
     std::string line;
+    int lineNumber = 0;
     while (std::getline(in, line)) {
+        ++lineNumber;
         if (line.empty()) continue;
         const size_t sep = line.find('=');
         if (sep == std::string::npos) continue;
@@ -177,21 +204,23 @@ bool MapData::loadFromFile(const std::string& path, Logger& logger) {
         } else if (key == "world_name") {
             worldName_ = value;
         } else if (key == "tile") {
-            tileSize_ = std::stoi(value);
+            if (!parseInt(value, tileSize_) || tileSize_ <= 0) return failLine(lineNumber, "invalid tile size");
         } else if (key == "width") {
-            width_ = std::stoi(value);
+            if (!parseInt(value, width_) || width_ <= 0) return failLine(lineNumber, "invalid map width");
         } else if (key == "height") {
-            height_ = std::stoi(value);
+            if (!parseInt(value, height_) || height_ <= 0) return failLine(lineNumber, "invalid map height");
         } else if (key == "spawn") {
             std::istringstream stream(value);
             std::string token;
-            if (!std::getline(stream, token, ',')) return false;
-            spawnX_ = std::stof(token);
-            if (!std::getline(stream, token, ',')) return false;
-            spawnY_ = std::stof(token);
+            if (!std::getline(stream, token, ',') || !parseFloat(token, spawnX_)) {
+                return failLine(lineNumber, "invalid spawn x");
+            }
+            if (!std::getline(stream, token, ',') || !parseFloat(token, spawnY_)) {
+                return failLine(lineNumber, "invalid spawn y");
+            }
         } else if (key == "property") {
             const auto parts = splitEscaped(value, ',');
-            if (parts.size() < 2) return false;
+            if (parts.size() < 2) return failLine(lineNumber, "invalid property");
             properties_[parts[0]] = parts[1];
             if (parts[0].rfind("player_sprite_", 0) == 0) {
                 addAssetRefForDomain(mapImageRefs_, characterImageRefs_, parts[1], "character");
@@ -203,15 +232,19 @@ bool MapData::loadFromFile(const std::string& path, Logger& logger) {
             }
         } else if (key == "object") {
             const std::vector<std::string> parts = splitEscaped(value, ',');
-            if (parts.size() < 6) return false;
+            if (parts.size() < 6) return failLine(lineNumber, "invalid object");
 
             Object object;
             object.kind = parts[0];
             object.id = parts[1];
-            object.x = std::stof(parts[2]);
-            object.y = std::stof(parts[3]);
-            object.width = std::stof(parts[4]);
-            object.height = std::stof(parts[5]);
+            if (!parseFloat(parts[2], object.x) ||
+                !parseFloat(parts[3], object.y) ||
+                !parseFloat(parts[4], object.width) ||
+                !parseFloat(parts[5], object.height) ||
+                object.width < 0.0f ||
+                object.height < 0.0f) {
+                return failLine(lineNumber, "invalid object bounds");
+            }
             for (size_t i = 6; i < parts.size(); ++i) {
                 const auto prop = splitPropertyAssignment(parts[i], ':');
                 if (!prop.has_value()) continue;
@@ -224,21 +257,22 @@ bool MapData::loadFromFile(const std::string& path, Logger& logger) {
             objects_.push_back(std::move(object));
         } else if (key == "stamp") {
             const std::vector<std::string> parts = splitEscaped(value, ',');
-            if (parts.size() < 4) return false;
+            if (parts.size() < 4) return failLine(lineNumber, "invalid stamp");
             Stamp stamp;
             stamp.layer = parts[0];
-            stamp.x = std::stoi(parts[1]);
-            stamp.y = std::stoi(parts[2]);
+            if (!parseInt(parts[1], stamp.x) || !parseInt(parts[2], stamp.y)) {
+                return failLine(lineNumber, "invalid stamp coordinates");
+            }
             stamp.asset = parts[3];
             addAssetRefForDomain(mapImageRefs_, characterImageRefs_, stamp.asset, "map");
             stamps_.push_back(std::move(stamp));
         } else if (key == "blocked") {
             Rect area;
-            if (!parseRect(value, area)) return false;
+            if (!parseRect(value, area)) return failLine(lineNumber, "invalid blocked rect");
             blockedAreas_.push_back(area);
         } else if (key == "water") {
             Rect area;
-            if (!parseRect(value, area)) return false;
+            if (!parseRect(value, area)) return failLine(lineNumber, "invalid water rect");
             waterAreas_.push_back(area);
         }
     }

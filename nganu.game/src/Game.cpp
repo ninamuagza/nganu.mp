@@ -10,6 +10,10 @@
 #include <sstream>
 #include <unordered_set>
 
+#if defined(PLATFORM_ANDROID)
+#include "raymob.h"
+#endif
+
 namespace {
 Color BackgroundSky() { return Color {197, 226, 233, 255}; }
 Color BackgroundHorizon() { return Color {168, 208, 214, 255}; }
@@ -22,6 +26,10 @@ Color OutlineColor() { return Color {231, 241, 236, 46}; }
 Color SoftCardColor() { return Color {24, 37, 42, 204}; }
 Font g_uiFont {};
 bool g_ownsUiFont = false;
+
+#if defined(PLATFORM_ANDROID)
+bool g_androidSoftKeyboardVisible = false;
+#endif
 
 struct HudLayout {
     Rectangle safeFrame {};
@@ -77,6 +85,183 @@ float FitPanelHeight(float available, float minimum, float preferred) {
 Rectangle GameplayViewport(float screenWidth, float screenHeight) {
     return Rectangle {0.0f, 0.0f, screenWidth, screenHeight};
 }
+
+Rectangle CenteredCardInFrame(const Rectangle& frame, float preferredWidth, float maxWidth, float preferredHeight, float minHeight);
+
+struct LoginHitRects {
+    Rectangle nameBox {};
+    Rectangle hostBox {};
+    Rectangle portBox {};
+    Rectangle buttonBox {};
+};
+
+LoginHitRects ComputeLoginHitRects(float screenWidth, float screenHeight) {
+    const Rectangle safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
+    const bool compact = safeFrame.width < 760.0f;
+    const bool tiny = safeFrame.width < 620.0f || safeFrame.height < 560.0f;
+    const float cardPadding = tiny ? 18.0f : 28.0f;
+    const float fieldHeight = tiny ? 40.0f : 44.0f;
+    const float cardWidth = std::min(tiny ? 520.0f : 620.0f, safeFrame.width);
+    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 540.0f : 520.0f), safeFrame.height);
+    const Rectangle card = CenteredCardInFrame(safeFrame, cardWidth, 620.0f, cardHeight, tiny ? 420.0f : 460.0f);
+    const float innerX = card.x + cardPadding;
+    const float innerWidth = card.width - cardPadding * 2.0f;
+    const float hostWidth = (compact || tiny) ? innerWidth : innerWidth - 120.0f;
+
+    LoginHitRects rects;
+    rects.nameBox = Rectangle {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
+    rects.hostBox = Rectangle {innerX, rects.nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
+    rects.portBox = Rectangle {
+        compact || tiny ? innerX : rects.hostBox.x + rects.hostBox.width + 14.0f,
+        compact || tiny ? rects.hostBox.y + fieldHeight + 28.0f : rects.hostBox.y,
+        compact || tiny ? innerWidth : 106.0f,
+        fieldHeight
+    };
+    rects.buttonBox = Rectangle {innerX, rects.portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
+    return rects;
+}
+
+#if defined(PLATFORM_ANDROID)
+void ShowAndroidKeyboard() {
+    if (!g_androidSoftKeyboardVisible) {
+        ShowSoftKeyboard();
+        g_androidSoftKeyboardVisible = true;
+    }
+}
+
+void HideAndroidKeyboard() {
+    if (g_androidSoftKeyboardVisible) {
+        HideSoftKeyboard();
+        g_androidSoftKeyboardVisible = false;
+    }
+}
+
+bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly) {
+    const int code = GetLastSoftKeyCode();
+    const int unicode = GetLastSoftKeyUnicode();
+    const char ch = GetLastSoftKeyChar();
+    if (code == 0 && unicode == 0 && ch == '\0') {
+        return false;
+    }
+
+    bool changed = false;
+    if ((code == KEY_BACKSPACE || code == 67) && !target.empty()) {
+        target.pop_back();
+        changed = true;
+    } else {
+        const int value = unicode != 0 ? unicode : static_cast<unsigned char>(ch);
+        if (value >= 32 && value <= 126 && target.size() < maxLen) {
+            if (!numericOnly || std::isdigit(value)) {
+                target.push_back(static_cast<char>(value));
+                changed = true;
+            }
+        }
+    }
+
+    ClearLastSoftKey();
+    return changed;
+}
+
+bool AndroidPointPressedIn(Rectangle rect, bool& wasDown) {
+    bool down = false;
+    for (int i = 0; i < GetTouchPointCount(); ++i) {
+        if (CheckCollisionPointRec(GetTouchPosition(i), rect)) {
+            down = true;
+            break;
+        }
+    }
+    const bool pressed = down && !wasDown;
+    wasDown = down;
+    return pressed;
+}
+
+Rectangle AndroidJoystickBounds() {
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    const float radius = std::clamp(std::min(screenWidth, screenHeight) * 0.115f, 58.0f, 92.0f);
+    return Rectangle {screenWidth * 0.055f, screenHeight - (radius * 2.25f), radius * 2.0f, radius * 2.0f};
+}
+
+Vector2 AndroidMovementInput() {
+    const Rectangle joy = AndroidJoystickBounds();
+    const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
+    const float radius = joy.width * 0.5f;
+    for (int i = 0; i < GetTouchPointCount(); ++i) {
+        const Vector2 touch = GetTouchPosition(i);
+        const float dx = touch.x - center.x;
+        const float dy = touch.y - center.y;
+        const float distanceSq = dx * dx + dy * dy;
+        const float captureRadius = radius * 1.45f;
+        if (distanceSq <= captureRadius * captureRadius) {
+            return NormalizeOrZero(Vector2 {dx / radius, dy / radius});
+        }
+    }
+    return Vector2 {};
+}
+
+Rectangle AndroidActionButtonRect(float indexFromRight) {
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    const float screenHeight = static_cast<float>(GetScreenHeight());
+    const float size = std::clamp(std::min(screenWidth, screenHeight) * 0.105f, 52.0f, 82.0f);
+    const float gap = size * 0.22f;
+    return Rectangle {
+        screenWidth - ((indexFromRight + 1.0f) * size) - (indexFromRight + 1.0f) * gap,
+        screenHeight - size - gap,
+        size,
+        size
+    };
+}
+
+bool AndroidInteractPressed() {
+    static bool wasDown = false;
+    return AndroidPointPressedIn(AndroidActionButtonRect(0.0f), wasDown);
+}
+
+bool AndroidInventoryPressed() {
+    static bool wasDown = false;
+    return AndroidPointPressedIn(AndroidActionButtonRect(1.0f), wasDown);
+}
+
+bool AndroidChatPressed() {
+    static bool wasDown = false;
+    return AndroidPointPressedIn(AndroidActionButtonRect(2.0f), wasDown);
+}
+
+void DrawAndroidTouchControls(bool chatFocused) {
+    const Rectangle joy = AndroidJoystickBounds();
+    const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
+    const float radius = joy.width * 0.5f;
+    DrawCircleV(center, radius, Fade(Color {8, 18, 20, 255}, 0.34f));
+    DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), radius, Fade(RAYWHITE, 0.34f));
+
+    Vector2 knob = AndroidMovementInput();
+    knob = Vector2 {center.x + knob.x * radius * 0.55f, center.y + knob.y * radius * 0.55f};
+    DrawCircleV(knob, radius * 0.34f, Fade(RAYWHITE, 0.30f));
+
+    auto drawButton = [](Rectangle rect, const char* label, Color color) {
+        DrawCircle(static_cast<int>(rect.x + rect.width * 0.5f),
+                   static_cast<int>(rect.y + rect.height * 0.5f),
+                   rect.width * 0.5f,
+                   Fade(color, 0.62f));
+        DrawCircleLines(static_cast<int>(rect.x + rect.width * 0.5f),
+                        static_cast<int>(rect.y + rect.height * 0.5f),
+                        rect.width * 0.5f,
+                        Fade(RAYWHITE, 0.42f));
+        const int fontSize = static_cast<int>(std::clamp(rect.width * 0.28f, 14.0f, 22.0f));
+        DrawUiText(label,
+                   rect.x + (rect.width - static_cast<float>(MeasureUiText(label, fontSize))) * 0.5f,
+                   rect.y + rect.height * 0.5f - fontSize * 0.5f,
+                   fontSize,
+                   RAYWHITE);
+    };
+
+    drawButton(AndroidActionButtonRect(0.0f), "E", AccentColor());
+    drawButton(AndroidActionButtonRect(1.0f), "Bag", Color {84, 132, 216, 255});
+    drawButton(AndroidActionButtonRect(2.0f), chatFocused ? "Send" : "Chat", Color {214, 154, 76, 255});
+}
+#else
+void HideAndroidKeyboard() {}
+#endif
 
 HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDebug) {
     HudLayout layout;
@@ -214,6 +399,25 @@ void LoadGameUiFont() {
         return;
     }
 
+#if defined(PLATFORM_ANDROID)
+    const std::vector<std::string> candidates {
+        "fonts/Rubik.ttf",
+        "fonts/OpenSans-Regular.ttf",
+        "fonts/OpenSans-SemiBold.ttf",
+        "fonts/RedHatDisplay-Regular.otf"
+    };
+
+    for (const std::string& path : candidates) {
+        g_uiFont = LoadFontEx(path.c_str(), 64, nullptr, 0);
+        g_ownsUiFont = g_uiFont.texture.id > 0;
+        if (g_ownsUiFont) {
+            GenTextureMipmaps(&g_uiFont.texture);
+            SetTextureFilter(g_uiFont.texture, TEXTURE_FILTER_TRILINEAR);
+            TraceLog(LOG_INFO, "UI FONT: Loaded Android UI font from %s", path.c_str());
+            return;
+        }
+    }
+#else
     const std::filesystem::path repoRoot = std::filesystem::path(NGANU_REPO_ROOT).lexically_normal();
     const std::vector<std::filesystem::path> candidates {
         repoRoot / "nganu.game" / "assets" / "fonts" / "Rubik.ttf",
@@ -236,6 +440,7 @@ void LoadGameUiFont() {
             return;
         }
     }
+#endif
 
     g_uiFont = GetFontDefault();
     SetTextureFilter(g_uiFont.texture, TEXTURE_FILTER_BILINEAR);
@@ -309,7 +514,11 @@ Game::Game() {
     player_.bodyColor = LocalColor();
     player_.radius = 15.0f;
     loginName_ = player_.name;
+#if defined(PLATFORM_ANDROID)
+    loginHost_ = "10.0.2.2";
+#else
     loginHost_ = "127.0.0.1";
+#endif
     loginPort_ = "7777";
     loginStatus_ = "Checking server update...";
 
@@ -458,6 +667,39 @@ void Game::BeginRetryWait(const std::string& reason) {
 }
 
 void Game::UpdateLoginInput() {
+#if defined(PLATFORM_ANDROID)
+    const LoginHitRects hitRects = ComputeLoginHitRects(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()));
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        const Vector2 point = GetMousePosition();
+        if (CheckCollisionPointRec(point, hitRects.nameBox)) {
+            loginField_ = LoginField::Name;
+            ShowAndroidKeyboard();
+        } else if (CheckCollisionPointRec(point, hitRects.hostBox)) {
+            loginField_ = LoginField::Host;
+            ShowAndroidKeyboard();
+        } else if (CheckCollisionPointRec(point, hitRects.portBox)) {
+            loginField_ = LoginField::Port;
+            ShowAndroidKeyboard();
+        } else if (CheckCollisionPointRec(point, hitRects.buttonBox)) {
+            HideAndroidKeyboard();
+            StartLogin();
+            return;
+        }
+    }
+
+    switch (loginField_) {
+    case LoginField::Name:
+        AndroidConsumeSoftChar(loginName_, 24, false);
+        break;
+    case LoginField::Host:
+        AndroidConsumeSoftChar(loginHost_, 64, false);
+        break;
+    case LoginField::Port:
+        AndroidConsumeSoftChar(loginPort_, 5, true);
+        break;
+    }
+#endif
+
     if (IsKeyPressed(KEY_F5)) {
         StartConnection();
         return;
@@ -555,20 +797,33 @@ void Game::UpdateLoggingIn(float dt) {
 }
 
 void Game::StartLogin() {
+    HideAndroidKeyboard();
     if (loginName_.empty()) {
         loginStatus_ = "Player name is required";
         return;
     }
     if (!manifest_.valid) {
+#if defined(PLATFORM_ANDROID)
+        BeginBootUpdateCheck();
+#else
         loginStatus_ = "Client content is not ready. Press F5 to re-check.";
+#endif
         return;
     }
     if (!mapReady_) {
+#if defined(PLATFORM_ANDROID)
+        BeginBootUpdateCheck();
+#else
         loginStatus_ = "Map content is still loading. Press F5 if needed.";
+#endif
         return;
     }
     if (!network_.IsConnected() || !handshakeReady_) {
+#if defined(PLATFORM_ANDROID)
+        BeginBootUpdateCheck();
+#else
         loginStatus_ = "Server session is offline. Press F5 to reconnect.";
+#endif
         return;
     }
 
@@ -605,6 +860,12 @@ void Game::UpdatePlayer(float dt) {
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) input.x += 1.0f;
     if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) input.y -= 1.0f;
     if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) input.y += 1.0f;
+#if defined(PLATFORM_ANDROID)
+    const Vector2 touchInput = AndroidMovementInput();
+    if (std::fabs(touchInput.x) > 0.01f || std::fabs(touchInput.y) > 0.01f) {
+        input = touchInput;
+    }
+#endif
 
     const bool running = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
     const float moveSpeed = running ? 240.0f : 165.0f;
@@ -969,6 +1230,14 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
 }
 
 std::filesystem::path Game::CacheDirectory() const {
+#if defined(PLATFORM_ANDROID)
+    char* cacheDir = GetCacheDir();
+    if (cacheDir != nullptr) {
+        const std::filesystem::path path(cacheDir);
+        MemFree(cacheDir);
+        return path / "nganu";
+    }
+#endif
     return std::filesystem::current_path() / "cache";
 }
 
@@ -1279,9 +1548,11 @@ std::string Game::NameForPlayer(int playerId) const {
 }
 
 void Game::UpdateChatInput() {
-    if (IsKeyPressed(KEY_ENTER)) {
+#if defined(PLATFORM_ANDROID)
+    if (AndroidChatPressed()) {
         if (!chatFocused_) {
             chatFocused_ = true;
+            ShowAndroidKeyboard();
             return;
         }
 
@@ -1292,6 +1563,28 @@ void Game::UpdateChatInput() {
             chatInput_.clear();
         }
         chatFocused_ = false;
+        HideAndroidKeyboard();
+        return;
+    }
+#endif
+
+    if (IsKeyPressed(KEY_ENTER)) {
+        if (!chatFocused_) {
+            chatFocused_ = true;
+#if defined(PLATFORM_ANDROID)
+            ShowAndroidKeyboard();
+#endif
+            return;
+        }
+
+        if (!chatInput_.empty()) {
+            if (!network_.SendChatMessage(chatInput_)) {
+                AddChatLine("[System] Chat send failed");
+            }
+            chatInput_.clear();
+        }
+        chatFocused_ = false;
+        HideAndroidKeyboard();
     }
 
     if (!chatFocused_) return;
@@ -1299,8 +1592,13 @@ void Game::UpdateChatInput() {
     if (IsKeyPressed(KEY_ESCAPE)) {
         chatFocused_ = false;
         chatInput_.clear();
+        HideAndroidKeyboard();
         return;
     }
+
+#if defined(PLATFORM_ANDROID)
+    AndroidConsumeSoftChar(chatInput_, 90, false);
+#endif
 
     int pressed = GetCharPressed();
     while (pressed > 0) {
@@ -1356,6 +1654,11 @@ void Game::UpdateUi(float dt) {
     if (IsKeyPressed(KEY_I) && inventoryUi_ != nullptr) {
         inventoryUi_->Toggle();
     }
+#if defined(PLATFORM_ANDROID)
+    if (AndroidInventoryPressed() && inventoryUi_ != nullptr) {
+        inventoryUi_->Toggle();
+    }
+#endif
     if (IsKeyPressed(KEY_J) && objectiveUi_ != nullptr) {
         objectiveUi_->Toggle();
     }
@@ -1374,7 +1677,12 @@ void Game::UpdateUi(float dt) {
 void Game::UpdateNpcAndQuest() {
     if (chatFocused_ || uiInputBlockingWorld_) return;
 
-    if (IsKeyPressed(KEY_E)) {
+    bool interactPressed = IsKeyPressed(KEY_E);
+#if defined(PLATFORM_ANDROID)
+    interactPressed = interactPressed || AndroidInteractPressed();
+#endif
+
+    if (interactPressed) {
         const WorldObject* nearest = nullptr;
         float nearestDistanceSq = std::numeric_limits<float>::max();
         for (const WorldObject& object : world_.objects()) {
@@ -1526,6 +1834,9 @@ void Game::Draw() const {
                        Fade(WHITE, 0.0f));
     DrawScene();
     DrawHud();
+#if defined(PLATFORM_ANDROID)
+    DrawAndroidTouchControls(chatFocused_);
+#endif
 }
 
 void Game::DrawLoginScreen() const {
