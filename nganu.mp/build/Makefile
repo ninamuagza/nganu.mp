@@ -155,6 +155,30 @@ example_plugin/fast:
 	$(MAKE) $(MAKESILENT) -f plugins/example_plugin/CMakeFiles/example_plugin.dir/build.make plugins/example_plugin/CMakeFiles/example_plugin.dir/build
 .PHONY : example_plugin/fast
 
+home/fanorisky/GameProject/shared/MapFormat.o: home/fanorisky/GameProject/shared/MapFormat.cpp.o
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.o
+
+# target to build an object file
+home/fanorisky/GameProject/shared/MapFormat.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.o
+
+home/fanorisky/GameProject/shared/MapFormat.i: home/fanorisky/GameProject/shared/MapFormat.cpp.i
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.i
+
+# target to preprocess a source file
+home/fanorisky/GameProject/shared/MapFormat.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.i
+
+home/fanorisky/GameProject/shared/MapFormat.s: home/fanorisky/GameProject/shared/MapFormat.cpp.s
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.s
+
+# target to generate assembly for a file
+home/fanorisky/GameProject/shared/MapFormat.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.s
+
 src/core/MapData.o: src/core/MapData.cpp.o
 .PHONY : src/core/MapData.o
 
@@ -598,6 +622,9 @@ help:
 	@echo "... enet_static"
 	@echo "... example_plugin"
 	@echo "... game-server"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.o"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.i"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.s"
 	@echo "... src/core/MapData.o"
 	@echo "... src/core/MapData.i"
 	@echo "... src/core/MapData.s"

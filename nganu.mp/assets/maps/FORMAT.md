@@ -1,210 +1,204 @@
-# Map Format
+# Map Format V2
 
-Format `.map` sekarang dinaikkan supaya cukup untuk jangka panjang: visual layer, property, spawn, collision, dan object dasar. Format ini sengaja tetap text supaya mudah dipakai server, client, dan nanti map editor.
+Format `.map` sekarang **hanya** mendukung `map_format=2`. Format lama seperti `width=`, `height=`, `stamp=`, `object=`, `blocked=`, dan `water=` sudah tidak didukung parser.
 
-## Bentuk File
+Setiap baris memakai `key=value`. Nilai yang mengandung `,` atau `:` harus di-escape dengan `\`.
 
-Setiap baris memakai `key=value`.
-
-Contoh:
+## Contoh
 
 ```text
-map_id=starter_field
-world_name=Greenfields
-tile=48
-width=42
-height=30
-spawn=160,640
-property=music,greenfields_day
-layer=ground,color,palette:grassland,#CDE6D8FF,1.0
-object=npc,luna,304,624,32,32,title:Field Guide,behavior:starter_guide
-blocked=260,220,220,140
-water=920,120,300,210
+map_format=2
+map_id=new_map
+world_name=New Region
+tile_size=48
+size=24,18
+spawn=600,312
+
+asset=terrain,map,terrain_atlas.png
+asset=objects,map,base_out_atlas.png
+asset=player,character,base_out_atlas.png
+
+property=music,prototype_day
+property=player_sprite_south,player@608@0@32@32
+
+layer=ground,tilemap,asset:terrain@0@0@32@32,tint:#FFFFFFFF,parallax:1
+layer=road,tilemap,tint:#FFFFFFFF,parallax:1
+
+tile=ground,7,8,terrain@0@800@32@32
+tile=road,11,6,terrain@192@864@32@32
+line=road,7,1,9,1,terrain@96@896@32@32
+fill=ground,0,0,24,18,terrain@0@800@32@32
+tiles=road,terrain@320@832@32@32,17:3,6:8
+
+area=block,672,336,48,48
+area=water,920,120,300,210
+
+entity=npc,npc_1,384,96,48,48
+prop=npc_1,name,Guide
+prop=npc_1,title,NPC
+prop=npc_1,sprite,terrain@480@384@64@96
+
+entity=portal,portal_2,624,96,48,48
+prop=portal_2,title,Portal
+prop=portal_2,sprite,objects@384@608@32@32
+prop=portal_2,target_x,624
+prop=portal_2,target_y,96
 ```
 
-## Header Dasar
+## Header
 
-- `map_id`
-  Id map unik.
-- `world_name`
-  Nama region/world yang tampil di client.
-- `tile`
-  Ukuran tile dasar dalam pixel.
-- `width`
-  Lebar map dalam tile.
-- `height`
-  Tinggi map dalam tile.
-- `spawn=x,y`
-  Titik spawn default map.
+- `map_format=2`
+  Wajib. Parser menolak map tanpa versi ini.
+- `map_id=<id>`
+  Id unik map.
+- `world_name=<name>`
+  Nama region/world untuk client.
+- `tile_size=<pixels>`
+  Ukuran tile world dalam pixel.
+- `size=<width>,<height>`
+  Ukuran map dalam tile.
+- `spawn=<x>,<y>`
+  Spawn default dalam pixel world.
 
-## Property
+## Asset Alias
 
-- `property=key,value`
-  Metadata bebas untuk map.
+- `asset=<alias>,<domain>,<file>`
+
+`domain` saat ini:
+
+- `map`
+- `character`
+
+Alias dipakai oleh atlas ref agar map tidak mengulang nama file panjang.
 
 Contoh:
 
-- `property=music,greenfields_day`
+- `asset=terrain,map,terrain_atlas.png`
+- `asset=objects,map,base_out_atlas.png`
+- `asset=player,character,base_out_atlas.png`
+
+Atlas ref memakai bentuk:
+
+```text
+alias@srcX@srcY@srcW@srcH
+```
+
+Contoh:
+
+- `terrain@0@800@32@32`
+- `objects@384@0@32@32`
+- `player@608@0@32@32`
+
+Parser akan resolve bentuk itu ke domain asset internal seperti `map:terrain_atlas.png@...` atau `character:base_out_atlas.png@...`.
+
+## Property Map
+
+- `property=<key>,<value>`
+
+Contoh:
+
+- `property=music,prototype_day`
 - `property=climate,temperate`
-- `property=biome,starter_plains`
 - `property=map_script,greenfields_main`
+- `property=player_sprite_south,player@608@0@32@32`
 
-Ini disiapkan untuk sifat map seperti:
-
-- ambience
-- weather
-- bgm
-- region flags
-- rules tertentu
+`player_sprite_*` boleh memakai alias `character`.
 
 ## Layer
 
-- `layer=name,kind,asset,tint,parallax`
+- `layer=<name>,<type>[,prop:value...]`
 
-Kolom:
+`type` utama sekarang:
 
-- `name`
-  Nama layer, misalnya `ground`, `road`, `detail`.
-- `kind`
-  Jenis layer. Saat ini minimal:
-  - `color`
-  - `image`
-- `asset`
-  Referensi asset yang nanti bisa di-resolve dari server asset pipeline.
-  Untuk atlas sederhana saat ini bisa pakai bentuk:
-  `filename@srcX@srcY@srcW@srcH`
-- `tint`
-  Warna `#RRGGBB` atau `#RRGGBBAA`.
-- `parallax`
-  Faktor parallax.
+- `tilemap`
+
+Property layer:
+
+- `asset:<atlas-ref>`
+- `tint:<#RRGGBB atau #RRGGBBAA>`
+- `parallax:<float>`
 
 Contoh:
 
-- `layer=ground,image,map:terrain_atlas.png@0@0@32@32,#FFFFFFFF,1.0`
-- `layer=road,image,map:terrain_atlas.png@96@0@32@32,#FFFFFFFF,1.0`
+- `layer=ground,tilemap,asset:terrain@0@0@32@32,tint:#FFFFFFFF,parallax:1`
+- `layer=road,tilemap,tint:#FFFFFFFF,parallax:1`
 
-## Object
+## Tile
 
-- `object=kind,id,x,y,width,height[,prop:value ...]`
+- `tile=<layer>,<x>,<y>,<atlas-ref>`
 
-Object adalah entitas dasar yang diletakkan di map.
+`x` dan `y` memakai koordinat tile. `atlas-ref` memakai alias dari `asset=`.
 
 Contoh:
 
-- `object=npc,luna,304,624,32,32,title:Field Guide,behavior:starter_guide`
-- `object=trigger,starter_road_marker,850,590,180,120,quest:starter_scout_road`
-- `object=portal,waygate_crossroads,1184,640,96,96,target_x:2544,target_y:624`
-- `object=prop,sign_west,256,612,32,32,title:Road Sign,sprite:map:base_out_atlas.png@384@0@32@32`
-- `object=region,greenfields_region,0,384,1728,864,title:Greenfields,climate:temperate`
+- `tile=ground,7,8,terrain@0@800@32@32`
+- `tile=road,11,6,terrain@192@864@32@32`
 
-Jenis object yang layak dipakai nanti:
+## Tile Compression
+
+Parser juga mendukung bentuk ringkas yang di-expand menjadi tile runtime biasa:
+
+- `line=<layer>,<x1>,<y1>,<x2>,<y2>,<atlas-ref>`
+  Garis horizontal atau vertikal, inclusive.
+- `fill=<layer>,<x>,<y>,<width>,<height>,<atlas-ref>`
+  Rectangle penuh dalam koordinat tile.
+- `tiles=<layer>,<atlas-ref>,<x:y>[,<x:y>...]`
+  Banyak koordinat tidak berurutan dengan asset yang sama.
+
+Contoh:
+
+- `line=road,7,1,9,1,terrain@96@896@32@32`
+- `fill=ground,0,0,24,18,terrain@0@800@32@32`
+- `tiles=road,terrain@320@832@32@32,17:3,6:8`
+
+Gunakan `tile=` hanya untuk satu tile spesifik. Gunakan `line/fill/tiles` untuk map editor output agar ukuran file dan diff tetap kecil.
+
+## Area
+
+- `area=<kind>,<x>,<y>,<width>,<height>`
+
+`kind` saat ini:
+
+- `block`
+- `water`
+
+Area memakai koordinat pixel world. Area ini masuk ke server/client collision.
+
+## Entity
+
+- `entity=<kind>,<id>,<x>,<y>,<width>,<height>`
+- `prop=<entity_id>,<key>,<value>`
+
+Jenis entity yang dipakai saat ini:
 
 - `npc`
-- `trigger`
-- `spawn`
 - `portal`
+- `trigger`
 - `prop`
 - `region`
 
-Property object yang mulai dipakai sekarang:
+Property entity yang umum:
 
+- `name`
 - `title`
 - `description`
-- `behavior`
 - `script`
 - `quest`
 - `sprite`
 - `pivot`
 - `facing`
 - `z`
-- `intro1`
-- `intro2`
-- `progress`
-- `complete`
-- `idle`
-- `complete_text`
-- `turnin_text`
 - `target_map`
 - `target_x`
 - `target_y`
 - `target_title`
 
-Nilai `sprite` memakai format atlas yang sama seperti layer image:
+## Metadata Atlas
 
-- `sprite=filename@srcX@srcY@srcW@srcH`
-
-- `script=handler_name`
-  Nama handler Lua yang akan dipakai untuk object atau map-level behavior.
-
-## Stamp
-
-- `stamp=layer,x,y,asset`
-
-Stamp adalah tile paint per-cell yang ditulis editor map. `x` dan `y` memakai koordinat tile, bukan pixel.
-
-Contoh:
-
-- `stamp=ground,5,8,map:terrain_atlas.png@0@0@32@32`
-- `stamp=road,6,8,map:terrain_atlas.png@96@0@32@32`
-- `stamp=detail,10,12,map:base_out_atlas.png@320@0@32@32`
-
-Ini dipakai untuk map editor supaya tile visual tidak lagi harus hardcoded sebagai satu sprite untuk seluruh layer.
-
-Stamp sekarang juga bisa membawa collision/logic dari metadata atlas. Jadi tile seperti air, duri, lumpur, atau lava tidak perlu punya key map khusus seperti `water=...`.
-
-Contoh metadata atlas sidecar:
+File sidecar atlas tetap didukung:
 
 ```text
 tile=0,160,32,32,collision:block,tag:water
 ```
 
-File sidecar diletakkan di folder atlas map image dengan nama `<atlas>.atlas`, misalnya:
-
-- `assets/map_images/base_out_atlas.atlas`
-
-Property tambahan:
-
-- `pivot=x|y`
-  Titik origin sprite dalam rasio bounds object.
-  Contoh `pivot:0.5|1.0`.
-- `facing`
-  Arah object seperti `north`, `east`, `south`, `west`, atau derajat numerik.
-- `z`
-  Z-layer sederhana untuk draw order object.
-- `target_map`
-  Opsional untuk `portal`. Kalau diisi dan beda dengan map aktif, portal akan memindahkan player ke map lain.
-- `target_x`, `target_y`
-  Posisi tujuan untuk `portal`. Ini sekarang jalur utama untuk teleport di map yang sama.
-- `target_title`
-  Label tujuan teleport untuk feedback UI/server text.
-
-## Area Berulang
-
-- `blocked=x,y,width,height`
-  Area collision padat.
-- `water=x,y,width,height`
-  Area non-walkable atau terrain khusus.
-
-Catatan:
-
-- `blocked` dan `water` masih didukung sebagai format lama.
-- Arah baru yang disarankan adalah memakai `stamp` + metadata atlas agar collision/terrain tag ikut tile yang dipaint, bukan area hardcoded terpisah.
-
-## Arah Jangka Panjang
-
-Format ini sengaja dijaga linear dan mudah ditulis editor.
-
-Pipeline yang dituju:
-
-1. map editor menulis `.map`
-2. server membaca `.map`
-3. server mengirim manifest + asset yang relevan
-4. client parse hasilnya dan render/map logic mengikuti data itu
-
-Ke depan format ini bisa ditambah tanpa mematahkan bentuk dasarnya, misalnya:
-
-- `tileset=id,asset,tilew,tileh`
-- `nav=...`
-- `light=...`
-- `sound=...`
-- `script=...`
+Sidecar berada di `assets/map_images/<atlas>.atlas`. Metadata ini dipakai untuk collision/tag per tile jika tersedia. Jika sidecar tidak ada, asset tetap valid dan client tidak akan menunggu metadata tersebut.

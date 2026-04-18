@@ -1,11 +1,11 @@
-# nganu.atlas
+# nganu.editor
 
-Editor atlas dan map ringan berbasis `raylib` untuk membantu memilih source rect atlas dan menyusun map `.map` yang cocok dengan pipeline `nganu.mp`:
+Editor content ringan berbasis `raylib` untuk membantu memilih source rect atlas, menyusun map `.map`, dan menyiapkan asset yang cocok dengan pipeline `nganu.mp`:
 
 - `map:filename.png@x@y@w@h`
 - `character:filename.png@x@y@w@h`
 
-Versi awal ini fokus ke:
+Saat ini editor fokus ke:
 
 - scan atlas dari `../nganu.mp/assets/map_images`
 - scan atlas dari `../nganu.mp/assets/characters`
@@ -14,15 +14,15 @@ Versi awal ini fokus ke:
 - atur ukuran grid dan ukuran selection
 - copy ref atlas ke clipboard
 - buka map dari `../nganu.mp/assets/maps`
-- paint `stamp=` tile ke layer map aktif
-- toggle area `blocked` dan `water` per tile
+- paint tile ke layer map aktif
+- toggle area `block` dan `water` per tile
 - set `spawn`
-- save kembali ke file `.map`
+- save kembali ke format `.map` v2
 
 ## Build
 
 ```bash
-cd nganu.atlas
+cd nganu.editor
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
 ```
@@ -30,7 +30,7 @@ cmake --build build --parallel
 ## Run
 
 ```bash
-./build/nganu-atlas
+./build/nganu-editor
 ```
 
 ## Controls
@@ -72,4 +72,4 @@ cmake --build build --parallel
 
 ## Catatan
 
-Tool ini belum punya object editor, property inspector lengkap, atau map painter multi-layer yang penuh. Versi ini sudah cukup untuk paint tile stamp, blocked/water, spawn, dan save format `.map` dasar.
+Tool ini masih sederhana, tetapi arahnya adalah editor content umum, bukan hanya atlas picker. Versi ini sudah cukup untuk memilih atlas rect, paint tile map, mengatur area block/water, spawn, object dasar, dan save format `.map` v2.

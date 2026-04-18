@@ -1812,7 +1812,11 @@ void Game::EnsureReferencedImagesRequested() {
             network_.RequestAsset(assetKey);
         }
         const std::string metaKey = "map_meta:" + std::filesystem::path(file).stem().string() + ".atlas";
-        if (network_.IsConnected() && !HasCachedImageAsset(metaKey, manifest_.revision)) {
+        const bool metaListed = std::find(manifest_.assets.begin(), manifest_.assets.end(), metaKey) != manifest_.assets.end();
+        if (metaListed && !HasCachedImageAsset(metaKey, manifest_.revision)) {
+            addPending(metaKey);
+        }
+        if (metaListed && network_.IsConnected() && !HasCachedImageAsset(metaKey, manifest_.revision)) {
             network_.RequestAsset(metaKey);
         }
     }
@@ -1852,6 +1856,7 @@ void Game::RefreshMapAssetReadiness() {
     }
 
     if (!mapReady_) {
+        world_.ReloadAtlasMetadata();
         mapReady_ = true;
         loginStatus_ = "Server ready. Press Enter to log in.";
         AddChatLine("[System] Map textures ready");

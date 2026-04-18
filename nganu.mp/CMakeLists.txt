@@ -36,6 +36,7 @@ endif()
 # game-server executable                                              #
 # ------------------------------------------------------------------ #
 set(SERVER_SOURCES
+    ../shared/MapFormat.cpp
     src/main.cpp
     src/core/MapData.cpp
     src/core/Server.cpp

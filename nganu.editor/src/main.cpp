@@ -1,11 +1,11 @@
-#include "AtlasEditor.h"
+#include "EditorApp.h"
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-    InitWindow(1440, 900, "nganu.atlas");
+    InitWindow(1440, 900, "nganu.editor");
     SetTargetFPS(144);
 
-    AtlasEditor editor;
+    EditorApp editor;
     while (!WindowShouldClose()) {
         const float dt = GetFrameTime();
         editor.Update(dt);

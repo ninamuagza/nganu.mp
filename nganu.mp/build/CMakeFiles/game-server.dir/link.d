@@ -2,6 +2,7 @@
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
+  CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o \
   CMakeFiles/game-server.dir/src/main.cpp.o \
   CMakeFiles/game-server.dir/src/core/MapData.cpp.o \
   CMakeFiles/game-server.dir/src/core/Server.cpp.o \
@@ -48,6 +49,8 @@
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
+
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o:
 
 CMakeFiles/game-server.dir/src/main.cpp.o:
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(nganu-atlas LANGUAGES C CXX)
+project(nganu-editor LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,20 +17,21 @@ if (NOT TARGET raylib AND NOT TARGET PkgConfig::RAYLIB)
     message(FATAL_ERROR "raylib was not found. Install raylib development files, then rerun CMake.")
 endif()
 
-add_executable(nganu-atlas
+add_executable(nganu-editor
+    ../shared/MapFormat.cpp
     src/main.cpp
-    src/AtlasEditor.cpp
+    src/EditorApp.cpp
 )
 
-target_include_directories(nganu-atlas PRIVATE src)
-target_compile_definitions(nganu-atlas PRIVATE NGANU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+target_include_directories(nganu-editor PRIVATE src ..)
+target_compile_definitions(nganu-editor PRIVATE NGANU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 if (TARGET raylib)
-    target_link_libraries(nganu-atlas PRIVATE raylib)
+    target_link_libraries(nganu-editor PRIVATE raylib)
 else()
-    target_link_libraries(nganu-atlas PRIVATE PkgConfig::RAYLIB)
+    target_link_libraries(nganu-editor PRIVATE PkgConfig::RAYLIB)
 endif()
 
 if (UNIX AND NOT APPLE)
-    target_link_libraries(nganu-atlas PRIVATE m)
+    target_link_libraries(nganu-editor PRIVATE m)
 endif()

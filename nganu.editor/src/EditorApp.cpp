@@ -1,10 +1,14 @@
-#include "AtlasEditor.h"
+#include "EditorApp.h"
+
+#include "shared/MapFormat.h"
 
 #include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include <set>
 
 namespace {
 Color BackgroundColor() { return Color {238, 232, 220, 255}; }
@@ -155,7 +159,7 @@ void SetPropertyValue(PropertyCollection& properties, const std::string& key, co
 }
 }
 
-AtlasEditor::AtlasEditor() {
+EditorApp::EditorApp() {
     projectRoot_ = std::filesystem::path(NGANU_REPO_ROOT).lexically_normal();
     mapAssetRoot_ = projectRoot_ / "nganu.mp" / "assets" / "map_images";
     characterAssetRoot_ = projectRoot_ / "nganu.mp" / "assets" / "characters";
@@ -171,14 +175,14 @@ AtlasEditor::AtlasEditor() {
     statusText_ = "Atlas mode: choose a brush, then switch to Map mode with F2.";
 }
 
-AtlasEditor::~AtlasEditor() {
+EditorApp::~EditorApp() {
     if (ownsUiFont_ && uiFont_.texture.id > 0) {
         UnloadFont(uiFont_);
     }
     UnloadAssets();
 }
 
-void AtlasEditor::LoadUiFont() {
+void EditorApp::LoadUiFont() {
     const std::vector<std::filesystem::path> candidates {
         "/usr/share/fonts/Adwaita/AdwaitaSans-Regular.ttf",
         "/usr/share/fonts/noto/NotoSans-Regular.ttf"
@@ -202,7 +206,7 @@ void AtlasEditor::LoadUiFont() {
     }
 }
 
-void AtlasEditor::ScanAssets() {
+void EditorApp::ScanAssets() {
     UnloadAssets();
     mapAssets_.clear();
     characterAssets_.clear();
@@ -234,7 +238,7 @@ void AtlasEditor::ScanAssets() {
     activeIndex_ = std::clamp(activeIndex_, 0, std::max(0, static_cast<int>(ActiveAssets().size()) - 1));
 }
 
-void AtlasEditor::ScanMaps() {
+void EditorApp::ScanMaps() {
     mapFiles_.clear();
     if (!std::filesystem::exists(mapsRoot_)) {
         return;
@@ -253,15 +257,15 @@ void AtlasEditor::ScanMaps() {
     }
 }
 
-std::vector<AtlasEditor::AtlasAsset>& AtlasEditor::ActiveAssets() {
+std::vector<EditorApp::AtlasAsset>& EditorApp::ActiveAssets() {
     return activeDomain_ == Domain::Map ? mapAssets_ : characterAssets_;
 }
 
-const std::vector<AtlasEditor::AtlasAsset>& AtlasEditor::ActiveAssets() const {
+const std::vector<EditorApp::AtlasAsset>& EditorApp::ActiveAssets() const {
     return activeDomain_ == Domain::Map ? mapAssets_ : characterAssets_;
 }
 
-AtlasEditor::AtlasAsset* AtlasEditor::CurrentAsset() {
+EditorApp::AtlasAsset* EditorApp::CurrentAsset() {
     auto& assets = ActiveAssets();
     if (assets.empty() || activeIndex_ < 0 || activeIndex_ >= static_cast<int>(assets.size())) {
         return nullptr;
@@ -269,7 +273,7 @@ AtlasEditor::AtlasAsset* AtlasEditor::CurrentAsset() {
     return &assets[activeIndex_];
 }
 
-const AtlasEditor::AtlasAsset* AtlasEditor::CurrentAsset() const {
+const EditorApp::AtlasAsset* EditorApp::CurrentAsset() const {
     const auto& assets = ActiveAssets();
     if (assets.empty() || activeIndex_ < 0 || activeIndex_ >= static_cast<int>(assets.size())) {
         return nullptr;
@@ -277,7 +281,7 @@ const AtlasEditor::AtlasAsset* AtlasEditor::CurrentAsset() const {
     return &assets[activeIndex_];
 }
 
-void AtlasEditor::EnsureCurrentTextureLoaded() {
+void EditorApp::EnsureCurrentTextureLoaded() {
     AtlasAsset* asset = CurrentAsset();
     if (!asset || asset->loaded) {
         return;
@@ -287,7 +291,7 @@ void AtlasEditor::EnsureCurrentTextureLoaded() {
     ClampSelectionToTexture();
 }
 
-void AtlasEditor::UnloadAssets() {
+void EditorApp::UnloadAssets() {
     auto unload = [](std::vector<AtlasAsset>& assets) {
         for (AtlasAsset& asset : assets) {
             if (asset.loaded && asset.texture.id > 0) {
@@ -301,7 +305,7 @@ void AtlasEditor::UnloadAssets() {
     unload(characterAssets_);
 }
 
-void AtlasEditor::ChangeDomain() {
+void EditorApp::ChangeDomain() {
     activeDomain_ = activeDomain_ == Domain::Map ? Domain::Character : Domain::Map;
     if (ActiveAssets().empty()) {
         activeDomain_ = activeDomain_ == Domain::Map ? Domain::Character : Domain::Map;
@@ -310,7 +314,7 @@ void AtlasEditor::ChangeDomain() {
     ClampSelectionToTexture();
 }
 
-void AtlasEditor::StepAsset(int delta) {
+void EditorApp::StepAsset(int delta) {
     auto& assets = ActiveAssets();
     if (assets.empty()) {
         activeIndex_ = 0;
@@ -325,7 +329,7 @@ void AtlasEditor::StepAsset(int delta) {
     ClampSelectionToTexture();
 }
 
-void AtlasEditor::NewMapDocument() {
+void EditorApp::NewMapDocument() {
     currentMapFile_.clear();
     mapId_ = "new_map";
     worldName_ = "New Region";
@@ -351,107 +355,72 @@ void AtlasEditor::NewMapDocument() {
     objectPlacementKind_ = "prop";
 }
 
-bool AtlasEditor::LoadMapFile(const std::filesystem::path& path) {
+bool EditorApp::LoadMapFile(const std::filesystem::path& path) {
     std::ifstream in(path);
     if (!in.is_open()) {
         statusText_ = "Failed to open map: " + path.filename().string();
         return false;
     }
 
+    std::ostringstream buffer;
+    buffer << in.rdbuf();
+    const Nganu::MapFormat::ParseResult parsed = Nganu::MapFormat::ParseDocument(buffer.str());
+    if (!parsed.ok) {
+        statusText_ = parsed.line > 0
+            ? "Map parse issue at line " + std::to_string(parsed.line) + ": " + parsed.error
+            : "Map parse issue: " + parsed.error;
+        return false;
+    }
+    const Nganu::MapFormat::Document& document = parsed.document;
+
     NewMapDocument();
     currentMapFile_ = path;
-    mapId_ = path.stem().string();
-    worldName_ = path.stem().string();
+    mapId_ = document.mapId;
+    worldName_ = document.worldName;
+    mapTileSize_ = document.tileSize;
+    mapWidth_ = document.width;
+    mapHeight_ = document.height;
+    mapSpawn_ = Vector2 {document.spawn.x, document.spawn.y};
     mapProperties_.clear();
     mapLayers_.clear();
 
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line.empty()) {
-            continue;
+    for (const auto& [key, value] : document.properties) {
+        mapProperties_.push_back({key, value});
+    }
+    for (const Nganu::MapFormat::Layer& source : document.layers) {
+        mapLayers_.push_back(MapLayerDef {source.name, source.kind, source.asset, source.tint, source.parallax});
+    }
+    for (const Nganu::MapFormat::Stamp& source : document.stamps) {
+        mapStamps_.push_back(MapStamp {source.layer, source.x, source.y, source.asset});
+    }
+    for (const Nganu::MapFormat::Object& source : document.objects) {
+        MapObject object;
+        object.kind = source.kind;
+        object.id = source.id;
+        object.x = static_cast<int>(std::round(source.bounds.x));
+        object.y = static_cast<int>(std::round(source.bounds.y));
+        object.width = static_cast<int>(std::round(source.bounds.width));
+        object.height = static_cast<int>(std::round(source.bounds.height));
+        for (const auto& [key, value] : source.properties) {
+            object.properties.push_back({key, value});
         }
-        const size_t sep = line.find('=');
-        if (sep == std::string::npos) {
-            continue;
-        }
-        const std::string key = line.substr(0, sep);
-        const std::string value = line.substr(sep + 1);
-        try {
-            if (key == "map_id") {
-                mapId_ = value;
-            } else if (key == "world_name") {
-                worldName_ = value;
-            } else if (key == "tile") {
-                mapTileSize_ = std::stoi(value);
-            } else if (key == "width") {
-                mapWidth_ = std::stoi(value);
-            } else if (key == "height") {
-                mapHeight_ = std::stoi(value);
-            } else if (key == "spawn") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 2) {
-                    mapSpawn_.x = std::stof(parts[0]);
-                    mapSpawn_.y = std::stof(parts[1]);
-                }
-            } else if (key == "property") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 2) {
-                    mapProperties_.push_back({parts[0], parts[1]});
-                }
-            } else if (key == "layer") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 5) {
-                    MapLayerDef layer;
-                    layer.name = parts[0];
-                    layer.kind = parts[1];
-                    layer.asset = parts[2];
-                    layer.tint = parts[3];
-                    layer.parallax = std::stof(parts[4]);
-                    mapLayers_.push_back(std::move(layer));
-                }
-            } else if (key == "stamp") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 4) {
-                    MapStamp stamp;
-                    stamp.layer = parts[0];
-                    stamp.x = std::stoi(parts[1]);
-                    stamp.y = std::stoi(parts[2]);
-                    stamp.asset = parts[3];
-                    mapStamps_.push_back(std::move(stamp));
-                }
-            } else if (key == "object") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 6) {
-                    MapObject object;
-                    object.kind = parts[0];
-                    object.id = parts[1];
-                    object.x = std::stoi(parts[2]);
-                    object.y = std::stoi(parts[3]);
-                    object.width = std::stoi(parts[4]);
-                    object.height = std::stoi(parts[5]);
-                    for (size_t i = 6; i < parts.size(); ++i) {
-                        const auto kv = SplitEscaped(parts[i], ':');
-                        if (kv.size() >= 2) {
-                            object.properties.push_back({kv[0], kv[1]});
-                        }
-                    }
-                    mapObjects_.push_back(std::move(object));
-                }
-            } else if (key == "blocked") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 4) {
-                    blockedAreas_.push_back({std::stoi(parts[0]), std::stoi(parts[1]), std::stoi(parts[2]), std::stoi(parts[3])});
-                }
-            } else if (key == "water") {
-                const auto parts = SplitEscaped(value, ',');
-                if (parts.size() >= 4) {
-                    waterAreas_.push_back({std::stoi(parts[0]), std::stoi(parts[1]), std::stoi(parts[2]), std::stoi(parts[3])});
-                }
-            }
-        } catch (...) {
-            statusText_ = "Map parse issue near: " + line;
-            return false;
-        }
+        mapObjects_.push_back(std::move(object));
+    }
+    for (const Nganu::MapFormat::Rect& source : document.blockedAreas) {
+        blockedAreas_.push_back(MapRect {
+            static_cast<int>(std::round(source.x)),
+            static_cast<int>(std::round(source.y)),
+            static_cast<int>(std::round(source.width)),
+            static_cast<int>(std::round(source.height))
+        });
+    }
+    for (const Nganu::MapFormat::Rect& source : document.waterAreas) {
+        waterAreas_.push_back(MapRect {
+            static_cast<int>(std::round(source.x)),
+            static_cast<int>(std::round(source.y)),
+            static_cast<int>(std::round(source.width)),
+            static_cast<int>(std::round(source.height))
+        });
     }
 
     if (mapLayers_.empty()) {
@@ -462,7 +431,7 @@ bool AtlasEditor::LoadMapFile(const std::filesystem::path& path) {
     return true;
 }
 
-bool AtlasEditor::SaveCurrentMap() const {
+bool EditorApp::SaveCurrentMap() const {
     std::filesystem::path output = currentMapFile_;
     if (output.empty()) {
         output = mapsRoot_ / (mapId_ + ".map");
@@ -474,35 +443,96 @@ bool AtlasEditor::SaveCurrentMap() const {
             return false;
         }
 
+        out << "map_format=2\n";
         out << "map_id=" << mapId_ << "\n";
         out << "world_name=" << worldName_ << "\n";
-        out << "tile=" << mapTileSize_ << "\n";
-        out << "width=" << mapWidth_ << "\n";
-        out << "height=" << mapHeight_ << "\n";
+        out << "tile_size=" << mapTileSize_ << "\n";
+        out << "size=" << mapWidth_ << "," << mapHeight_ << "\n";
         out << "spawn=" << static_cast<int>(mapSpawn_.x) << "," << static_cast<int>(mapSpawn_.y) << "\n";
         for (const MapProperty& property : mapProperties_) {
-            out << "property=" << EscapeValue(property.key) << "," << EscapeValue(property.value) << "\n";
+            out << "property=" << Nganu::MapFormat::EscapeValue(property.key) << "," << Nganu::MapFormat::EscapeValue(property.value) << "\n";
         }
         for (const MapLayerDef& layer : mapLayers_) {
-            out << "layer=" << EscapeValue(layer.name) << "," << EscapeValue(layer.kind) << "," << EscapeValue(layer.asset)
-                << "," << layer.tint << "," << layer.parallax << "\n";
+            out << "layer=" << Nganu::MapFormat::EscapeValue(layer.name) << ",tilemap";
+            if (!layer.asset.empty()) {
+                out << ",asset:" << Nganu::MapFormat::EscapeValue(layer.asset);
+            }
+            out << ",tint:" << layer.tint << ",parallax:" << layer.parallax << "\n";
         }
+        std::map<std::pair<std::string, std::string>, std::set<std::pair<int, int>>> stampGroups;
         for (const MapStamp& stamp : mapStamps_) {
-            out << "stamp=" << EscapeValue(stamp.layer) << "," << stamp.x << "," << stamp.y << "," << EscapeValue(stamp.asset) << "\n";
+            stampGroups[{stamp.layer, stamp.asset}].insert({stamp.x, stamp.y});
+        }
+        for (auto& [group, points] : stampGroups) {
+            const std::string& layer = group.first;
+            const std::string& asset = group.second;
+            while (!points.empty()) {
+                const auto start = *points.begin();
+                int runX = start.first;
+                while (points.find({runX + 1, start.second}) != points.end()) {
+                    ++runX;
+                }
+                int runY = start.second;
+                while (points.find({start.first, runY + 1}) != points.end()) {
+                    ++runY;
+                }
+                const int horizontalLen = runX - start.first + 1;
+                const int verticalLen = runY - start.second + 1;
+                if (horizontalLen >= 3 || verticalLen >= 3) {
+                    if (horizontalLen >= verticalLen) {
+                        out << "line=" << Nganu::MapFormat::EscapeValue(layer) << ","
+                            << start.first << "," << start.second << ","
+                            << runX << "," << start.second << ","
+                            << Nganu::MapFormat::EscapeValue(asset) << "\n";
+                        for (int x = start.first; x <= runX; ++x) {
+                            points.erase({x, start.second});
+                        }
+                    } else {
+                        out << "line=" << Nganu::MapFormat::EscapeValue(layer) << ","
+                            << start.first << "," << start.second << ","
+                            << start.first << "," << runY << ","
+                            << Nganu::MapFormat::EscapeValue(asset) << "\n";
+                        for (int y = start.second; y <= runY; ++y) {
+                            points.erase({start.first, y});
+                        }
+                    }
+                    continue;
+                }
+
+                std::vector<std::pair<int, int>> batch;
+                batch.reserve(32);
+                while (!points.empty() && batch.size() < 32) {
+                    batch.push_back(*points.begin());
+                    points.erase(points.begin());
+                }
+                if (batch.size() == 1) {
+                    out << "tile=" << Nganu::MapFormat::EscapeValue(layer) << ","
+                        << batch[0].first << "," << batch[0].second << ","
+                        << Nganu::MapFormat::EscapeValue(asset) << "\n";
+                } else {
+                    out << "tiles=" << Nganu::MapFormat::EscapeValue(layer) << ","
+                        << Nganu::MapFormat::EscapeValue(asset);
+                    for (const auto& [x, y] : batch) {
+                        out << "," << x << ":" << y;
+                    }
+                    out << "\n";
+                }
+            }
         }
         for (const MapObject& object : mapObjects_) {
-            out << "object=" << EscapeValue(object.kind) << "," << EscapeValue(object.id) << ","
-                << object.x << "," << object.y << "," << object.width << "," << object.height;
+            out << "entity=" << Nganu::MapFormat::EscapeValue(object.kind) << "," << Nganu::MapFormat::EscapeValue(object.id) << ","
+                << object.x << "," << object.y << "," << object.width << "," << object.height << "\n";
             for (const MapProperty& property : object.properties) {
-                out << "," << EscapeValue(property.key) << ":" << EscapeValue(property.value);
+                out << "prop=" << Nganu::MapFormat::EscapeValue(object.id) << ","
+                    << Nganu::MapFormat::EscapeValue(property.key) << ","
+                    << Nganu::MapFormat::EscapeValue(property.value) << "\n";
             }
-            out << "\n";
         }
         for (const MapRect& rect : blockedAreas_) {
-            out << "blocked=" << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
+            out << "area=block," << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
         }
         for (const MapRect& rect : waterAreas_) {
-            out << "water=" << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
+            out << "area=water," << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
         }
         return out.good();
     } catch (...) {
@@ -510,7 +540,7 @@ bool AtlasEditor::SaveCurrentMap() const {
     }
 }
 
-void AtlasEditor::StepMapFile(int delta) {
+void EditorApp::StepMapFile(int delta) {
     if (mapFiles_.empty()) {
         return;
     }
@@ -523,21 +553,21 @@ void AtlasEditor::StepMapFile(int delta) {
     LoadMapFile(mapFiles_[activeMapFileIndex_]);
 }
 
-AtlasEditor::MapLayerDef* AtlasEditor::ActiveMapLayer() {
+EditorApp::MapLayerDef* EditorApp::ActiveMapLayer() {
     if (mapLayers_.empty() || activeMapLayerIndex_ < 0 || activeMapLayerIndex_ >= static_cast<int>(mapLayers_.size())) {
         return nullptr;
     }
     return &mapLayers_[activeMapLayerIndex_];
 }
 
-const AtlasEditor::MapLayerDef* AtlasEditor::ActiveMapLayer() const {
+const EditorApp::MapLayerDef* EditorApp::ActiveMapLayer() const {
     if (mapLayers_.empty() || activeMapLayerIndex_ < 0 || activeMapLayerIndex_ >= static_cast<int>(mapLayers_.size())) {
         return nullptr;
     }
     return &mapLayers_[activeMapLayerIndex_];
 }
 
-std::string AtlasEditor::CurrentBrushRef() const {
+std::string EditorApp::CurrentBrushRef() const {
     const AtlasAsset* asset = CurrentAsset();
     if (!asset) {
         return {};
@@ -548,7 +578,7 @@ std::string AtlasEditor::CurrentBrushRef() const {
     return BuildAtlasRef();
 }
 
-std::vector<AtlasEditor::BrushStamp> AtlasEditor::CurrentBrushPattern() const {
+std::vector<EditorApp::BrushStamp> EditorApp::CurrentBrushPattern() const {
     std::vector<BrushStamp> pattern;
     const AtlasAsset* asset = CurrentAsset();
     if (!asset || asset->domain != "map") {
@@ -572,7 +602,7 @@ std::vector<AtlasEditor::BrushStamp> AtlasEditor::CurrentBrushPattern() const {
     return pattern;
 }
 
-void AtlasEditor::HandleKeyboardInput(float dt) {
+void EditorApp::HandleKeyboardInput(float dt) {
     const float panStep = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL) ? 18.0f : 9.0f;
     if (IsKeyPressed(KEY_F1)) {
         mode_ = EditorMode::Atlas;
@@ -630,7 +660,7 @@ void AtlasEditor::HandleKeyboardInput(float dt) {
     ClampSelectionToTexture();
 }
 
-void AtlasEditor::HandleMouseInput(const Rectangle& canvasBounds) {
+void EditorApp::HandleMouseInput(const Rectangle& canvasBounds) {
     if (mode_ != EditorMode::Atlas) {
         return;
     }
@@ -678,7 +708,7 @@ void AtlasEditor::HandleMouseInput(const Rectangle& canvasBounds) {
     ClampSelectionToTexture();
 }
 
-Rectangle AtlasEditor::MapCanvasRect(const Rectangle& bounds) const {
+Rectangle EditorApp::MapCanvasRect(const Rectangle& bounds) const {
     return Rectangle {
         bounds.x + mapPan_.x,
         bounds.y + mapPan_.y,
@@ -687,7 +717,7 @@ Rectangle AtlasEditor::MapCanvasRect(const Rectangle& bounds) const {
     };
 }
 
-bool AtlasEditor::ScreenToMapTile(Vector2 screen, const Rectangle& bounds, int& outTileX, int& outTileY) const {
+bool EditorApp::ScreenToMapTile(Vector2 screen, const Rectangle& bounds, int& outTileX, int& outTileY) const {
     const Rectangle canvas = MapCanvasRect(bounds);
     if (!CheckCollisionPointRec(screen, canvas)) {
         return false;
@@ -699,7 +729,7 @@ bool AtlasEditor::ScreenToMapTile(Vector2 screen, const Rectangle& bounds, int& 
     return true;
 }
 
-bool AtlasEditor::ScreenToMapPixel(Vector2 screen, const Rectangle& bounds, int& outX, int& outY) const {
+bool EditorApp::ScreenToMapPixel(Vector2 screen, const Rectangle& bounds, int& outX, int& outY) const {
     const Rectangle canvas = MapCanvasRect(bounds);
     if (!CheckCollisionPointRec(screen, canvas)) {
         return false;
@@ -709,7 +739,7 @@ bool AtlasEditor::ScreenToMapPixel(Vector2 screen, const Rectangle& bounds, int&
     return true;
 }
 
-void AtlasEditor::PaintMapTile(int tileX, int tileY) {
+void EditorApp::PaintMapTile(int tileX, int tileY) {
     MapLayerDef* layer = ActiveMapLayer();
     const std::vector<BrushStamp> brush = CurrentBrushPattern();
     if (!layer || brush.empty()) {
@@ -738,7 +768,7 @@ void AtlasEditor::PaintMapTile(int tileX, int tileY) {
     }
 }
 
-void AtlasEditor::EraseMapTile(int tileX, int tileY) {
+void EditorApp::EraseMapTile(int tileX, int tileY) {
     MapLayerDef* layer = ActiveMapLayer();
     if (!layer) {
         return;
@@ -748,7 +778,7 @@ void AtlasEditor::EraseMapTile(int tileX, int tileY) {
     }), mapStamps_.end());
 }
 
-bool AtlasEditor::HasMapRect(const std::vector<MapRect>& areas, int tileX, int tileY) const {
+bool EditorApp::HasMapRect(const std::vector<MapRect>& areas, int tileX, int tileY) const {
     const int px = tileX * mapTileSize_;
     const int py = tileY * mapTileSize_;
     for (const MapRect& rect : areas) {
@@ -759,7 +789,7 @@ bool AtlasEditor::HasMapRect(const std::vector<MapRect>& areas, int tileX, int t
     return false;
 }
 
-void AtlasEditor::ToggleMapRect(std::vector<MapRect>& areas, int tileX, int tileY) {
+void EditorApp::ToggleMapRect(std::vector<MapRect>& areas, int tileX, int tileY) {
     const int px = tileX * mapTileSize_;
     const int py = tileY * mapTileSize_;
     for (size_t i = 0; i < areas.size(); ++i) {
@@ -772,7 +802,7 @@ void AtlasEditor::ToggleMapRect(std::vector<MapRect>& areas, int tileX, int tile
     areas.push_back({px, py, mapTileSize_, mapTileSize_});
 }
 
-int AtlasEditor::ObjectIndexAtPixel(int px, int py) const {
+int EditorApp::ObjectIndexAtPixel(int px, int py) const {
     for (int i = static_cast<int>(mapObjects_.size()) - 1; i >= 0; --i) {
         const MapObject& object = mapObjects_[static_cast<size_t>(i)];
         if (px >= object.x && py >= object.y && px < object.x + object.width && py < object.y + object.height) {
@@ -782,7 +812,7 @@ int AtlasEditor::ObjectIndexAtPixel(int px, int py) const {
     return -1;
 }
 
-void AtlasEditor::PlaceOrSelectObject(int px, int py) {
+void EditorApp::PlaceOrSelectObject(int px, int py) {
     const int existing = ObjectIndexAtPixel(px, py);
     if (existing >= 0) {
         selectedMapObjectIndex_ = existing;
@@ -825,7 +855,7 @@ void AtlasEditor::PlaceOrSelectObject(int px, int py) {
     statusText_ = "Placed object " + mapObjects_.back().id;
 }
 
-void AtlasEditor::DeleteSelectedObject() {
+void EditorApp::DeleteSelectedObject() {
     if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
         return;
     }
@@ -835,7 +865,7 @@ void AtlasEditor::DeleteSelectedObject() {
     statusText_ = "Deleted object " + removedId;
 }
 
-void AtlasEditor::HandleMapKeyboardInput(float dt) {
+void EditorApp::HandleMapKeyboardInput(float dt) {
     if (mode_ != EditorMode::Map) {
         return;
     }
@@ -891,7 +921,7 @@ void AtlasEditor::HandleMapKeyboardInput(float dt) {
     if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), mapDownRepeatTimer_, dt)) mapPan_.y -= panStep;
 }
 
-void AtlasEditor::HandleMapMouseInput(const Rectangle& canvasBounds) {
+void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds) {
     if (mode_ != EditorMode::Map) {
         return;
     }
@@ -1001,7 +1031,7 @@ void AtlasEditor::HandleMapMouseInput(const Rectangle& canvasBounds) {
     }
 }
 
-void AtlasEditor::ClampSelectionToTexture() {
+void EditorApp::ClampSelectionToTexture() {
     AtlasAsset* asset = CurrentAsset();
     if (!asset || !asset->loaded) {
         selectionX_ = std::max(0, selectionX_);
@@ -1018,7 +1048,7 @@ void AtlasEditor::ClampSelectionToTexture() {
     selectionY_ = std::clamp(selectionY_, 0, std::max(0, maxRows - selectionRows_));
 }
 
-Rectangle AtlasEditor::SelectionRectPixels() const {
+Rectangle EditorApp::SelectionRectPixels() const {
     return Rectangle {
         static_cast<float>(selectionX_ * gridWidth_),
         static_cast<float>(selectionY_ * gridHeight_),
@@ -1027,7 +1057,7 @@ Rectangle AtlasEditor::SelectionRectPixels() const {
     };
 }
 
-std::string AtlasEditor::BuildAtlasRef() const {
+std::string EditorApp::BuildAtlasRef() const {
     const AtlasAsset* asset = CurrentAsset();
     if (!asset) {
         return {};
@@ -1042,7 +1072,7 @@ std::string AtlasEditor::BuildAtlasRef() const {
     return out.str();
 }
 
-void AtlasEditor::CopyCurrentRef() {
+void EditorApp::CopyCurrentRef() {
     const std::string ref = BuildAtlasRef();
     if (ref.empty()) {
         statusText_ = "No atlas selected.";
@@ -1052,7 +1082,7 @@ void AtlasEditor::CopyCurrentRef() {
     statusText_ = "Copied atlas ref: " + ref;
 }
 
-void AtlasEditor::Update(float dt) {
+void EditorApp::Update(float dt) {
     EnsureCurrentTextureLoaded();
     HandleKeyboardInput(dt);
     HandleMapKeyboardInput(dt);
@@ -1062,15 +1092,15 @@ void AtlasEditor::Update(float dt) {
     HandleMapMouseInput(canvasBounds);
 }
 
-void AtlasEditor::DrawTopBar() const {
+void EditorApp::DrawTopBar() const {
     const Rectangle bar {0.0f, 0.0f, static_cast<float>(GetScreenWidth()), 60.0f};
     DrawRectangleRec(bar, PanelColor());
-    DrawUiText(uiFont_, "nganu.atlas", 18, 14, UiFont(28), RAYWHITE);
+    DrawUiText(uiFont_, "nganu.editor", 18, 14, UiFont(28), RAYWHITE);
     DrawUiText(uiFont_, "F1 Atlas | F2 Map", 190, 20, UiFont(18), AccentSoft());
     DrawUiText(uiFont_, ModeLabel(mode_), 340, 20, UiFont(18), Fade(RAYWHITE, 0.8f));
 }
 
-void AtlasEditor::DrawAtlasCanvas(Rectangle bounds) const {
+void EditorApp::DrawAtlasCanvas(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.02f, 8, Color {252, 248, 241, 255});
     DrawRectangleLinesEx(bounds, 1.0f, Fade(InkColor(), 0.14f));
 
@@ -1101,7 +1131,7 @@ void AtlasEditor::DrawAtlasCanvas(Rectangle bounds) const {
     EndScissorMode();
 }
 
-void AtlasEditor::DrawSidePanel(Rectangle bounds) const {
+void EditorApp::DrawSidePanel(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.04f, 8, PanelColor());
 
     const AtlasAsset* asset = CurrentAsset();
@@ -1144,7 +1174,7 @@ void AtlasEditor::DrawSidePanel(Rectangle bounds) const {
     DrawUiText(uiFont_, statusText_, bounds.x + 18.0f, bounds.y + bounds.height - 30.0f, UiFont(16), Fade(RAYWHITE, 0.62f));
 }
 
-void AtlasEditor::DrawMapCanvas(Rectangle bounds) const {
+void EditorApp::DrawMapCanvas(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.02f, 8, Color {252, 248, 241, 255});
     DrawRectangleLinesEx(bounds, 1.0f, Fade(InkColor(), 0.14f));
 
@@ -1295,7 +1325,7 @@ void AtlasEditor::DrawMapCanvas(Rectangle bounds) const {
     EndScissorMode();
 }
 
-void AtlasEditor::DrawMapSidePanel(Rectangle bounds) const {
+void EditorApp::DrawMapSidePanel(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.04f, 8, PanelColor());
     const MapLayerDef* activeLayer = ActiveMapLayer();
     float y = bounds.y + 18.0f;
@@ -1424,7 +1454,7 @@ void AtlasEditor::DrawMapSidePanel(Rectangle bounds) const {
     DrawUiText(uiFont_, statusText_, left, bounds.y + bounds.height - 24.0f, UiFont(16), Fade(RAYWHITE, 0.62f));
 }
 
-void AtlasEditor::Draw() const {
+void EditorApp::Draw() const {
     ClearBackground(BackgroundColor());
     DrawTopBar();
 
@@ -1441,15 +1471,15 @@ void AtlasEditor::Draw() const {
     DrawMapSidePanel(sideBounds);
 }
 
-const char* AtlasEditor::ModeLabel(EditorMode mode) {
+const char* EditorApp::ModeLabel(EditorMode mode) {
     return mode == EditorMode::Atlas ? "Atlas Picker" : "Map Editor";
 }
 
-const char* AtlasEditor::DomainLabel(Domain domain) {
+const char* EditorApp::DomainLabel(Domain domain) {
     return domain == Domain::Map ? "map" : "character";
 }
 
-const char* AtlasEditor::MapToolLabel(MapTool tool) {
+const char* EditorApp::MapToolLabel(MapTool tool) {
     switch (tool) {
         case MapTool::Paint: return "paint";
         case MapTool::Erase: return "erase";
@@ -1461,7 +1491,7 @@ const char* AtlasEditor::MapToolLabel(MapTool tool) {
     return "paint";
 }
 
-const char* AtlasEditor::MapSectionLabel(MapSection section) {
+const char* EditorApp::MapSectionLabel(MapSection section) {
     switch (section) {
         case MapSection::Tile: return "Tile";
         case MapSection::Region: return "Region";

@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/nganu-atlas.dir/link.d "CMakeFiles/nganu-atlas.dir/src/main.cpp.o" "CMakeFiles/nganu-atlas.dir/src/AtlasEditor.cpp.o" -o nganu-atlas  /usr/lib/libraylib.so -lm -L/usr/lib -lraylib

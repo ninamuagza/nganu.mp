@@ -473,7 +473,7 @@ Konsekuensi:
 
 Keputusan:
 
-- `nganu.atlas` dan tooling lain diposisikan sebagai alat produksi content, bukan penentu state runtime saat game berjalan.
+- `nganu.editor` dan tooling lain diposisikan sebagai alat produksi content, bukan penentu state runtime saat game berjalan.
 
 Alasan:
 
@@ -510,7 +510,7 @@ Peran:
 - session/state management
 - plugin integration
 
-### `nganu.atlas`
+### `nganu.editor`
 
 Peran:
 

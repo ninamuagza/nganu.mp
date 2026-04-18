@@ -16,6 +16,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o.d"
   "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o"
   "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o.d"
+  "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o"
+  "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o.d"
   "CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o"
   "CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o.d"
   "CMakeFiles/nganu-game.dir/src/Game.cpp.o"

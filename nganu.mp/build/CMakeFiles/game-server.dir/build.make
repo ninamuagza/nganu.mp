@@ -72,10 +72,24 @@ include CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/codegen:
 .PHONY : CMakeFiles/game-server.dir/codegen
 
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: CMakeFiles/game-server.dir/flags.make
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /home/fanorisky/GameProject/shared/MapFormat.cpp
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o -MF CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o.d -o CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o -c /home/fanorisky/GameProject/shared/MapFormat.cpp
+
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/fanorisky/GameProject/shared/MapFormat.cpp > CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i
+
+CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/fanorisky/GameProject/shared/MapFormat.cpp -o CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s
+
 CMakeFiles/game-server.dir/src/main.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/main.cpp
 CMakeFiles/game-server.dir/src/main.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/game-server.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game-server.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/main.cpp.o -MF CMakeFiles/game-server.dir/src/main.cpp.o.d -o CMakeFiles/game-server.dir/src/main.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/main.cpp
 
 CMakeFiles/game-server.dir/src/main.cpp.i: cmake_force
@@ -89,7 +103,7 @@ CMakeFiles/game-server.dir/src/main.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game-server.dir/src/core/MapData.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game-server.dir/src/core/MapData.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/core/MapData.cpp.o -MF CMakeFiles/game-server.dir/src/core/MapData.cpp.o.d -o CMakeFiles/game-server.dir/src/core/MapData.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp
 
 CMakeFiles/game-server.dir/src/core/MapData.cpp.i: cmake_force
@@ -103,7 +117,7 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/core/Server.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp
 CMakeFiles/game-server.dir/src/core/Server.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game-server.dir/src/core/Server.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game-server.dir/src/core/Server.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/core/Server.cpp.o -MF CMakeFiles/game-server.dir/src/core/Server.cpp.o.d -o CMakeFiles/game-server.dir/src/core/Server.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp
 
 CMakeFiles/game-server.dir/src/core/Server.cpp.i: cmake_force
@@ -117,7 +131,7 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game-server.dir/src/core/Runtime.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game-server.dir/src/core/Runtime.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/core/Runtime.cpp.o -MF CMakeFiles/game-server.dir/src/core/Runtime.cpp.o.d -o CMakeFiles/game-server.dir/src/core/Runtime.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp
 
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.i: cmake_force
@@ -131,7 +145,7 @@ CMakeFiles/game-server.dir/src/core/Runtime.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.cpp
 CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o -MF CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o.d -o CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.cpp
 
 CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.i: cmake_force
@@ -145,7 +159,7 @@ CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.cpp
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o -MF CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o.d -o CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.cpp
 
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.i: cmake_force
@@ -159,7 +173,7 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/script/Builtins.cpp
 CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/game-server.dir/src/script/Builtins.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/game-server.dir/src/script/Builtins.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/script/Builtins.cpp.o -MF CMakeFiles/game-server.dir/src/script/Builtins.cpp.o.d -o CMakeFiles/game-server.dir/src/script/Builtins.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/script/Builtins.cpp
 
 CMakeFiles/game-server.dir/src/script/Builtins.cpp.i: cmake_force
@@ -173,7 +187,7 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/network/Network.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/network/Network.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/network/Network.cpp
 CMakeFiles/game-server.dir/src/network/Network.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/game-server.dir/src/network/Network.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/game-server.dir/src/network/Network.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/network/Network.cpp.o -MF CMakeFiles/game-server.dir/src/network/Network.cpp.o.d -o CMakeFiles/game-server.dir/src/network/Network.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/network/Network.cpp
 
 CMakeFiles/game-server.dir/src/network/Network.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/game-server.dir/src/network/Network.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/network/Packet.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/network/Packet.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/network/Packet.cpp
 CMakeFiles/game-server.dir/src/network/Packet.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/game-server.dir/src/network/Packet.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/game-server.dir/src/network/Packet.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/network/Packet.cpp.o -MF CMakeFiles/game-server.dir/src/network/Packet.cpp.o.d -o CMakeFiles/game-server.dir/src/network/Packet.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/network/Packet.cpp
 
 CMakeFiles/game-server.dir/src/network/Packet.cpp.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/game-server.dir/src/network/Packet.cpp.s: cmake_force
 CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o: CMakeFiles/game-server.dir/flags.make
 CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.cpp
 CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o: CMakeFiles/game-server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o -MF CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o.d -o CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o -c /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.cpp
 
 CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.i: cmake_force
@@ -214,6 +228,7 @@ CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.s: cmake_force
 
 # Object files for target game-server
 game__server_OBJECTS = \
+"CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o" \
 "CMakeFiles/game-server.dir/src/main.cpp.o" \
 "CMakeFiles/game-server.dir/src/core/MapData.cpp.o" \
 "CMakeFiles/game-server.dir/src/core/Server.cpp.o" \
@@ -228,6 +243,7 @@ game__server_OBJECTS = \
 # External object files for target game-server
 game__server_EXTERNAL_OBJECTS =
 
+/home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/src/main.cpp.o
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/src/core/MapData.cpp.o
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/src/core/Server.cpp.o
@@ -243,7 +259,7 @@ game__server_EXTERNAL_OBJECTS =
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: libenet_static.a
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: /usr/lib/libluajit-5.1.so
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable /home/fanorisky/GameProject/nganu.mp/bin/game-server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable /home/fanorisky/GameProject/nganu.mp/bin/game-server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game-server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

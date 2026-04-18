@@ -1,3 +1,0 @@
-/home/fanorisky/GameProject/nganu.atlas/build/CMakeFiles/nganu-atlas.dir
-/home/fanorisky/GameProject/nganu.atlas/build/CMakeFiles/edit_cache.dir
-/home/fanorisky/GameProject/nganu.atlas/build/CMakeFiles/rebuild_cache.dir

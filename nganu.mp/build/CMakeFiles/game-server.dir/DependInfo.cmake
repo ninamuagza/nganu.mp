@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/fanorisky/GameProject/shared/MapFormat.cpp" "CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o" "gcc" "CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp" "CMakeFiles/game-server.dir/src/core/MapData.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/MapData.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp" "CMakeFiles/game-server.dir/src/core/Runtime.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/Runtime.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.mp/src/core/Server.cpp" "CMakeFiles/game-server.dir/src/core/Server.cpp.o" "gcc" "CMakeFiles/game-server.dir/src/core/Server.cpp.o.d"

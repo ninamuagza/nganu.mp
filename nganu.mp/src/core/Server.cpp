@@ -457,7 +457,10 @@ void Server::rebuildAllowedAssetKeys() {
         for (const std::string& asset : loadedMap.mapImageRefs()) {
             if (asset.empty()) continue;
             allowedAssetKeys_.insert("map_image:" + asset);
-            allowedAssetKeys_.insert("map_meta:" + std::filesystem::path(asset).stem().string() + ".atlas");
+            const std::string metaFile = std::filesystem::path(asset).stem().string() + ".atlas";
+            if (std::filesystem::exists(mapDirectory_.parent_path() / "map_images" / metaFile)) {
+                allowedAssetKeys_.insert("map_meta:" + metaFile);
+            }
         }
         for (const std::string& asset : loadedMap.characterImageRefs()) {
             if (asset.empty()) continue;

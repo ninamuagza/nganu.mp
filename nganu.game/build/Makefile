@@ -321,6 +321,30 @@ home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
 .PHONY : home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.s
 
+home/fanorisky/GameProject/shared/MapFormat.o: home/fanorisky/GameProject/shared/MapFormat.cpp.o
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.o
+
+# target to build an object file
+home/fanorisky/GameProject/shared/MapFormat.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.o
+
+home/fanorisky/GameProject/shared/MapFormat.i: home/fanorisky/GameProject/shared/MapFormat.cpp.i
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.i
+
+# target to preprocess a source file
+home/fanorisky/GameProject/shared/MapFormat.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.i
+
+home/fanorisky/GameProject/shared/MapFormat.s: home/fanorisky/GameProject/shared/MapFormat.cpp.s
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.s
+
+# target to generate assembly for a file
+home/fanorisky/GameProject/shared/MapFormat.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s
+.PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.s
+
 src/AssetManager.o: src/AssetManager.cpp.o
 .PHONY : src/AssetManager.o
 
@@ -666,6 +690,9 @@ help:
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.o"
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.i"
 	@echo "... home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.s"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.o"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.i"
+	@echo "... home/fanorisky/GameProject/shared/MapFormat.s"
 	@echo "... src/AssetManager.o"
 	@echo "... src/AssetManager.i"
 	@echo "... src/AssetManager.s"

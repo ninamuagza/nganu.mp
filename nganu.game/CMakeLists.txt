@@ -18,6 +18,7 @@ if (NOT TARGET raylib AND NOT TARGET PkgConfig::RAYLIB)
 endif()
 
 add_executable(nganu-game
+    ../shared/MapFormat.cpp
     src/main.cpp
     src/Game.cpp
     src/World.cpp

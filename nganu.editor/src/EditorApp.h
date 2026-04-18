@@ -6,10 +6,10 @@
 #include <string>
 #include <vector>
 
-class AtlasEditor {
+class EditorApp {
 public:
-    AtlasEditor();
-    ~AtlasEditor();
+    EditorApp();
+    ~EditorApp();
 
     void Update(float dt);
     void Draw() const;

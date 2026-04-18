@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "shared/MapFormat.h"
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -32,46 +34,6 @@ struct AtlasRef {
     bool valid = false;
 };
 
-bool ParseRectangle(const std::string& value, Rectangle& out) {
-    std::istringstream stream(value);
-    std::string token;
-    float parts[4] {};
-    int index = 0;
-    while (std::getline(stream, token, ',') && index < 4) {
-        try {
-            parts[index++] = std::stof(token);
-        } catch (...) {
-            return false;
-        }
-    }
-    if (index != 4) {
-        return false;
-    }
-
-    out = Rectangle {parts[0], parts[1], parts[2], parts[3]};
-    return true;
-}
-
-bool ParseVector2(const std::string& value, Vector2& out) {
-    std::istringstream stream(value);
-    std::string token;
-    float parts[2] {};
-    int index = 0;
-    while (std::getline(stream, token, ',') && index < 2) {
-        try {
-            parts[index++] = std::stof(token);
-        } catch (...) {
-            return false;
-        }
-    }
-    if (index != 2) {
-        return false;
-    }
-
-    out = Vector2 {parts[0], parts[1]};
-    return true;
-}
-
 bool ParsePair(const std::string& value, float& a, float& b) {
     std::istringstream stream(value);
     std::string token;
@@ -92,91 +54,6 @@ bool ParsePair(const std::string& value, float& a, float& b) {
         return false;
     }
     return true;
-}
-
-std::vector<std::string> SplitComma(const std::string& value) {
-    std::vector<std::string> parts;
-    std::string current;
-    bool escaping = false;
-    for (char ch : value) {
-        if (escaping) {
-            current.push_back(ch);
-            escaping = false;
-            continue;
-        }
-        if (ch == '\\') {
-            escaping = true;
-            continue;
-        }
-        if (ch == ',') {
-            parts.push_back(current);
-            current.clear();
-            continue;
-        }
-        current.push_back(ch);
-    }
-    parts.push_back(current);
-    return parts;
-}
-
-std::vector<std::string> SplitEscaped(const std::string& value, char delim) {
-    std::vector<std::string> parts;
-    std::string current;
-    bool escaping = false;
-    for (char ch : value) {
-        if (escaping) {
-            current.push_back(ch);
-            escaping = false;
-            continue;
-        }
-        if (ch == '\\') {
-            escaping = true;
-            continue;
-        }
-        if (ch == delim) {
-            parts.push_back(current);
-            current.clear();
-            continue;
-        }
-        current.push_back(ch);
-    }
-    parts.push_back(current);
-    return parts;
-}
-
-std::optional<std::pair<std::string, std::string>> SplitPropertyAssignment(const std::string& value, char delim) {
-    std::string key;
-    std::string remainder;
-    bool escaping = false;
-    bool foundDelim = false;
-    for (char ch : value) {
-        if (escaping) {
-            if (foundDelim) {
-                remainder.push_back(ch);
-            } else {
-                key.push_back(ch);
-            }
-            escaping = false;
-            continue;
-        }
-        if (ch == '\\') {
-            escaping = true;
-            continue;
-        }
-        if (!foundDelim && ch == delim) {
-            foundDelim = true;
-            continue;
-        }
-        if (foundDelim) {
-            remainder.push_back(ch);
-        } else {
-            key.push_back(ch);
-        }
-    }
-    if (!foundDelim) {
-        return std::nullopt;
-    }
-    return std::make_pair(key, remainder);
 }
 
 Color ParseHexColor(const std::string& value, Color fallback) {
@@ -222,39 +99,14 @@ Color ParseHexColor(const std::string& value, Color fallback) {
 
 AtlasRef ParseAtlasRef(const std::string& asset) {
     AtlasRef ref;
-    std::vector<std::string> parts;
-    std::istringstream stream(asset);
-    std::string token;
-    while (std::getline(stream, token, '@')) {
-        parts.push_back(token);
-    }
-
-    if (parts.size() != 5) {
+    const auto parsed = Nganu::MapFormat::ParseAtlasRef(asset);
+    if (!parsed.has_value()) {
         return ref;
     }
-
-    ref.file = parts[0];
-    ref.file.erase(std::remove(ref.file.begin(), ref.file.end(), '\\'), ref.file.end());
-    const size_t domainSep = ref.file.find(':');
-    if (domainSep != std::string::npos) {
-        const std::string domain = ref.file.substr(0, domainSep);
-        ref.file = ref.file.substr(domainSep + 1);
-        if (domain == "character") {
-            ref.domain = AssetDomain::Character;
-        } else {
-            ref.domain = AssetDomain::Map;
-        }
-    }
-    try {
-        ref.source.x = std::stof(parts[1]);
-        ref.source.y = std::stof(parts[2]);
-        ref.source.width = std::stof(parts[3]);
-        ref.source.height = std::stof(parts[4]);
-    } catch (...) {
-        return ref;
-    }
-
-    ref.valid = !ref.file.empty() && ref.source.width > 0.0f && ref.source.height > 0.0f;
+    ref.domain = parsed->domain == Nganu::MapFormat::AssetDomain::Character ? AssetDomain::Character : AssetDomain::Map;
+    ref.file = parsed->file;
+    ref.source = Rectangle {parsed->source.x, parsed->source.y, parsed->source.width, parsed->source.height};
+    ref.valid = true;
     return ref;
 }
 
@@ -364,9 +216,6 @@ bool HasArea(Rectangle rect) {
     return rect.width > 0.0f && rect.height > 0.0f;
 }
 
-std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h) {
-    return file + "@" + std::to_string(x) + "@" + std::to_string(y) + "@" + std::to_string(w) + "@" + std::to_string(h);
-}
 }
 
 World::World() {
@@ -396,13 +245,12 @@ void World::LoadDefaults() {
 }
 
 bool World::LoadFromMapAsset(const std::string& rawAsset) {
-    atlasTileMeta_.clear();
-    int nextTileSize = tileSize_;
-    int nextWidth = width_;
-    int nextHeight = height_;
-    std::string nextMapId = mapId_;
-    std::string nextWorldName = worldName_;
-    Vector2 nextSpawn = spawnPoint_;
+    const Nganu::MapFormat::ParseResult parsed = Nganu::MapFormat::ParseDocument(rawAsset);
+    if (!parsed.ok) {
+        return false;
+    }
+    const Nganu::MapFormat::Document& document = parsed.document;
+
     std::unordered_map<std::string, std::string> nextProperties;
     std::vector<WorldLayer> nextLayers;
     std::vector<WorldStamp> nextStamps;
@@ -410,141 +258,53 @@ bool World::LoadFromMapAsset(const std::string& rawAsset) {
     std::vector<Rectangle> nextBlocked;
     std::vector<Rectangle> nextWater;
 
-    std::istringstream stream(rawAsset);
-    std::string line;
-    while (std::getline(stream, line)) {
-        if (line.empty()) {
-            continue;
-        }
-
-        const size_t sep = line.find('=');
-        if (sep == std::string::npos) {
-            continue;
-        }
-
-        const std::string key = line.substr(0, sep);
-        const std::string value = line.substr(sep + 1);
-        if (key == "tile") {
-            try {
-                nextTileSize = std::stoi(value);
-            } catch (...) {
-                return false;
-            }
-        } else if (key == "width") {
-            try {
-                nextWidth = std::stoi(value);
-            } catch (...) {
-                return false;
-            }
-        } else if (key == "height") {
-            try {
-                nextHeight = std::stoi(value);
-            } catch (...) {
-                return false;
-            }
-        } else if (key == "map_id") {
-            nextMapId = value;
-        } else if (key == "world_name") {
-            nextWorldName = value;
-        } else if (key == "spawn") {
-            if (!ParseVector2(value, nextSpawn)) {
-                return false;
-            }
-        } else if (key == "property") {
-            const std::vector<std::string> parts = SplitEscaped(value, ',');
-            if (parts.size() < 2) {
-                return false;
-            }
-            nextProperties[parts[0]] = parts[1];
-        } else if (key == "layer") {
-            const std::vector<std::string> parts = SplitComma(value);
-            if (parts.size() < 5) {
-                return false;
-            }
-            WorldLayer layer;
-            layer.name = parts[0];
-            layer.kind = parts[1];
-            layer.asset = parts[2];
-            layer.tint = ParseHexColor(parts[3], RAYWHITE);
-            try {
-                layer.parallax = std::stof(parts[4]);
-            } catch (...) {
-                return false;
-            }
-            LoadAtlasMetadataForRef(layer.asset);
-            nextLayers.push_back(std::move(layer));
-        } else if (key == "object") {
-            const std::vector<std::string> parts = SplitComma(value);
-            if (parts.size() < 6) {
-                return false;
-            }
-            WorldObject object;
-            object.kind = parts[0];
-            object.id = parts[1];
-            try {
-                object.bounds.x = std::stof(parts[2]);
-                object.bounds.y = std::stof(parts[3]);
-                object.bounds.width = std::stof(parts[4]);
-                object.bounds.height = std::stof(parts[5]);
-            } catch (...) {
-                return false;
-            }
-            for (size_t i = 6; i < parts.size(); ++i) {
-                const auto prop = SplitPropertyAssignment(parts[i], ':');
-                if (!prop.has_value()) {
-                    continue;
-                }
-                object.properties[prop->first] = prop->second;
-            }
-            nextObjects.push_back(std::move(object));
-        } else if (key == "stamp") {
-            const std::vector<std::string> parts = SplitComma(value);
-            if (parts.size() < 4) {
-                return false;
-            }
-            WorldStamp stamp;
-            stamp.layer = parts[0];
-            try {
-                stamp.x = std::stoi(parts[1]);
-                stamp.y = std::stoi(parts[2]);
-            } catch (...) {
-                return false;
-            }
-            stamp.asset = parts[3];
-            LoadAtlasMetadataForRef(stamp.asset);
-            nextStamps.push_back(std::move(stamp));
-        } else if (key == "blocked") {
-            Rectangle area {};
-            if (!ParseRectangle(value, area)) {
-                return false;
-            }
-            nextBlocked.push_back(area);
-        } else if (key == "water") {
-            Rectangle area {};
-            if (!ParseRectangle(value, area)) {
-                return false;
-            }
-            nextWater.push_back(area);
-        }
+    nextProperties = document.properties;
+    nextLayers.reserve(document.layers.size());
+    for (const Nganu::MapFormat::Layer& source : document.layers) {
+        WorldLayer layer;
+        layer.name = source.name;
+        layer.kind = source.kind;
+        layer.asset = source.asset;
+        layer.tint = ParseHexColor(source.tint, RAYWHITE);
+        layer.parallax = source.parallax;
+        nextLayers.push_back(std::move(layer));
     }
-
-    if (nextTileSize < 16 || nextTileSize > 128 || nextWidth < 8 || nextHeight < 8) {
-        return false;
+    nextObjects.reserve(document.objects.size());
+    for (const Nganu::MapFormat::Object& source : document.objects) {
+        WorldObject object;
+        object.kind = source.kind;
+        object.id = source.id;
+        object.bounds = Rectangle {source.bounds.x, source.bounds.y, source.bounds.width, source.bounds.height};
+        object.properties = source.properties;
+        nextObjects.push_back(std::move(object));
+    }
+    nextStamps.reserve(document.stamps.size());
+    for (const Nganu::MapFormat::Stamp& source : document.stamps) {
+        nextStamps.push_back(WorldStamp {source.layer, source.x, source.y, source.asset});
+    }
+    nextBlocked.reserve(document.blockedAreas.size());
+    for (const Nganu::MapFormat::Rect& source : document.blockedAreas) {
+        nextBlocked.push_back(Rectangle {source.x, source.y, source.width, source.height});
+    }
+    nextWater.reserve(document.waterAreas.size());
+    for (const Nganu::MapFormat::Rect& source : document.waterAreas) {
+        nextWater.push_back(Rectangle {source.x, source.y, source.width, source.height});
     }
 
     UnloadTextures();
-    tileSize_ = nextTileSize;
-    width_ = nextWidth;
-    height_ = nextHeight;
-    mapId_ = nextMapId;
-    worldName_ = nextWorldName;
-    spawnPoint_ = nextSpawn;
+    tileSize_ = document.tileSize;
+    width_ = document.width;
+    height_ = document.height;
+    mapId_ = document.mapId;
+    worldName_ = document.worldName;
+    spawnPoint_ = Vector2 {document.spawn.x, document.spawn.y};
     properties_ = std::move(nextProperties);
     layers_ = std::move(nextLayers);
     stamps_ = std::move(nextStamps);
     objects_ = std::move(nextObjects);
     blockedAreas_ = std::move(nextBlocked);
     waterAreas_ = std::move(nextWater);
+    ReloadAtlasMetadata();
     return true;
 }
 
@@ -944,6 +704,24 @@ bool World::PreloadReferencedTextures() const {
     return ready;
 }
 
+void World::ReloadAtlasMetadata() {
+    atlasTileMeta_.clear();
+    for (const WorldLayer& layer : layers_) {
+        if (layer.kind == "image") {
+            LoadAtlasMetadataForRef(layer.asset);
+        }
+    }
+    for (const WorldStamp& stamp : stamps_) {
+        LoadAtlasMetadataForRef(stamp.asset);
+    }
+    for (const WorldObject& object : objects_) {
+        const auto it = object.properties.find("sprite");
+        if (it != object.properties.end()) {
+            LoadAtlasMetadataForRef(it->second);
+        }
+    }
+}
+
 std::vector<std::string> World::referencedMapImageFiles() const {
     std::vector<std::string> files;
     auto addRef = [&](const std::string& ref) {
@@ -1037,7 +815,7 @@ void World::LoadAtlasMetadataForRef(const std::string& assetRef) {
         if (sep == std::string::npos) continue;
         if (line.substr(0, sep) != "tile") continue;
 
-        const std::vector<std::string> parts = SplitEscaped(line.substr(sep + 1), ',');
+        const std::vector<std::string> parts = Nganu::MapFormat::SplitEscaped(line.substr(sep + 1), ',');
         if (parts.size() < 4) continue;
 
         int x = 0;
@@ -1055,7 +833,7 @@ void World::LoadAtlasMetadataForRef(const std::string& assetRef) {
 
         WorldAtlasTileMeta meta;
         for (size_t i = 4; i < parts.size(); ++i) {
-            const auto prop = SplitPropertyAssignment(parts[i], ':');
+            const auto prop = Nganu::MapFormat::SplitPropertyAssignment(parts[i], ':');
             if (!prop.has_value()) continue;
             if (prop->first == "collision" && prop->second == "block") {
                 meta.blocksMovement = true;
@@ -1063,7 +841,7 @@ void World::LoadAtlasMetadataForRef(const std::string& assetRef) {
                 meta.tag = prop->second;
             }
         }
-        atlasTileMeta_[AtlasMetaKey(ref.file, x, y, w, h)] = std::move(meta);
+        atlasTileMeta_[Nganu::MapFormat::AtlasMetaKey(ref.file, x, y, w, h)] = std::move(meta);
     }
 }
 
@@ -1072,11 +850,11 @@ std::optional<WorldAtlasTileMeta> World::metaForAsset(const std::string& assetRe
     if (!ref.valid || ref.file.empty()) {
         return std::nullopt;
     }
-    const std::string key = AtlasMetaKey(ref.file,
-                                         static_cast<int>(ref.source.x),
-                                         static_cast<int>(ref.source.y),
-                                         static_cast<int>(ref.source.width),
-                                         static_cast<int>(ref.source.height));
+    const std::string key = Nganu::MapFormat::AtlasMetaKey(ref.file,
+                                                           static_cast<int>(ref.source.x),
+                                                           static_cast<int>(ref.source.y),
+                                                           static_cast<int>(ref.source.width),
+                                                           static_cast<int>(ref.source.height));
     auto it = atlasTileMeta_.find(key);
     if (it == atlasTileMeta_.end()) {
         return std::nullopt;

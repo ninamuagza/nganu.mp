@@ -65,6 +65,7 @@ public:
     bool DrawSpriteRef(const std::string& spriteRef, Rectangle dest, Vector2 origin = Vector2 {}, float rotation = 0.0f, Color tint = WHITE) const;
     bool DrawObjectSprite(const WorldObject& object, Color tint = WHITE) const;
     bool PreloadReferencedTextures() const;
+    void ReloadAtlasMetadata();
     std::vector<std::string> referencedMapImageFiles() const;
     std::vector<std::string> referencedCharacterImageFiles() const;
     const std::vector<WorldLayer>& layers() const { return layers_; }

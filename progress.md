@@ -308,8 +308,8 @@ cd /home/fanorisky/GameProject/nganu.game
 - Format ref atlas di `.map` sekarang mendukung domain eksplisit seperti:
   - `map:terrain_atlas.png@0@0@32@32`
   - `character:base_out_atlas.png@608@0@32@32`
-- Proyek editor atlas baru ada di [`nganu.atlas`](./nganu.atlas) untuk memilih source rect atlas dan menyalin ref asset yang sesuai dengan pipeline runtime.
-- `nganu.atlas` sekarang juga punya mode map editor dasar untuk paint `stamp`, toggle `blocked/water`, set `spawn`, dan save `.map`.
+- Proyek content editor ada di [`nganu.editor`](./nganu.editor) untuk memilih source rect atlas, menyusun map, dan menyiapkan asset yang sesuai dengan pipeline runtime.
+- `nganu.editor` sekarang juga punya mode map editor dasar untuk paint tile, toggle `block/water`, set `spawn`, dan save `.map` v2.
 - Runtime sekarang diarahkan ke satu world besar default [`overworld.map`](./nganu.mp/game-server/assets/maps/overworld.map), dengan `portal` default sebagai teleport dalam map yang sama.
 - Konsep `region` sekarang dipakai sebagai object map untuk area besar seperti `Greenfields` dan `Crossroads`, lalu client HUD membaca region aktif dari posisi player.
-- `nganu.atlas` object mode sekarang juga mendukung placement `region`, jadi editor ikut selaras dengan desain overworld tunggal.
+- `nganu.editor` object mode sekarang juga mendukung placement `region`, jadi editor ikut selaras dengan desain overworld tunggal.

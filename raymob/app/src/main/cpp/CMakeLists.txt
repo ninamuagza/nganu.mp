@@ -25,6 +25,7 @@ set(NGANU_MP_ROOT "${REPO_ROOT}/nganu.mp")
 include_directories(${ANDROID_NDK}/sources/android/native_app_glue/)
 
 set(SOURCES
+    "${REPO_ROOT}/shared/MapFormat.cpp"
     "${NGANU_GAME_ROOT}/src/main.cpp"
     "${NGANU_GAME_ROOT}/src/Game.cpp"
     "${NGANU_GAME_ROOT}/src/World.cpp"

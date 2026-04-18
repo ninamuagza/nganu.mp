@@ -72,10 +72,24 @@ include CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/codegen:
 .PHONY : CMakeFiles/nganu-game.dir/codegen
 
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: CMakeFiles/nganu-game.dir/flags.make
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /home/fanorisky/GameProject/shared/MapFormat.cpp
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o -c /home/fanorisky/GameProject/shared/MapFormat.cpp
+
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/fanorisky/GameProject/shared/MapFormat.cpp > CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.i
+
+CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/fanorisky/GameProject/shared/MapFormat.cpp -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s
+
 CMakeFiles/nganu-game.dir/src/main.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.game/src/main.cpp
 CMakeFiles/nganu-game.dir/src/main.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/nganu-game.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/nganu-game.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/main.cpp.o -MF CMakeFiles/nganu-game.dir/src/main.cpp.o.d -o CMakeFiles/nganu-game.dir/src/main.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/main.cpp
 
 CMakeFiles/nganu-game.dir/src/main.cpp.i: cmake_force
@@ -89,7 +103,7 @@ CMakeFiles/nganu-game.dir/src/main.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/Game.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/Game.cpp.o: /home/fanorisky/GameProject/nganu.game/src/Game.cpp
 CMakeFiles/nganu-game.dir/src/Game.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/nganu-game.dir/src/Game.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/nganu-game.dir/src/Game.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/Game.cpp.o -MF CMakeFiles/nganu-game.dir/src/Game.cpp.o.d -o CMakeFiles/nganu-game.dir/src/Game.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/Game.cpp
 
 CMakeFiles/nganu-game.dir/src/Game.cpp.i: cmake_force
@@ -103,7 +117,7 @@ CMakeFiles/nganu-game.dir/src/Game.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/World.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/World.cpp.o: /home/fanorisky/GameProject/nganu.game/src/World.cpp
 CMakeFiles/nganu-game.dir/src/World.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/nganu-game.dir/src/World.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/nganu-game.dir/src/World.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/World.cpp.o -MF CMakeFiles/nganu-game.dir/src/World.cpp.o.d -o CMakeFiles/nganu-game.dir/src/World.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/World.cpp
 
 CMakeFiles/nganu-game.dir/src/World.cpp.i: cmake_force
@@ -117,7 +131,7 @@ CMakeFiles/nganu-game.dir/src/World.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o: /home/fanorisky/GameProject/nganu.game/src/NetworkClient.cpp
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o -MF CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o.d -o CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/NetworkClient.cpp
 
 CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.i: cmake_force
@@ -131,7 +145,7 @@ CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o: /home/fanorisky/GameProject/nganu.game/src/AssetManager.cpp
 CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o -MF CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o.d -o CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/AssetManager.cpp
 
 CMakeFiles/nganu-game.dir/src/AssetManager.cpp.i: cmake_force
@@ -145,7 +159,7 @@ CMakeFiles/nganu-game.dir/src/AssetManager.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ItemDefs.cpp
 CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o -MF CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ItemDefs.cpp
 
 CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.i: cmake_force
@@ -159,7 +173,7 @@ CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o: /home/fanorisky/GameProject/nganu.game/src/InventoryUi.cpp
 CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o -MF CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o.d -o CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/InventoryUi.cpp
 
 CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.i: cmake_force
@@ -173,7 +187,7 @@ CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ObjectiveUi.cpp
 CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o -MF CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ObjectiveUi.cpp
 
 CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ModalDialogUi.cpp
 CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o -MF CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ModalDialogUi.cpp
 
 CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ui/UiSystem.cpp
 CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o -MF CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ui/UiSystem.cpp
 
 CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.i: cmake_force
@@ -215,7 +229,7 @@ CMakeFiles/nganu-game.dir/src/ui/UiSystem.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ui/UiWindowConfig.cpp
 CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o -MF CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ui/UiWindowConfig.cpp
 
 CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.i: cmake_force
@@ -229,7 +243,7 @@ CMakeFiles/nganu-game.dir/src/ui/UiWindowConfig.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ui/UiDataStore.cpp
 CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o -MF CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ui/UiDataStore.cpp
 
 CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.i: cmake_force
@@ -243,7 +257,7 @@ CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o: /home/fanorisky/GameProject/nganu.game/src/ui/UiTheme.cpp
 CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o -MF CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o.d -o CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o -c /home/fanorisky/GameProject/nganu.game/src/ui/UiTheme.cpp
 
 CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.i: cmake_force
@@ -257,7 +271,7 @@ CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.s: cmake_force
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callbacks.c.i: cmake_force
@@ -271,7 +285,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/callba
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.i: cmake_force
@@ -285,7 +299,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compre
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/host.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/list.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet.c.i: cmake_force
@@ -327,7 +341,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/packet
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c.i: cmake_force
@@ -341,7 +355,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protocol.c.i: cmake_force
@@ -355,7 +369,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/protoc
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o: CMakeFiles/nganu-game.dir/flags.make
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o: /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o: CMakeFiles/nganu-game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o -MF CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o.d -o CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.o -c /home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c.i: cmake_force
@@ -368,6 +382,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 # Object files for target nganu-game
 nganu__game_OBJECTS = \
+"CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o" \
 "CMakeFiles/nganu-game.dir/src/main.cpp.o" \
 "CMakeFiles/nganu-game.dir/src/Game.cpp.o" \
 "CMakeFiles/nganu-game.dir/src/World.cpp.o" \
@@ -393,6 +408,7 @@ nganu__game_OBJECTS = \
 # External object files for target nganu-game
 nganu__game_EXTERNAL_OBJECTS =
 
+nganu-game: CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o
 nganu-game: CMakeFiles/nganu-game.dir/src/main.cpp.o
 nganu-game: CMakeFiles/nganu-game.dir/src/Game.cpp.o
 nganu-game: CMakeFiles/nganu-game.dir/src/World.cpp.o
@@ -418,7 +434,7 @@ nganu-game: CMakeFiles/nganu-game.dir/build.make
 nganu-game: CMakeFiles/nganu-game.dir/compiler_depend.ts
 nganu-game: /usr/lib/libraylib.so
 nganu-game: CMakeFiles/nganu-game.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX executable nganu-game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Linking CXX executable nganu-game"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/nganu-game.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
