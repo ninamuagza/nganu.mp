@@ -114,6 +114,7 @@ private:
     bool bootstrapRequested_ = false;
     bool handshakeReady_ = false;
     bool mapReady_ = false;
+    bool hasAuthoritativePosition_ = false;
     std::string pendingMapAssetKey_;
     std::string pendingMapId_;
     Vector2 pendingSpawnPosition_ {};

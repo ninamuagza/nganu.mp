@@ -141,6 +141,10 @@ android {
             jniDebuggable true
         }
         release {
+            // CI does not have a private release keystore. Signing release with the
+            // debug key keeps the APK installable on physical devices while still
+            // using release native/compiler settings for FPS testing.
+            signingConfig signingConfigs.debug
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

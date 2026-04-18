@@ -239,10 +239,25 @@ bool AndroidInventoryPressed() {
 
 bool AndroidChatPressed() {
     static bool wasDown = false;
+    return AndroidPointPressedIn(AndroidActionButtonRect(3.0f), wasDown);
+}
+
+bool AndroidObjectivePressed() {
+    static bool wasDown = false;
     return AndroidPointPressedIn(AndroidActionButtonRect(2.0f), wasDown);
 }
 
-void DrawAndroidTouchControls(bool chatFocused) {
+Rectangle AndroidDebugButtonRect() {
+    const float screenWidth = static_cast<float>(GetScreenWidth());
+    return Rectangle {screenWidth - 66.0f, 14.0f, 54.0f, 34.0f};
+}
+
+bool AndroidDebugPressed() {
+    static bool wasDown = false;
+    return AndroidPointPressedIn(AndroidDebugButtonRect(), wasDown);
+}
+
+void DrawAndroidTouchControls(bool chatFocused, bool showDebug) {
     const Rectangle joy = AndroidJoystickBounds();
     const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
     const float radius = joy.width * 0.5f;
@@ -272,7 +287,19 @@ void DrawAndroidTouchControls(bool chatFocused) {
 
     drawButton(AndroidActionButtonRect(0.0f), "E", AccentColor());
     drawButton(AndroidActionButtonRect(1.0f), "Bag", Color {84, 132, 216, 255});
-    drawButton(AndroidActionButtonRect(2.0f), chatFocused ? "Send" : "Chat", Color {214, 154, 76, 255});
+    drawButton(AndroidActionButtonRect(2.0f), "Quest", Color {96, 174, 132, 255});
+    drawButton(AndroidActionButtonRect(3.0f), chatFocused ? "Send" : "Chat", Color {214, 154, 76, 255});
+
+    const Rectangle debugRect = AndroidDebugButtonRect();
+    DrawRectangleRounded(debugRect, 0.45f, 8, Fade(showDebug ? AccentColor() : Color {8, 18, 20, 255}, showDebug ? 0.68f : 0.38f));
+    DrawRectangleRoundedLinesEx(debugRect, 0.45f, 8, 1.5f, Fade(RAYWHITE, 0.42f));
+    const char* label = "Dbg";
+    const int fontSize = 14;
+    DrawUiText(label,
+               debugRect.x + (debugRect.width - static_cast<float>(MeasureUiText(label, fontSize))) * 0.5f,
+               debugRect.y + 9.0f,
+               fontSize,
+               RAYWHITE);
 }
 #else
 void HideAndroidKeyboard() {}
@@ -580,6 +607,11 @@ void Game::Update(float dt) {
     if (IsKeyPressed(KEY_F1)) {
         showDebug_ = !showDebug_;
     }
+#if defined(PLATFORM_ANDROID)
+    if (AndroidDebugPressed()) {
+        showDebug_ = !showDebug_;
+    }
+#endif
 
     if (!bootStarted_) {
         BeginBootUpdateCheck();
@@ -627,6 +659,7 @@ void Game::BeginBootUpdateCheck() {
     manifestWait_ = 0.0f;
     retryCountdown_ = 0.0f;
     stateTimer_ = 0.0f;
+    hasAuthoritativePosition_ = false;
     manifest_ = ContentManifest {};
     mapReady_ = false;
     pendingMapAssetKey_.clear();
@@ -646,9 +679,11 @@ void Game::BeginBootUpdateCheck() {
     if (inventoryUi_ != nullptr && inventoryUi_->IsOpen()) {
         inventoryUi_->Close();
     }
-    player_.position = world_.spawnPoint();
-    lastSentPosition_ = player_.position;
-    camera_.target = player_.position;
+    if (!hasAuthoritativePosition_) {
+        player_.position = world_.spawnPoint();
+        lastSentPosition_ = player_.position;
+        camera_.target = player_.position;
+    }
     loginStatus_ = "Checking server update...";
     uiMode_ = UiMode::Boot;
     AddChatLine("[System] Checking server update...");
@@ -722,6 +757,11 @@ void Game::UpdateLoginInput() {
     case LoginField::Port:
         AndroidConsumeSoftChar(loginPort_, 5, true);
         break;
+    }
+    if (AndroidSoftEnterPressed()) {
+        HideAndroidKeyboard();
+        StartLogin();
+        return;
     }
 #endif
 
@@ -853,9 +893,11 @@ void Game::StartLogin() {
     }
 
     player_.name = loginName_;
-    player_.position = world_.spawnPoint();
-    lastSentPosition_ = player_.position;
-    camera_.target = player_.position;
+    if (!hasAuthoritativePosition_) {
+        player_.position = world_.spawnPoint();
+        lastSentPosition_ = player_.position;
+        camera_.target = player_.position;
+    }
     chatFocused_ = false;
     chatInput_.clear();
     sendAccumulator_ = 0.0f;
@@ -945,7 +987,11 @@ void Game::UpdateNetwork(float dt) {
     const bool movedEnough =
         std::fabs(player_.position.x - lastSentPosition_.x) > 0.5f ||
         std::fabs(player_.position.y - lastSentPosition_.y) > 0.5f;
+#if defined(PLATFORM_ANDROID)
+    const float sendInterval = movedEnough ? 0.05f : 1.0f;
+#else
     const float sendInterval = movedEnough ? 0.10f : 1.0f;
+#endif
 
     if (network_.IsConnected() && sendAccumulator_ >= sendInterval) {
         if (network_.SendPlayerPosition(player_.position.x, player_.position.y)) {
@@ -1075,12 +1121,14 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
     case NetworkEvent::Type::PlayerPosition:
         player_.position = Vector2 {event.x, event.y};
         lastSentPosition_ = player_.position;
+        hasAuthoritativePosition_ = true;
         break;
     case NetworkEvent::Type::SnapshotPlayer:
     case NetworkEvent::Type::PlayerJoined: {
         if (event.playerId == localPlayerId_ && localPlayerId_ != 0) {
             player_.position = Vector2 {event.x, event.y};
             lastSentPosition_ = player_.position;
+            hasAuthoritativePosition_ = true;
             break;
         }
         ApplyRemotePlayerState(event.playerId, event.x, event.y);
@@ -1426,7 +1474,12 @@ void Game::ApplyMapAsset(const AssetBlob& asset) {
         return;
     }
 
-    player_.position = hasPendingSpawnPosition_ ? pendingSpawnPosition_ : world_.spawnPoint();
+    if (hasPendingSpawnPosition_) {
+        player_.position = pendingSpawnPosition_;
+        hasAuthoritativePosition_ = true;
+    } else if (!hasAuthoritativePosition_) {
+        player_.position = world_.spawnPoint();
+    }
     lastSentPosition_ = player_.position;
     camera_.target = player_.position;
     mapReady_ = true;
@@ -1692,6 +1745,9 @@ void Game::UpdateUi(float dt) {
     if (AndroidInventoryPressed() && inventoryUi_ != nullptr) {
         inventoryUi_->Toggle();
     }
+    if (AndroidObjectivePressed() && objectiveUi_ != nullptr) {
+        objectiveUi_->Toggle();
+    }
 #endif
     if (IsKeyPressed(KEY_J) && objectiveUi_ != nullptr) {
         objectiveUi_->Toggle();
@@ -1869,7 +1925,7 @@ void Game::Draw() const {
     DrawScene();
     DrawHud();
 #if defined(PLATFORM_ANDROID)
-    DrawAndroidTouchControls(chatFocused_);
+    DrawAndroidTouchControls(chatFocused_, showDebug_);
 #endif
 }
 
@@ -1950,7 +2006,12 @@ void Game::DrawLoginScreen() const {
     DrawUiText(EllipsizeText(revisionLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f + static_cast<float>((infoFont + 3) * 2), infoFont, Fade(RAYWHITE, 0.74f));
 
     DrawWrappedText(loginStatus_, Rectangle {innerX, card.y + card.height - (tiny ? 88.0f : 72.0f), innerWidth, tiny ? 52.0f : 40.0f}, tiny ? 16 : 18, Fade(RAYWHITE, 0.82f), tiny ? 3 : 2);
-    DrawUiText(compact ? "Tab switch, Enter login, F5 re-check" : "Tab to switch fields, Enter to login, F5 to re-check update",
+#if defined(PLATFORM_ANDROID)
+    const char* loginHelp = "Tap fields to edit. Enter World logs in or re-checks server.";
+#else
+    const char* loginHelp = compact ? "Tab switch, Enter login, F5 re-check" : "Tab to switch fields, Enter to login, F5 to re-check update";
+#endif
+    DrawUiText(loginHelp,
                innerX,
                card.y + card.height - (tiny ? 28.0f : 34.0f),
                tiny ? 14 : 16,
