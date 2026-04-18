@@ -518,7 +518,7 @@ Game::Game() {
     player_.radius = 15.0f;
     loginName_ = player_.name;
 #if defined(PLATFORM_ANDROID)
-    loginHost_ = "10.0.2.2";
+    loginHost_ = "Auto LAN";
 #else
     loginHost_ = "127.0.0.1";
 #endif
@@ -653,6 +653,16 @@ void Game::BeginBootUpdateCheck() {
         BeginRetryWait("Invalid server port. Retrying in 10 seconds.");
         return;
     }
+
+#if defined(PLATFORM_ANDROID)
+    if (loginHost_.empty() || loginHost_ == "Auto LAN" || loginHost_ == "auto") {
+        loginStatus_ = "Scanning local WiFi for server...";
+        if (!network_.BeginLocalDiscovery(static_cast<uint16_t>(port))) {
+            BeginRetryWait("Local server scan failed. Retrying in 10 seconds.");
+        }
+        return;
+    }
+#endif
 
     if (!network_.Connect(loginHost_, static_cast<uint16_t>(port))) {
         BeginRetryWait("Server did not respond. Retrying in 10 seconds.");
@@ -935,6 +945,11 @@ void Game::UpdateNetwork(float dt) {
 
 void Game::HandleNetworkEvent(const NetworkEvent& event) {
     switch (event.type) {
+    case NetworkEvent::Type::LocalServerFound:
+        loginHost_ = event.text;
+        loginStatus_ = "Found local server at " + event.text + ". Connecting...";
+        AddChatLine("[System] Found local server at " + event.text);
+        break;
     case NetworkEvent::Type::Connected:
         AddChatLine("[System] Connected to server");
         if (uiMode_ == UiMode::Boot) {

@@ -12,6 +12,7 @@ struct NetworkEvent {
         Connected,
         ConnectionFailed,
         Disconnected,
+        LocalServerFound,
         Handshake,
         AssetManifest,
         AssetBlob,
@@ -57,6 +58,7 @@ public:
     NetworkClient& operator=(const NetworkClient&) = delete;
 
     bool Connect(const std::string& host, uint16_t port);
+    bool BeginLocalDiscovery(uint16_t port);
     void Update(float dt);
     void Disconnect();
 
@@ -80,11 +82,20 @@ public:
 private:
     ENetHost* client_ = nullptr;
     ENetPeer* peer_ = nullptr;
+    ENetSocket discoverySocket_ = ENET_SOCKET_NULL;
     std::string statusText_ = "Offline";
     std::vector<NetworkEvent> events_;
     bool awaitingConnect_ = false;
     float connectTimeout_ = 0.0f;
+    bool discoveryActive_ = false;
+    float discoveryElapsed_ = 0.0f;
+    float discoverySendTimer_ = 0.0f;
+    uint16_t discoveryGamePort_ = 0;
+    uint16_t discoveryPort_ = 0;
 
     void PushEvent(NetworkEvent event);
     void HandlePacket(const void* data, size_t len);
+    void StopDiscovery();
+    void SendDiscoveryProbe();
+    void PollDiscovery();
 };

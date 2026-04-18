@@ -25,6 +25,9 @@ public:
     /* Poll for events.  Returns true if an event was dequeued. */
     bool pollEvent(ENetEvent& event);
 
+    /* Poll and answer LAN discovery probes on port+1. */
+    void pollDiscovery(const std::string& serverName);
+
     /* Send a raw packet to a peer. */
     void sendPacket(void* peer, const void* data, size_t len, int channel, bool reliable = true);
 
@@ -53,5 +56,8 @@ public:
 private:
     Logger&    logger_;
     ENetHost*  host_ = nullptr;
+    ENetSocket discoverySocket_ = ENET_SOCKET_NULL;
+    uint16_t discoveryPort_ = 0;
+    uint16_t gamePort_ = 0;
     std::unordered_map<int, ENetPeer*> players_;
 };

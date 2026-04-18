@@ -1,10 +1,15 @@
 #include "NetworkClient.h"
 
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <utility>
 
 namespace {
 constexpr int kChannelCount = 2;
+constexpr const char* kDiscoveryProbe = "NGANU_DISCOVER_V1";
+constexpr const char* kDiscoveryReply = "NGANU_SERVER_V1";
 }
 
 NetworkClient::NetworkClient() {
@@ -22,6 +27,7 @@ NetworkClient::NetworkClient() {
 
 NetworkClient::~NetworkClient() {
     Disconnect();
+    StopDiscovery();
     if (client_) {
         enet_host_destroy(client_);
         client_ = nullptr;
@@ -32,6 +38,7 @@ NetworkClient::~NetworkClient() {
 bool NetworkClient::Connect(const std::string& host, uint16_t port) {
     if (!client_) return false;
     if (peer_) return true;
+    StopDiscovery();
 
     ENetAddress address {};
     if (enet_address_set_host(&address, host.c_str()) != 0) {
@@ -54,8 +61,57 @@ bool NetworkClient::Connect(const std::string& host, uint16_t port) {
     return true;
 }
 
+bool NetworkClient::BeginLocalDiscovery(uint16_t port) {
+    if (!client_) return false;
+    Disconnect();
+    StopDiscovery();
+
+    discoverySocket_ = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+    if (discoverySocket_ == ENET_SOCKET_NULL) {
+        statusText_ = "LAN discovery socket failed";
+        PushEvent(NetworkEvent {NetworkEvent::Type::ConnectionFailed});
+        return false;
+    }
+
+    ENetAddress bindAddress {};
+    bindAddress.host = ENET_HOST_ANY;
+    bindAddress.port = ENET_PORT_ANY;
+    enet_socket_set_option(discoverySocket_, ENET_SOCKOPT_NONBLOCK, 1);
+    enet_socket_set_option(discoverySocket_, ENET_SOCKOPT_BROADCAST, 1);
+    if (enet_socket_bind(discoverySocket_, &bindAddress) != 0) {
+        StopDiscovery();
+        statusText_ = "LAN discovery bind failed";
+        PushEvent(NetworkEvent {NetworkEvent::Type::ConnectionFailed});
+        return false;
+    }
+
+    discoveryActive_ = true;
+    discoveryElapsed_ = 0.0f;
+    discoverySendTimer_ = 0.0f;
+    discoveryGamePort_ = port;
+    discoveryPort_ = static_cast<uint16_t>(port + 1);
+    statusText_ = "Scanning local WiFi for server...";
+    SendDiscoveryProbe();
+    return true;
+}
+
 void NetworkClient::Update(float dt) {
     if (!client_) return;
+
+    if (discoveryActive_) {
+        discoveryElapsed_ += dt;
+        discoverySendTimer_ += dt;
+        if (discoverySendTimer_ >= 0.75f) {
+            SendDiscoveryProbe();
+            discoverySendTimer_ = 0.0f;
+        }
+        PollDiscovery();
+        if (discoveryActive_ && discoveryElapsed_ >= 4.0f) {
+            StopDiscovery();
+            statusText_ = "LAN server not found";
+            PushEvent(NetworkEvent {NetworkEvent::Type::ConnectionFailed});
+        }
+    }
 
     if (awaitingConnect_ && peer_ && peer_->state == ENET_PEER_STATE_CONNECTING) {
         connectTimeout_ += dt;
@@ -97,6 +153,7 @@ void NetworkClient::Update(float dt) {
 }
 
 void NetworkClient::Disconnect() {
+    StopDiscovery();
     if (!peer_) return;
 
     awaitingConnect_ = false;
@@ -124,6 +181,71 @@ void NetworkClient::Disconnect() {
     }
 
     statusText_ = "Offline";
+}
+
+void NetworkClient::StopDiscovery() {
+    discoveryActive_ = false;
+    discoveryElapsed_ = 0.0f;
+    discoverySendTimer_ = 0.0f;
+    if (discoverySocket_ != ENET_SOCKET_NULL) {
+        enet_socket_destroy(discoverySocket_);
+        discoverySocket_ = ENET_SOCKET_NULL;
+    }
+}
+
+void NetworkClient::SendDiscoveryProbe() {
+    if (discoverySocket_ == ENET_SOCKET_NULL || discoveryPort_ == 0) return;
+
+    ENetAddress broadcast {};
+    broadcast.host = ENET_HOST_BROADCAST;
+    broadcast.port = discoveryPort_;
+    ENetBuffer buffer {};
+    buffer.data = const_cast<char*>(kDiscoveryProbe);
+    buffer.dataLength = std::strlen(kDiscoveryProbe);
+    enet_socket_send(discoverySocket_, &broadcast, &buffer, 1);
+}
+
+void NetworkClient::PollDiscovery() {
+    if (discoverySocket_ == ENET_SOCKET_NULL) return;
+
+    char data[192] {};
+    ENetBuffer buffer {};
+    buffer.data = data;
+    buffer.dataLength = sizeof(data) - 1;
+
+    ENetAddress sender {};
+    while (true) {
+        const int received = enet_socket_receive(discoverySocket_, &sender, &buffer, 1);
+        if (received <= 0) {
+            break;
+        }
+        data[std::min(received, static_cast<int>(sizeof(data) - 1))] = '\0';
+        if (std::strncmp(data, kDiscoveryReply, std::strlen(kDiscoveryReply)) != 0) {
+            continue;
+        }
+
+        uint16_t port = discoveryGamePort_;
+        const char* portText = std::strstr(data, "port=");
+        if (portText != nullptr) {
+            const long parsed = std::strtol(portText + 5, nullptr, 10);
+            if (parsed > 0 && parsed <= 65535) {
+                port = static_cast<uint16_t>(parsed);
+            }
+        }
+
+        char host[64] {};
+        if (enet_address_get_host_ip(&sender, host, sizeof(host)) != 0 || host[0] == '\0') {
+            continue;
+        }
+
+        NetworkEvent event {};
+        event.type = NetworkEvent::Type::LocalServerFound;
+        event.text = host;
+        PushEvent(std::move(event));
+        StopDiscovery();
+        Connect(host, port);
+        return;
+    }
 }
 
 bool NetworkClient::SendPlayerPosition(float x, float y) {

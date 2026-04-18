@@ -1109,6 +1109,8 @@ int Server::runTest(const std::string& cfgPath) {
 /* Network event processing                                           */
 /* ------------------------------------------------------------------ */
 void Server::processNetworkEvents() {
+    network_.pollDiscovery(runtime_.getString("servername", "nganu.mp"));
+
     ENetEvent event;
     while (network_.pollEvent(event)) {
         switch (event.type) {

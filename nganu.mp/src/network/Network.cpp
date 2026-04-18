@@ -1,5 +1,12 @@
 #include "network/Network.h"
 #include <cstring>
+#include <cstdio>
+#include <algorithm>
+
+namespace {
+constexpr const char* kDiscoveryProbe = "NGANU_DISCOVER_V1";
+constexpr const char* kDiscoveryReply = "NGANU_SERVER_V1";
+}
 
 Network::Network(Logger& logger) : logger_(logger) {}
 
@@ -29,10 +36,33 @@ bool Network::init(uint16_t port, size_t maxClients) {
     }
 
     logger_.info("Network", "Listening on port %u (max %zu clients)", (unsigned)port, maxClients);
+    gamePort_ = port;
+    discoveryPort_ = static_cast<uint16_t>(port + 1);
+    discoverySocket_ = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+    if (discoverySocket_ != ENET_SOCKET_NULL) {
+        ENetAddress discoveryAddress {};
+        discoveryAddress.host = ENET_HOST_ANY;
+        discoveryAddress.port = discoveryPort_;
+        enet_socket_set_option(discoverySocket_, ENET_SOCKOPT_NONBLOCK, 1);
+        enet_socket_set_option(discoverySocket_, ENET_SOCKOPT_REUSEADDR, 1);
+        if (enet_socket_bind(discoverySocket_, &discoveryAddress) == 0) {
+            logger_.info("Network", "LAN discovery listening on UDP port %u", (unsigned)discoveryPort_);
+        } else {
+            logger_.warn("Network", "Failed to bind LAN discovery port %u", (unsigned)discoveryPort_);
+            enet_socket_destroy(discoverySocket_);
+            discoverySocket_ = ENET_SOCKET_NULL;
+        }
+    } else {
+        logger_.warn("Network", "Failed to create LAN discovery socket");
+    }
     return true;
 }
 
 void Network::shutdown() {
+    if (discoverySocket_ != ENET_SOCKET_NULL) {
+        enet_socket_destroy(discoverySocket_);
+        discoverySocket_ = ENET_SOCKET_NULL;
+    }
     if (!host_) return;
 
     /* Gracefully disconnect all peers */
@@ -61,6 +91,39 @@ void Network::shutdown() {
 bool Network::pollEvent(ENetEvent& event) {
     if (!host_) return false;
     return enet_host_service(host_, &event, 0) > 0;
+}
+
+void Network::pollDiscovery(const std::string& serverName) {
+    if (discoverySocket_ == ENET_SOCKET_NULL) return;
+
+    char buffer[128] {};
+    ENetBuffer receiveBuffer {};
+    receiveBuffer.data = buffer;
+    receiveBuffer.dataLength = sizeof(buffer) - 1;
+
+    ENetAddress sender {};
+    while (true) {
+        const int received = enet_socket_receive(discoverySocket_, &sender, &receiveBuffer, 1);
+        if (received <= 0) {
+            break;
+        }
+        buffer[std::min(received, static_cast<int>(sizeof(buffer) - 1))] = '\0';
+        if (std::strncmp(buffer, kDiscoveryProbe, std::strlen(kDiscoveryProbe)) != 0) {
+            continue;
+        }
+
+        char reply[192] {};
+        std::snprintf(reply,
+                      sizeof(reply),
+                      "%s port=%u name=%s",
+                      kDiscoveryReply,
+                      static_cast<unsigned>(gamePort_),
+                      serverName.empty() ? "nganu.mp" : serverName.c_str());
+        ENetBuffer replyBuffer {};
+        replyBuffer.data = reply;
+        replyBuffer.dataLength = std::strlen(reply);
+        enet_socket_send(discoverySocket_, &sender, &replyBuffer, 1);
+    }
 }
 
 void Network::sendPacket(void* peer, const void* data, size_t len, int channel, bool reliable) {
