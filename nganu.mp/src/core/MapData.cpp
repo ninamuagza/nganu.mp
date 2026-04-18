@@ -112,7 +112,8 @@ bool parseRect(const std::string& value, MapData::Rect& out) {
 
 std::string assetFileName(const std::string& ref) {
     const size_t sep = ref.find('@');
-    const std::string head = (sep == std::string::npos) ? ref : ref.substr(0, sep);
+    std::string head = (sep == std::string::npos) ? ref : ref.substr(0, sep);
+    head.erase(std::remove(head.begin(), head.end(), '\\'), head.end());
     const size_t domainSep = head.find(':');
     if (domainSep == std::string::npos) {
         return head;
@@ -122,7 +123,8 @@ std::string assetFileName(const std::string& ref) {
 
 std::string assetDomain(const std::string& ref) {
     const size_t sep = ref.find('@');
-    const std::string head = (sep == std::string::npos) ? ref : ref.substr(0, sep);
+    std::string head = (sep == std::string::npos) ? ref : ref.substr(0, sep);
+    head.erase(std::remove(head.begin(), head.end(), '\\'), head.end());
     const size_t domainSep = head.find(':');
     if (domainSep == std::string::npos) {
         return {};

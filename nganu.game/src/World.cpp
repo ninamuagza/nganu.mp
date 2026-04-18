@@ -232,6 +232,7 @@ AtlasRef ParseAtlasRef(const std::string& asset) {
     }
 
     ref.file = parts[0];
+    ref.file.erase(std::remove(ref.file.begin(), ref.file.end(), '\\'), ref.file.end());
     const size_t domainSep = ref.file.find(':');
     if (domainSep != std::string::npos) {
         const std::string domain = ref.file.substr(0, domainSep);
@@ -253,6 +254,16 @@ AtlasRef ParseAtlasRef(const std::string& asset) {
 
     ref.valid = !ref.file.empty() && ref.source.width > 0.0f && ref.source.height > 0.0f;
     return ref;
+}
+
+bool HasStampsOnLayer(const std::vector<WorldStamp>& stamps, const std::string& layerName) {
+    return std::any_of(stamps.begin(), stamps.end(), [&](const WorldStamp& stamp) {
+        return stamp.layer == layerName;
+    });
+}
+
+bool LayerHasUsableImage(const WorldLayer& layer) {
+    return layer.kind == "image" && !layer.asset.empty() && ParseAtlasRef(layer.asset).valid;
 }
 
 const std::filesystem::path& RootForDomain(AssetDomain domain, const std::filesystem::path& mapRoot, const std::filesystem::path& characterRoot) {
@@ -550,23 +561,20 @@ void World::DrawGround(Rectangle visibleArea) const {
         return;
     }
 
-    DrawRectangleRec(clippedView, GrassColor());
+    const bool hasGroundStamps = HasStampsOnLayer(stamps_, "ground");
+    if (!hasGroundStamps) {
+        DrawRectangleRec(clippedView, GrassColor());
+    }
 
     for (const WorldLayer& layer : layers_) {
         if (layer.name == "ground" && layer.kind == "color") {
             DrawRectangleRec(clippedView, Fade(layer.tint, 0.18f));
-        } else if (layer.name == "ground" && layer.kind == "image") {
+        } else if (layer.name == "ground" && LayerHasUsableImage(layer)) {
             const AtlasRef ref = ParseAtlasRef(layer.asset);
             if (ref.valid) {
-                auto textureIt = textures_.find(ref.file);
-                if (textureIt == textures_.end()) {
-                    const std::filesystem::path path = mapAssetRoot_ / ref.file;
-                    if (std::filesystem::exists(path)) {
-                        textureIt = textures_.emplace(ref.file, LoadTexture(path.string().c_str())).first;
-                    }
-                }
-                if (textureIt != textures_.end() && textureIt->second.id > 0) {
-                    DrawTiledTexture(textureIt->second, ref.source, clippedView, layer.tint);
+                Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
+                if (texture != nullptr) {
+                    DrawTiledTexture(*texture, ref.source, clippedView, layer.tint);
                 }
             }
         }
@@ -592,7 +600,7 @@ void World::DrawGround(Rectangle visibleArea) const {
     const int minTileY = std::max(0, static_cast<int>(std::floor(clippedView.y / tileSize_)));
     const int maxTileX = std::min(width_, static_cast<int>(std::ceil((clippedView.x + clippedView.width) / tileSize_)));
     const int maxTileY = std::min(height_, static_cast<int>(std::ceil((clippedView.y + clippedView.height) / tileSize_)));
-    if (!kFastMobileRender) {
+    if (!kFastMobileRender && !hasGroundStamps) {
         for (int y = minTileY; y < maxTileY; ++y) {
             for (int x = minTileX; x < maxTileX; ++x) {
                 if ((x + y) % 2 == 0) {
@@ -603,33 +611,6 @@ void World::DrawGround(Rectangle visibleArea) const {
                         tileSize_,
                         Fade(GrassShade(), 0.22f)
                     );
-                }
-            }
-        }
-    }
-
-    if (!kFastMobileRender) {
-        for (const WorldLayer& layer : layers_) {
-            if (layer.kind != "image") {
-                continue;
-            }
-            if (layer.asset.find("water") != std::string::npos) {
-                continue;
-            }
-            if (layer.asset.find("road") != std::string::npos) {
-                continue;
-            }
-
-            const int step = std::max(28, tileSize_ / 2);
-            const int minY = static_cast<int>(std::floor(clippedView.y / step)) * step;
-            const int minX = static_cast<int>(std::floor(clippedView.x / step)) * step;
-            const int maxY = static_cast<int>(std::ceil((clippedView.y + clippedView.height) / step)) * step;
-            const int maxX = static_cast<int>(std::ceil((clippedView.x + clippedView.width) / step)) * step;
-            for (int y = minY; y < maxY; y += step) {
-                for (int x = minX; x < maxX; x += step) {
-                    if (((x / step) + (y / step)) % 3 == 0) {
-                        DrawCircle(x + (step / 2), y + (step / 2), step * 0.14f, Fade(layer.tint, 0.08f));
-                    }
                 }
             }
         }
@@ -687,24 +668,18 @@ void World::DrawDecorations(Rectangle visibleArea) const {
             const Rectangle clippedHorizontal = ClampRectToBounds(horizontalRoad, clippedView);
             const Rectangle clippedVertical = ClampRectToBounds(verticalRoad, clippedView);
             bool drewTexture = false;
-            if (layer.kind == "image") {
+            if (LayerHasUsableImage(layer)) {
                 const AtlasRef ref = ParseAtlasRef(layer.asset);
                 if (ref.valid) {
-                    auto textureIt = textures_.find(ref.file);
-                    if (textureIt == textures_.end()) {
-                        const std::filesystem::path path = mapAssetRoot_ / ref.file;
-                        if (std::filesystem::exists(path)) {
-                            textureIt = textures_.emplace(ref.file, LoadTexture(path.string().c_str())).first;
-                        }
-                    }
-                    if (textureIt != textures_.end() && textureIt->second.id > 0) {
-                        if (HasArea(clippedHorizontal)) DrawTiledTexture(textureIt->second, ref.source, clippedHorizontal, layer.tint);
-                        if (HasArea(clippedVertical)) DrawTiledTexture(textureIt->second, ref.source, clippedVertical, layer.tint);
+                    Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
+                    if (texture != nullptr) {
+                        if (HasArea(clippedHorizontal)) DrawTiledTexture(*texture, ref.source, clippedHorizontal, layer.tint);
+                        if (HasArea(clippedVertical)) DrawTiledTexture(*texture, ref.source, clippedVertical, layer.tint);
                         drewTexture = true;
                     }
                 }
             }
-            if (!drewTexture) {
+            if (!drewTexture && !HasStampsOnLayer(stamps_, "road")) {
                 if (HasArea(clippedHorizontal)) DrawRectangleRec(clippedHorizontal, Fade(PathColor(), 0.90f));
                 if (HasArea(clippedVertical)) DrawRectangleRec(clippedVertical, Fade(PathColor(), 0.90f));
             }

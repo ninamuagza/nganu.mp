@@ -133,6 +133,7 @@ private:
     bool hasAuthoritativePosition_ = false;
     std::string pendingMapAssetKey_;
     std::string pendingMapId_;
+    std::vector<std::string> pendingMapImageAssetKeys_;
     Vector2 pendingSpawnPosition_ {};
     bool hasPendingSpawnPosition_ = false;
     std::string lastMapAssetSource_ = "none";
@@ -179,6 +180,7 @@ private:
     void BeginMapBootstrap();
     void BeginMapBootstrapForAsset(const std::string& assetKey, const std::string& statusText);
     void ApplyMapAsset(const AssetBlob& asset);
+    void RefreshMapAssetReadiness();
     std::string NameForPlayer(int playerId) const;
     std::string SpriteForAvatar(const Avatar& avatar, bool localPlayer) const;
     void UpdateChatInput();

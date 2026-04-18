@@ -795,6 +795,7 @@ void Game::BeginBootUpdateCheck() {
     mapReady_ = false;
     pendingMapAssetKey_.clear();
     pendingMapId_.clear();
+    pendingMapImageAssetKeys_.clear();
     hasPendingSpawnPosition_ = false;
     lastMapAssetSource_ = "none";
     lastAppliedMapAssetKey_.clear();
@@ -1187,6 +1188,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         mapReady_ = false;
         pendingMapAssetKey_.clear();
         pendingMapId_.clear();
+        pendingMapImageAssetKeys_.clear();
         hasPendingSpawnPosition_ = false;
         inventory_.open = false;
         inventory_.revision = 0;
@@ -1235,6 +1237,12 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         if (blob->kind == "image" && blob->key.rfind("ui_image:", 0) == 0) {
             LoadUiTextureFromCache(blob->key);
         }
+        if ((blob->kind == "image" || blob->kind == "meta") &&
+            (blob->key.rfind("map_image:", 0) == 0 ||
+             blob->key.rfind("map_meta:", 0) == 0 ||
+             blob->key.rfind("character_image:", 0) == 0)) {
+            RefreshMapAssetReadiness();
+        }
         if (blob->kind == "map") {
             ApplyMapAsset(*blob);
             if (mapReady_) {
@@ -1246,7 +1254,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
                     AddChatLine("[System] World loaded: " + world_.mapId());
                 }
             }
-        } else if (blob->kind == "meta" && mapReady_ && !lastAppliedMapAssetKey_.empty()) {
+        } else if (blob->kind == "meta" && !lastAppliedMapAssetKey_.empty()) {
             std::string cachedMap;
             if (LoadCachedAsset(lastAppliedMapAssetKey_, manifest_.revision, cachedMap)) {
                 const Vector2 keepPosition = player_.position;
@@ -1265,6 +1273,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         chatBubbles_.clear();
         localCorrectionRemaining_ = Vector2 {};
         currentObjective_.clear();
+        pendingMapImageAssetKeys_.clear();
         pendingMapId_ = event.mapId;
         pendingSpawnPosition_ = Vector2 {event.x, event.y};
         hasPendingSpawnPosition_ = true;
@@ -1717,7 +1726,7 @@ void Game::ApplyMapAsset(const AssetBlob& asset) {
     lastSentPosition_ = player_.position;
     localCorrectionRemaining_ = Vector2 {};
     camera_.target = player_.position;
-    mapReady_ = true;
+    mapReady_ = false;
     pendingMapAssetKey_.clear();
     pendingMapId_ = world_.mapId();
     hasPendingSpawnPosition_ = false;
@@ -1726,30 +1735,74 @@ void Game::ApplyMapAsset(const AssetBlob& asset) {
     manifest_.worldName = world_.worldName();
     AddChatLine("[System] Map asset applied: " + asset.key);
     EnsureReferencedImagesRequested();
+    RefreshMapAssetReadiness();
 }
 
 void Game::EnsureReferencedImagesRequested() {
-    if (!network_.IsConnected()) {
-        return;
-    }
+    pendingMapImageAssetKeys_.clear();
+    auto addPending = [&](const std::string& assetKey) {
+        if (std::find(pendingMapImageAssetKeys_.begin(), pendingMapImageAssetKeys_.end(), assetKey) == pendingMapImageAssetKeys_.end()) {
+            pendingMapImageAssetKeys_.push_back(assetKey);
+        }
+    };
 
     for (const std::string& file : world_.referencedMapImageFiles()) {
         const std::string assetKey = "map_image:" + file;
-        if (HasCachedImageAsset(assetKey, manifest_.revision)) {
-        } else {
+        if (!HasCachedImageAsset(assetKey, manifest_.revision)) {
+            addPending(assetKey);
+        }
+        if (network_.IsConnected() && !HasCachedImageAsset(assetKey, manifest_.revision)) {
             network_.RequestAsset(assetKey);
         }
         const std::string metaKey = "map_meta:" + std::filesystem::path(file).stem().string() + ".atlas";
-        if (!HasCachedImageAsset(metaKey, manifest_.revision)) {
+        if (network_.IsConnected() && !HasCachedImageAsset(metaKey, manifest_.revision)) {
             network_.RequestAsset(metaKey);
         }
     }
     for (const std::string& file : world_.referencedCharacterImageFiles()) {
         const std::string assetKey = "character_image:" + file;
-        if (HasCachedImageAsset(assetKey, manifest_.revision)) {
-            continue;
+        if (!HasCachedImageAsset(assetKey, manifest_.revision)) {
+            addPending(assetKey);
         }
-        network_.RequestAsset(assetKey);
+        if (network_.IsConnected() && !HasCachedImageAsset(assetKey, manifest_.revision)) {
+            network_.RequestAsset(assetKey);
+        }
+    }
+
+    if (!pendingMapImageAssetKeys_.empty()) {
+        loginStatus_ = "Downloading map textures: " + std::to_string(pendingMapImageAssetKeys_.size()) + " remaining";
+        AddChatLine("[System] Waiting for map textures: " + std::to_string(pendingMapImageAssetKeys_.size()));
+    }
+}
+
+void Game::RefreshMapAssetReadiness() {
+    if (lastAppliedMapAssetKey_.empty()) {
+        return;
+    }
+
+    pendingMapImageAssetKeys_.erase(
+        std::remove_if(pendingMapImageAssetKeys_.begin(),
+                       pendingMapImageAssetKeys_.end(),
+                       [&](const std::string& assetKey) {
+                           return HasCachedImageAsset(assetKey, manifest_.revision);
+                       }),
+        pendingMapImageAssetKeys_.end());
+
+    if (!pendingMapImageAssetKeys_.empty()) {
+        mapReady_ = false;
+        loginStatus_ = "Downloading map textures: " + std::to_string(pendingMapImageAssetKeys_.size()) + " remaining";
+        return;
+    }
+
+    if (!mapReady_) {
+        mapReady_ = true;
+        loginStatus_ = "Server ready. Press Enter to log in.";
+        AddChatLine("[System] Map textures ready");
+        if (uiMode_ == UiMode::Boot) {
+            uiMode_ = UiMode::MainMenu;
+        } else if (uiMode_ == UiMode::World) {
+            AddChatLine("[System] World textures ready: " + world_.mapId());
+        }
     }
 }
 
