@@ -373,29 +373,6 @@ Rectangle PixelSnapped(Rectangle rect) {
     };
 }
 
-Rectangle AtlasInset(Rectangle source) {
-    constexpr float kInset = 0.01f;
-    if (source.width <= kInset * 2.0f || source.height <= kInset * 2.0f) {
-        return source;
-    }
-    return Rectangle {
-        source.x + kInset,
-        source.y + kInset,
-        source.width - kInset * 2.0f,
-        source.height - kInset * 2.0f
-    };
-}
-
-Rectangle SeamOverlap(Rectangle dest) {
-    constexpr float kOverlap = 0.5f;
-    return Rectangle {
-        dest.x - kOverlap,
-        dest.y - kOverlap,
-        dest.width + kOverlap * 2.0f,
-        dest.height + kOverlap * 2.0f
-    };
-}
-
 std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h) {
     return file + "@" + std::to_string(x) + "@" + std::to_string(y) + "@" + std::to_string(w) + "@" + std::to_string(h);
 }
@@ -927,7 +904,7 @@ bool World::DrawSpriteRef(const std::string& spriteRef, Rectangle dest, Vector2 
     if (!texture) {
         return false;
     }
-    DrawTexturePro(*texture, AtlasInset(ref.source), SeamOverlap(PixelSnapped(dest)), origin, rotation, tint);
+    DrawTexturePro(*texture, ref.source, PixelSnapped(dest), origin, rotation, tint);
     return true;
 }
 
