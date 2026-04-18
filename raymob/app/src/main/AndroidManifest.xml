@@ -29,6 +29,7 @@
         <activity
             android:name=".NativeLoader"
             android:configChanges="keyboardHidden|screenSize"
+            android:theme="@style/NganuTheme"
             android:screenOrientation="${APP_ORIENTATION}" android:launchMode="singleTask"
             android:resizeableActivity="false"
             android:clearTaskOnLaunch="true"
