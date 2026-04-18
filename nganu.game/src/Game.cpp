@@ -2464,15 +2464,20 @@ void Game::DrawBootScreen() const {
 }
 
 void Game::DrawScene() const {
-    BeginMode2D(camera_);
+    Camera2D renderCamera = camera_;
+    const float tx = renderCamera.offset.x - renderCamera.target.x;
+    const float ty = renderCamera.offset.y - renderCamera.target.y;
+    renderCamera.offset.x += std::round(tx) - tx;
+    renderCamera.offset.y += std::round(ty) - ty;
+    BeginMode2D(renderCamera);
 #if defined(PLATFORM_ANDROID)
     const float margin = 32.0f;
 #else
     const float margin = 96.0f;
 #endif
-    const Vector2 topLeft = GetScreenToWorld2D(Vector2 {-margin, -margin}, camera_);
+    const Vector2 topLeft = GetScreenToWorld2D(Vector2 {-margin, -margin}, renderCamera);
     const Vector2 bottomRight = GetScreenToWorld2D(Vector2 {static_cast<float>(GetScreenWidth()) + margin,
-                                                            static_cast<float>(GetScreenHeight()) + margin}, camera_);
+                                                            static_cast<float>(GetScreenHeight()) + margin}, renderCamera);
     const Rectangle visibleArea {
         std::min(topLeft.x, bottomRight.x),
         std::min(topLeft.y, bottomRight.y),

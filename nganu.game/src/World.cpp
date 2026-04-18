@@ -364,15 +364,6 @@ bool HasArea(Rectangle rect) {
     return rect.width > 0.0f && rect.height > 0.0f;
 }
 
-Rectangle PixelSnapped(Rectangle rect) {
-    return Rectangle {
-        std::round(rect.x),
-        std::round(rect.y),
-        std::round(rect.width),
-        std::round(rect.height)
-    };
-}
-
 std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h) {
     return file + "@" + std::to_string(x) + "@" + std::to_string(y) + "@" + std::to_string(w) + "@" + std::to_string(h);
 }
@@ -904,7 +895,7 @@ bool World::DrawSpriteRef(const std::string& spriteRef, Rectangle dest, Vector2 
     if (!texture) {
         return false;
     }
-    DrawTexturePro(*texture, ref.source, PixelSnapped(dest), origin, rotation, tint);
+    DrawTexturePro(*texture, ref.source, dest, origin, rotation, tint);
     return true;
 }
 
