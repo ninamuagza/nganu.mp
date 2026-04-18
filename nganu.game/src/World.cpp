@@ -329,6 +329,7 @@ Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textu
     if (texture.id <= 0 || texture.width <= 0 || texture.height <= 0) {
         return nullptr;
     }
+    SetTextureFilter(texture, TEXTURE_FILTER_POINT);
 
     textureIt = textures.emplace(cacheKey, texture).first;
     return &textureIt->second;

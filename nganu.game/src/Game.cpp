@@ -2453,15 +2453,20 @@ void Game::DrawBootScreen() const {
 }
 
 void Game::DrawScene() const {
-    BeginMode2D(camera_);
+    Camera2D renderCamera = camera_;
+    renderCamera.offset.x = std::round(renderCamera.offset.x);
+    renderCamera.offset.y = std::round(renderCamera.offset.y);
+    renderCamera.target.x = std::round(renderCamera.target.x);
+    renderCamera.target.y = std::round(renderCamera.target.y);
+    BeginMode2D(renderCamera);
 #if defined(PLATFORM_ANDROID)
     const float margin = 32.0f;
 #else
     const float margin = 96.0f;
 #endif
-    const Vector2 topLeft = GetScreenToWorld2D(Vector2 {-margin, -margin}, camera_);
+    const Vector2 topLeft = GetScreenToWorld2D(Vector2 {-margin, -margin}, renderCamera);
     const Vector2 bottomRight = GetScreenToWorld2D(Vector2 {static_cast<float>(GetScreenWidth()) + margin,
-                                                            static_cast<float>(GetScreenHeight()) + margin}, camera_);
+                                                            static_cast<float>(GetScreenHeight()) + margin}, renderCamera);
     const Rectangle visibleArea {
         std::min(topLeft.x, bottomRight.x),
         std::min(topLeft.y, bottomRight.y),
@@ -2558,15 +2563,7 @@ void Game::DrawScene() const {
     }
     if (CheckCollisionPointRec(player_.position, visibleArea)) {
         auto localBubbleIt = chatBubbles_.find(localPlayerId_);
-        if (chatFocused_ && !chatInput_.empty() && localBubbleIt == chatBubbles_.end()) {
-            ChatBubble typingBubble;
-            typingBubble.lines = {"..."};
-            typingBubble.age = 1.0f;
-            typingBubble.duration = 999.0f;
-            typingBubble.linePopAge = 1.0f;
-            typingBubble.previousLineCount = 1;
-            DrawChatBubble(player_.position, typingBubble, true);
-        } else if (localBubbleIt != chatBubbles_.end()) {
+        if (localBubbleIt != chatBubbles_.end()) {
             DrawChatBubble(player_.position, localBubbleIt->second, true);
         }
     }
