@@ -88,6 +88,7 @@ Rectangle GameplayViewport(float screenWidth, float screenHeight) {
 
 Rectangle CenteredCardInFrame(const Rectangle& frame, float preferredWidth, float maxWidth, float preferredHeight, float minHeight);
 Vector2 NormalizeOrZero(Vector2 value);
+Vector2 ScaleVector(Vector2 value, float scale);
 int MeasureUiText(const std::string& text, int fontSize);
 void DrawUiText(const char* text, float x, float y, int fontSize, Color color);
 
@@ -201,19 +202,61 @@ Vector2 AndroidMovementInput() {
     const Rectangle joy = AndroidJoystickBounds();
     const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
     const float radius = joy.width * 0.5f;
+    const float captureRadius = radius * 1.65f;
+    const float effectiveRadius = radius * 1.08f;
+    const float deadzone = 0.18f;
+
+    bool found = false;
+    Vector2 bestTouch {};
+    float bestDistanceSq = captureRadius * captureRadius;
     for (int i = 0; i < GetTouchPointCount(); ++i) {
         const Vector2 touch = GetTouchPosition(i);
         const float dx = touch.x - center.x;
         const float dy = touch.y - center.y;
         const float distanceSq = dx * dx + dy * dy;
-        const float captureRadius = radius * 1.45f;
-        if (distanceSq <= captureRadius * captureRadius) {
-            return NormalizeOrZero(Vector2 {dx / radius, dy / radius});
+        if (distanceSq <= bestDistanceSq) {
+            bestDistanceSq = distanceSq;
+            bestTouch = touch;
+            found = true;
         }
     }
-    return Vector2 {};
+
+    if (!found) {
+        return Vector2 {};
+    }
+
+    const float dx = bestTouch.x - center.x;
+    const float dy = bestTouch.y - center.y;
+    const float distance = std::sqrt((dx * dx) + (dy * dy));
+    const float normalizedDistance = std::clamp(distance / effectiveRadius, 0.0f, 1.0f);
+    if (normalizedDistance <= deadzone) {
+        return Vector2 {};
+    }
+
+    const Vector2 direction = NormalizeOrZero(Vector2 {dx, dy});
+    const float amount = (normalizedDistance - deadzone) / (1.0f - deadzone);
+    const float curvedAmount = amount * amount * (3.0f - (2.0f * amount));
+    return ScaleVector(direction, curvedAmount);
 }
 
+float AndroidMovementAmount(Vector2 input) {
+    return std::clamp(std::sqrt((input.x * input.x) + (input.y * input.y)), 0.0f, 1.0f);
+}
+
+Vector2 AndroidMovementDirection(Vector2 input) {
+    return NormalizeOrZero(input);
+}
+#else
+float AndroidMovementAmount(Vector2) {
+    return 0.0f;
+}
+
+Vector2 AndroidMovementDirection(Vector2) {
+    return Vector2 {};
+}
+#endif
+
+#if defined(PLATFORM_ANDROID)
 Rectangle AndroidActionButtonRect(float indexFromRight) {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
@@ -265,8 +308,8 @@ void DrawAndroidTouchControls(bool chatFocused, bool showDebug) {
     DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), radius, Fade(RAYWHITE, 0.34f));
 
     Vector2 knob = AndroidMovementInput();
-    knob = Vector2 {center.x + knob.x * radius * 0.55f, center.y + knob.y * radius * 0.55f};
-    DrawCircleV(knob, radius * 0.34f, Fade(RAYWHITE, 0.30f));
+    knob = Vector2 {center.x + knob.x * radius * 0.72f, center.y + knob.y * radius * 0.72f};
+    DrawCircleV(knob, radius * 0.32f, Fade(RAYWHITE, 0.34f));
 
     auto drawButton = [](Rectangle rect, const char* label, Color color) {
         DrawCircle(static_cast<int>(rect.x + rect.width * 0.5f),
@@ -927,16 +970,22 @@ void Game::UpdatePlayer(float dt) {
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) input.x += 1.0f;
     if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) input.y -= 1.0f;
     if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) input.y += 1.0f;
+    bool analogInput = false;
 #if defined(PLATFORM_ANDROID)
     const Vector2 touchInput = AndroidMovementInput();
     if (std::fabs(touchInput.x) > 0.01f || std::fabs(touchInput.y) > 0.01f) {
         input = touchInput;
+        analogInput = true;
     }
 #endif
 
     const bool running = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
     const float moveSpeed = running ? 240.0f : 165.0f;
-    player_.velocity = ScaleVector(NormalizeOrZero(input), moveSpeed);
+    if (analogInput) {
+        player_.velocity = ScaleVector(AndroidMovementDirection(input), moveSpeed * AndroidMovementAmount(input));
+    } else {
+        player_.velocity = ScaleVector(NormalizeOrZero(input), moveSpeed);
+    }
 
     Vector2 nextPosition = player_.position;
 
