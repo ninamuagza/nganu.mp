@@ -27,9 +27,15 @@ struct Avatar {
     float radius = 14.0f;
 };
 
+struct RemoteMovementSample {
+    Vector2 position {};
+    float time = 0.0f;
+};
+
 struct RemoteAvatar {
     Avatar avatar;
     Vector2 targetPosition {};
+    std::vector<RemoteMovementSample> movementSamples;
 };
 
 struct ChatEntry {
@@ -41,6 +47,14 @@ struct ChatRow {
     std::string text;
     size_t entryIndex = 0;
     bool firstLine = false;
+};
+
+struct ChatBubble {
+    std::vector<std::string> lines;
+    float age = 0.0f;
+    float duration = 4.8f;
+    float linePopAge = 1.0f;
+    size_t previousLineCount = 0;
 };
 
 struct ContentManifest {
@@ -89,6 +103,7 @@ private:
     Avatar player_;
     std::unordered_map<int, RemoteAvatar> remotePlayers_;
     std::vector<ChatEntry> chatEntries_;
+    std::unordered_map<int, ChatBubble> chatBubbles_;
     UiMode uiMode_ = UiMode::Boot;
     LoginField loginField_ = LoginField::Name;
     Camera2D camera_ {};
@@ -96,6 +111,7 @@ private:
     float worldTime_ = 0.0f;
     float sendAccumulator_ = 0.0f;
     Vector2 lastSentPosition_ {};
+    Vector2 localCorrectionRemaining_ {};
     int localPlayerId_ = 0;
     std::string chatInput_;
     bool chatFocused_ = false;
@@ -146,6 +162,7 @@ private:
     void UpdateNetwork(float dt);
     void HandleNetworkEvent(const NetworkEvent& event);
     void AddChatLine(const std::string& line);
+    void PushChatBubble(int senderId, const std::string& text);
     void ApplyManifest(const std::string& rawManifest);
     std::optional<AssetBlob> ParseAssetBlob(const std::string& rawBlob) const;
     std::filesystem::path CacheDirectory() const;
@@ -166,6 +183,7 @@ private:
     std::string SpriteForAvatar(const Avatar& avatar, bool localPlayer) const;
     void UpdateChatInput();
     void UpdateChatScroll(float dt);
+    void UpdateChatBubbles(float dt);
     void UpdateUi(float dt);
     void UpdateNpcAndQuest();
     void UpdateRemoteSmoothing(float dt);
@@ -179,6 +197,7 @@ private:
 
     void DrawScene() const;
     void DrawAvatar(const Avatar& avatar, bool localPlayer) const;
+    void DrawChatBubble(Vector2 anchor, const ChatBubble& bubble, bool localPlayer) const;
     void DrawNpc(const WorldObject& object) const;
     void DrawHud() const;
     void DrawLoginScreen() const;

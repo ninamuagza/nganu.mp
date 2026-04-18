@@ -947,6 +947,20 @@ std::vector<std::string> World::referencedCharacterImageFiles() const {
             addRef(value);
         }
     }
+    for (const WorldLayer& layer : layers_) {
+        if (layer.kind == "image") {
+            addRef(layer.asset);
+        }
+    }
+    for (const WorldObject& object : objects_) {
+        auto it = object.properties.find("sprite");
+        if (it != object.properties.end()) {
+            addRef(it->second);
+        }
+    }
+    for (const WorldStamp& stamp : stamps_) {
+        addRef(stamp.asset);
+    }
 
     return files;
 }

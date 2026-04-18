@@ -204,7 +204,7 @@ bool AndroidPointPressedIn(Rectangle rect, bool& wasDown) {
 Rectangle AndroidJoystickBounds() {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
-    const float radius = std::clamp(std::min(screenWidth, screenHeight) * 0.115f, 58.0f, 92.0f);
+    const float radius = std::clamp(std::min(screenWidth, screenHeight) * 0.144f, 72.0f, 115.0f);
     return Rectangle {screenWidth * 0.055f, screenHeight - (radius * 2.25f), radius * 2.0f, radius * 2.0f};
 }
 
@@ -230,7 +230,8 @@ void UpdateAndroidJoystick() {
     const Vector2 defaultCenter = AndroidJoystickDefaultCenter();
     const float radius = AndroidJoystickRadius();
     const float activationRadius = radius * 1.80f;
-    const float deadzone = 0.16f;
+    const float deadzone = 0.07f;
+    const float minimumMoveAmount = 0.14f;
 
     int touchIndex = -1;
     Vector2 touch {};
@@ -289,7 +290,7 @@ void UpdateAndroidJoystick() {
     }
 
     const float amount = (normalizedDistance - deadzone) / (1.0f - deadzone);
-    const float curvedAmount = amount * amount * (3.0f - (2.0f * amount));
+    const float curvedAmount = minimumMoveAmount + ((1.0f - minimumMoveAmount) * amount * amount * (3.0f - (2.0f * amount)));
     g_androidJoystick.input = ScaleVector(direction, curvedAmount);
 }
 
@@ -643,6 +644,24 @@ Vector2 ScaleVector(Vector2 value, float scale) {
     return Vector2 {value.x * scale, value.y * scale};
 }
 
+float DistanceBetween(Vector2 a, Vector2 b) {
+    const float dx = a.x - b.x;
+    const float dy = a.y - b.y;
+    return std::sqrt((dx * dx) + (dy * dy));
+}
+
+float SmoothFadeByDistance(Vector2 a, Vector2 b, float fullAlphaDistance, float hiddenDistance) {
+    const float distance = DistanceBetween(a, b);
+    if (distance <= fullAlphaDistance) {
+        return 1.0f;
+    }
+    if (distance >= hiddenDistance) {
+        return 0.0f;
+    }
+    const float t = std::clamp((distance - fullAlphaDistance) / (hiddenDistance - fullAlphaDistance), 0.0f, 1.0f);
+    return 1.0f - (t * t * (3.0f - (2.0f * t)));
+}
+
 std::string FacingForVelocity(Vector2 velocity) {
     if (std::fabs(velocity.x) > std::fabs(velocity.y)) {
         return velocity.x >= 0.0f ? "east" : "west";
@@ -679,6 +698,7 @@ Game::Game() {
     camera_.rotation = 0.0f;
     camera_.zoom = 1.0f;
     lastSentPosition_ = player_.position;
+    localCorrectionRemaining_ = Vector2 {};
 
     inventory_.resize(20);
     InventoryNetCallbacks inventoryCallbacks;
@@ -751,6 +771,7 @@ void Game::Update(float dt) {
 
     UpdateChatInput();
     UpdateChatScroll(dt);
+    UpdateChatBubbles(dt);
     UpdateUi(dt);
     UpdatePlayer(dt);
     UpdateNetwork(dt);
@@ -790,10 +811,12 @@ void Game::BeginBootUpdateCheck() {
         inventoryUi_->Close();
     }
     if (!hasAuthoritativePosition_) {
-        player_.position = world_.spawnPoint();
-        lastSentPosition_ = player_.position;
-        camera_.target = player_.position;
+    player_.position = world_.spawnPoint();
+    lastSentPosition_ = player_.position;
+    localCorrectionRemaining_ = Vector2 {};
+    camera_.target = player_.position;
     }
+    localCorrectionRemaining_ = Vector2 {};
     loginStatus_ = "Checking server update...";
     uiMode_ = UiMode::Boot;
     AddChatLine("[System] Checking server update...");
@@ -1008,6 +1031,7 @@ void Game::StartLogin() {
         lastSentPosition_ = player_.position;
         camera_.target = player_.position;
     }
+    localCorrectionRemaining_ = Vector2 {};
     chatFocused_ = false;
     chatInput_.clear();
     sendAccumulator_ = 0.0f;
@@ -1067,6 +1091,19 @@ void Game::UpdatePlayer(float dt) {
         player_.position.y = nextPosition.y;
     }
 
+    const float correctionDistance = DistanceBetween(Vector2 {}, localCorrectionRemaining_);
+    if (correctionDistance > 0.01f) {
+        const float amount = std::clamp(dt * 6.0f, 0.0f, 1.0f);
+        const Vector2 correctionStep = ScaleVector(localCorrectionRemaining_, amount);
+        player_.position.x += correctionStep.x;
+        player_.position.y += correctionStep.y;
+        localCorrectionRemaining_.x -= correctionStep.x;
+        localCorrectionRemaining_.y -= correctionStep.y;
+        if (DistanceBetween(Vector2 {}, localCorrectionRemaining_) < 0.35f) {
+            localCorrectionRemaining_ = Vector2 {};
+        }
+    }
+
 }
 
 void Game::UpdateCamera(float dt) {
@@ -1103,11 +1140,7 @@ void Game::UpdateNetwork(float dt) {
     const bool movedEnough =
         std::fabs(player_.position.x - lastSentPosition_.x) > 0.5f ||
         std::fabs(player_.position.y - lastSentPosition_.y) > 0.5f;
-#if defined(PLATFORM_ANDROID)
-    const float sendInterval = movedEnough ? 0.05f : 1.0f;
-#else
     const float sendInterval = movedEnough ? 0.10f : 1.0f;
-#endif
 
     if (network_.IsConnected() && sendAccumulator_ >= sendInterval) {
         if (network_.SendPlayerPosition(player_.position.x, player_.position.y)) {
@@ -1146,6 +1179,8 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         break;
     case NetworkEvent::Type::Disconnected:
         remotePlayers_.clear();
+        chatBubbles_.clear();
+        localCorrectionRemaining_ = Vector2 {};
         localPlayerId_ = 0;
         handshakeReady_ = false;
         bootstrapRequested_ = false;
@@ -1227,6 +1262,8 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
     }
     case NetworkEvent::Type::MapTransfer:
         remotePlayers_.clear();
+        chatBubbles_.clear();
+        localCorrectionRemaining_ = Vector2 {};
         currentObjective_.clear();
         pendingMapId_ = event.mapId;
         pendingSpawnPosition_ = Vector2 {event.x, event.y};
@@ -1235,8 +1272,18 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         BeginMapBootstrapForAsset("map:" + event.mapId, "Loading map " + event.mapId + "...");
         break;
     case NetworkEvent::Type::PlayerPosition:
-        player_.position = Vector2 {event.x, event.y};
-        lastSentPosition_ = player_.position;
+        {
+            const Vector2 authoritative {event.x, event.y};
+            const float correctionDistance = DistanceBetween(player_.position, authoritative);
+            if (!hasAuthoritativePosition_ || correctionDistance > 96.0f) {
+                player_.position = authoritative;
+                localCorrectionRemaining_ = Vector2 {};
+            } else if (correctionDistance > 1.5f) {
+                localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.65f;
+                localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.65f;
+            }
+            lastSentPosition_ = player_.position;
+        }
         hasAuthoritativePosition_ = true;
         break;
     case NetworkEvent::Type::SnapshotPlayer:
@@ -1244,6 +1291,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         if (event.playerId == localPlayerId_ && localPlayerId_ != 0) {
             player_.position = Vector2 {event.x, event.y};
             lastSentPosition_ = player_.position;
+            localCorrectionRemaining_ = Vector2 {};
             hasAuthoritativePosition_ = true;
             break;
         }
@@ -1261,6 +1309,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         if (event.playerId != localPlayerId_) {
             AddChatLine("[System] " + NameForPlayer(event.playerId) + " left");
             remotePlayers_.erase(event.playerId);
+            chatBubbles_.erase(event.playerId);
         }
         break;
     case NetworkEvent::Type::PlayerMoved: {
@@ -1270,6 +1319,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
     }
     case NetworkEvent::Type::ChatMessage:
         AddChatLine("[" + NameForPlayer(event.senderId) + "] " + event.text);
+        PushChatBubble(event.senderId, event.text);
         break;
     case NetworkEvent::Type::PlayerName:
         ApplyPlayerName(event.playerId, event.text);
@@ -1336,6 +1386,73 @@ void Game::AddChatLine(const std::string& line) {
         chatEntries_.erase(chatEntries_.begin());
     }
     chatScrollTarget_ = 0.0f;
+}
+
+void Game::PushChatBubble(int senderId, const std::string& text) {
+    if (senderId <= 0 || text.empty()) {
+        return;
+    }
+
+    std::string sanitized;
+    sanitized.reserve(std::min<size_t>(text.size(), 96));
+    for (char ch : text) {
+        if (ch == '\n' || ch == '\r' || ch == '\t') {
+            sanitized.push_back(' ');
+        } else if (static_cast<unsigned char>(ch) >= 32) {
+            sanitized.push_back(ch);
+        }
+        if (sanitized.size() >= 96) {
+            break;
+        }
+    }
+    if (sanitized.empty()) {
+        return;
+    }
+
+    constexpr int kBubbleFontSize = 15;
+    constexpr float kBubbleMaxTextWidth = 190.0f;
+    constexpr size_t kBubbleMaxLines = 5;
+    std::vector<std::string> newLines;
+    std::istringstream words(sanitized);
+    std::string word;
+    std::string current;
+    while (words >> word) {
+        const std::string candidate = current.empty() ? word : current + " " + word;
+        if (MeasureUiText(candidate, kBubbleFontSize) <= static_cast<int>(kBubbleMaxTextWidth)) {
+            current = candidate;
+            continue;
+        }
+        if (!current.empty()) {
+            newLines.push_back(current);
+            current = word;
+        } else {
+            newLines.push_back(EllipsizeText(word, kBubbleFontSize, kBubbleMaxTextWidth));
+            current.clear();
+        }
+    }
+    if (!current.empty()) {
+        newLines.push_back(current);
+    }
+    if (newLines.empty()) {
+        return;
+    }
+    if (newLines.size() > kBubbleMaxLines) {
+        newLines.resize(kBubbleMaxLines);
+        newLines.back() = EllipsizeText(newLines.back(), kBubbleFontSize, kBubbleMaxTextWidth);
+    }
+
+    ChatBubble& bubble = chatBubbles_[senderId];
+    const bool startsNewBubble = bubble.lines.empty() || bubble.lines.size() + newLines.size() > kBubbleMaxLines;
+    bubble.previousLineCount = startsNewBubble ? 0 : bubble.lines.size();
+    if (startsNewBubble) {
+        bubble.lines.clear();
+        bubble.age = 0.0f;
+    } else {
+        bubble.age = std::max(bubble.age, 0.20f);
+    }
+    bubble.lines.insert(bubble.lines.end(), newLines.begin(), newLines.end());
+    bubble.duration = bubble.age + 4.8f;
+    bubble.linePopAge = 0.0f;
 }
 
 void Game::ApplyManifest(const std::string& rawManifest) {
@@ -1537,7 +1654,8 @@ bool Game::LoadCachedAsset(const std::string& assetKey, const std::string& revis
 
 bool Game::HasCachedImageAsset(const std::string& assetKey, const std::string& revision) const {
     try {
-        return std::filesystem::exists(ImageCachePathForAsset(assetKey, revision));
+        const std::filesystem::path path = ImageCachePathForAsset(assetKey, revision);
+        return std::filesystem::is_regular_file(path) && std::filesystem::file_size(path) > 0;
     } catch (...) {
         return false;
     }
@@ -1597,6 +1715,7 @@ void Game::ApplyMapAsset(const AssetBlob& asset) {
         player_.position = world_.spawnPoint();
     }
     lastSentPosition_ = player_.position;
+    localCorrectionRemaining_ = Vector2 {};
     camera_.target = player_.position;
     mapReady_ = true;
     pendingMapAssetKey_.clear();
@@ -1747,6 +1866,7 @@ std::string Game::NameForPlayer(int playerId) const {
 }
 
 void Game::UpdateChatInput() {
+    static float backspaceRepeatTimer = 0.0f;
     auto sendChatAndClose = [&]() {
         if (!chatInput_.empty()) {
             if (!network_.SendChatMessage(chatInput_)) {
@@ -1811,8 +1931,19 @@ void Game::UpdateChatInput() {
         pressed = GetCharPressed();
     }
 
+    const float dt = GetFrameTime();
+    if (!IsKeyDown(KEY_BACKSPACE)) {
+        backspaceRepeatTimer = 0.0f;
+    }
     if (IsKeyPressed(KEY_BACKSPACE) && !chatInput_.empty()) {
         chatInput_.pop_back();
+        backspaceRepeatTimer = 0.26f;
+    } else if (IsKeyDown(KEY_BACKSPACE) && !chatInput_.empty()) {
+        backspaceRepeatTimer -= dt;
+        if (backspaceRepeatTimer <= 0.0f) {
+            chatInput_.pop_back();
+            backspaceRepeatTimer = 0.045f;
+        }
     }
 }
 
@@ -1848,9 +1979,26 @@ void Game::UpdateChatScroll(float dt) {
     }
 }
 
+void Game::UpdateChatBubbles(float dt) {
+    for (auto it = chatBubbles_.begin(); it != chatBubbles_.end();) {
+        it->second.age += dt;
+        it->second.linePopAge += dt;
+        if (it->second.age >= it->second.duration) {
+            it = chatBubbles_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
 void Game::UpdateUi(float dt) {
     if (uiMode_ != UiMode::World) {
         uiInputBlockingWorld_ = false;
+        return;
+    }
+    if (chatFocused_) {
+        uiSystem_.Update(dt);
+        uiInputBlockingWorld_ = true;
         return;
     }
 
@@ -1915,11 +2063,42 @@ void Game::UpdateNpcAndQuest() {
 }
 
 void Game::UpdateRemoteSmoothing(float dt) {
-    const float amount = std::clamp(dt * 10.0f, 0.0f, 1.0f);
+    constexpr float kInterpolationDelay = 0.12f;
+    const float renderTime = worldTime_ - kInterpolationDelay;
     for (auto& [playerId, remote] : remotePlayers_) {
         (void)playerId;
-        remote.avatar.position.x = LerpValue(remote.avatar.position.x, remote.targetPosition.x, amount);
-        remote.avatar.position.y = LerpValue(remote.avatar.position.y, remote.targetPosition.y, amount);
+        if (remote.movementSamples.empty()) {
+            continue;
+        }
+
+        while (remote.movementSamples.size() > 2 && remote.movementSamples[1].time <= renderTime) {
+            remote.movementSamples.erase(remote.movementSamples.begin());
+        }
+
+        Vector2 target = remote.targetPosition;
+        if (remote.movementSamples.size() >= 2 &&
+            remote.movementSamples[0].time <= renderTime &&
+            remote.movementSamples[1].time >= renderTime) {
+            const RemoteMovementSample& a = remote.movementSamples[0];
+            const RemoteMovementSample& b = remote.movementSamples[1];
+            const float span = std::max(0.001f, b.time - a.time);
+            const float t = std::clamp((renderTime - a.time) / span, 0.0f, 1.0f);
+            target = Vector2 {
+                LerpValue(a.position.x, b.position.x, t),
+                LerpValue(a.position.y, b.position.y, t)
+            };
+        } else {
+            target = remote.movementSamples.back().position;
+        }
+
+        const float distance = DistanceBetween(remote.avatar.position, target);
+        if (distance > 128.0f) {
+            remote.avatar.position = target;
+        } else {
+            const float amount = std::clamp(dt * 16.0f, 0.0f, 1.0f);
+            remote.avatar.position.x = LerpValue(remote.avatar.position.x, target.x, amount);
+            remote.avatar.position.y = LerpValue(remote.avatar.position.y, target.y, amount);
+        }
     }
 }
 
@@ -1929,6 +2108,10 @@ void Game::ApplyRemotePlayerState(int playerId, float x, float y) {
         remote.avatar.name = "Player " + std::to_string(playerId);
     }
     remote.targetPosition = Vector2 {x, y};
+    remote.movementSamples.push_back(RemoteMovementSample {remote.targetPosition, worldTime_});
+    if (remote.movementSamples.size() > 8) {
+        remote.movementSamples.erase(remote.movementSamples.begin(), remote.movementSamples.end() - 8);
+    }
     if (remote.avatar.radius <= 0.0f) {
         remote.avatar.radius = 14.0f;
     }
@@ -2196,7 +2379,7 @@ void Game::DrawScene() const {
                 const Vector2 center = world_.objectCenter(object);
                 const bool inRange = IsNearPosition(player_.position, center, InteractionRangeForObject(object));
 #if defined(PLATFORM_ANDROID)
-                if (inRange) {
+                {
 #else
                 {
 #endif
@@ -2243,7 +2426,7 @@ void Game::DrawScene() const {
                 const Vector2 center = world_.objectCenter(object);
                 const bool inRange = IsNearPosition(player_.position, center, InteractionRangeForObject(object));
 #if defined(PLATFORM_ANDROID)
-                if (inRange) {
+                {
 #else
                 {
 #endif
@@ -2258,6 +2441,31 @@ void Game::DrawScene() const {
                     DrawUiText(InteractionPromptForObject(object), center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
+        }
+    }
+
+    for (const auto& [playerId, remote] : remotePlayers_) {
+        auto bubbleIt = chatBubbles_.find(playerId);
+        if (bubbleIt == chatBubbles_.end()) {
+            continue;
+        }
+        if (!CheckCollisionPointRec(remote.avatar.position, visibleArea)) {
+            continue;
+        }
+        DrawChatBubble(remote.avatar.position, bubbleIt->second, false);
+    }
+    if (CheckCollisionPointRec(player_.position, visibleArea)) {
+        auto localBubbleIt = chatBubbles_.find(localPlayerId_);
+        if (chatFocused_ && !chatInput_.empty() && localBubbleIt == chatBubbles_.end()) {
+            ChatBubble typingBubble;
+            typingBubble.lines = {"..."};
+            typingBubble.age = 1.0f;
+            typingBubble.duration = 999.0f;
+            typingBubble.linePopAge = 1.0f;
+            typingBubble.previousLineCount = 1;
+            DrawChatBubble(player_.position, typingBubble, true);
+        } else if (localBubbleIt != chatBubbles_.end()) {
+            DrawChatBubble(player_.position, localBubbleIt->second, true);
         }
     }
     EndMode2D();
@@ -2288,12 +2496,77 @@ void Game::DrawAvatar(const Avatar& avatar, bool localPlayer) const {
         DrawCircleLinesV(avatar.position, avatar.radius, outline);
     }
 #if defined(PLATFORM_ANDROID)
-    if (localPlayer || IsNearPosition(player_.position, avatar.position, 180.0f)) {
-        DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
+    const float labelAlpha = localPlayer ? 1.0f : SmoothFadeByDistance(player_.position, avatar.position, 170.0f, 320.0f);
+    if (labelAlpha > 0.02f) {
+        DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, Fade(RAYWHITE, labelAlpha));
     }
 #else
     DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
 #endif
+}
+
+void Game::DrawChatBubble(Vector2 anchor, const ChatBubble& bubble, bool localPlayer) const {
+    const float fadeIn = std::clamp(bubble.age / 0.18f, 0.0f, 1.0f);
+    const float fadeOutStart = bubble.duration - 0.85f;
+    const float fadeOut = 1.0f - std::clamp((bubble.age - fadeOutStart) / 0.85f, 0.0f, 1.0f);
+    const float easedIn = fadeIn * fadeIn * (3.0f - (2.0f * fadeIn));
+    const float easedOut = fadeOut * fadeOut * (3.0f - (2.0f * fadeOut));
+    const float alpha = std::clamp(std::min(easedIn, easedOut), 0.0f, 1.0f);
+    if (alpha <= 0.01f) {
+        return;
+    }
+
+    const int fontSize = 15;
+    const float maxTextWidth = 190.0f;
+    if (bubble.lines.empty()) {
+        return;
+    }
+
+    float textWidth = 0.0f;
+    for (const std::string& line : bubble.lines) {
+        textWidth = std::max(textWidth, static_cast<float>(MeasureUiText(line, fontSize)));
+    }
+    const float paddingX = 10.0f;
+    const float paddingY = 7.0f;
+    const float lineHeight = static_cast<float>(fontSize + 4);
+    const float bubbleWidth = std::clamp(textWidth + paddingX * 2.0f, 34.0f, maxTextWidth + paddingX * 2.0f);
+    const float resizeT = std::clamp(bubble.linePopAge / 0.16f, 0.0f, 1.0f);
+    const float resizeEase = resizeT * resizeT * (3.0f - (2.0f * resizeT));
+    const float previousLineCount = static_cast<float>(std::min(bubble.previousLineCount, bubble.lines.size()));
+    const float animatedLineCount = previousLineCount + ((static_cast<float>(bubble.lines.size()) - previousLineCount) * resizeEase);
+    const float bubbleHeight = paddingY * 2.0f + lineHeight * std::max(1.0f, animatedLineCount);
+    const float yLift = (1.0f - easedIn) * 10.0f;
+    const Rectangle rect {
+        anchor.x - bubbleWidth * 0.5f,
+        anchor.y - 82.0f - bubbleHeight - yLift,
+        bubbleWidth,
+        bubbleHeight
+    };
+
+    const Color fill = localPlayer
+        ? Color {25, 47, 38, 235}
+        : Color {15, 26, 31, 232};
+    const Color border = localPlayer ? AccentColor() : Color {231, 241, 236, 150};
+    DrawRectangleRounded(rect, 0.34f, 10, Fade(fill, alpha * 0.92f));
+    DrawRectangleRoundedLinesEx(rect, 0.34f, 10, 1.6f, Fade(border, alpha * 0.72f));
+
+    const float popT = std::clamp(bubble.linePopAge / 0.18f, 0.0f, 1.0f);
+    const float popEase = popT * popT * (3.0f - (2.0f * popT));
+    for (size_t i = 0; i < bubble.lines.size(); ++i) {
+        const std::string& line = bubble.lines[i];
+        const float lineWidth = static_cast<float>(MeasureUiText(line, fontSize));
+        const bool isNewLine = i >= bubble.previousLineCount;
+        const float lineAlpha = alpha * (isNewLine ? popEase : 0.92f);
+        if (lineAlpha <= 0.01f) {
+            continue;
+        }
+        const float popScaleOffset = isNewLine ? (1.0f - popEase) * 3.0f : 0.0f;
+        DrawUiText(line,
+                   rect.x + (rect.width - lineWidth) * 0.5f,
+                   rect.y + paddingY + lineHeight * static_cast<float>(i) + popScaleOffset,
+                   fontSize,
+                   Fade(RAYWHITE, lineAlpha));
+    }
 }
 
 void Game::DrawNpc(const WorldObject& object) const {
@@ -2318,11 +2591,7 @@ void Game::DrawNpc(const WorldObject& object) const {
     }
 
     const bool inRange = IsNearPosition(player_.position, drawPosition, InteractionRangeForObject(object));
-#if defined(PLATFORM_ANDROID)
-    if (inRange) {
-#else
     {
-#endif
         DrawUiText(drawName, drawPosition.x - 24.0f, drawPosition.y - 40.0f, 16, Color {255, 244, 171, 255});
         if (!drawTitle.empty()) {
             DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
