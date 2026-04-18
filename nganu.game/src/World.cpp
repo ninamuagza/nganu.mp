@@ -556,10 +556,6 @@ void World::DrawGround(Rectangle visibleArea) const {
         if (layer.name == "ground" && layer.kind == "color") {
             DrawRectangleRec(clippedView, Fade(layer.tint, 0.18f));
         } else if (layer.name == "ground" && layer.kind == "image") {
-            if (kFastMobileRender) {
-                DrawRectangleRec(clippedView, Fade(layer.tint, 0.10f));
-                continue;
-            }
             const AtlasRef ref = ParseAtlasRef(layer.asset);
             if (ref.valid) {
                 auto textureIt = textures_.find(ref.file);
@@ -727,8 +723,10 @@ void World::DrawDecorations(Rectangle visibleArea) const {
                 }
                 DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
             }
-        } else if (!kFastMobileRender && layer.asset.find("trees") != std::string::npos) {
-            const int decorationCount = std::max(18, (width_ * height_) / 60);
+        } else if (layer.asset.find("trees") != std::string::npos) {
+            const int decorationCount = kFastMobileRender
+                ? std::max(8, (width_ * height_) / 140)
+                : std::max(18, (width_ * height_) / 60);
             const int maxX = std::max(160, width_ * tileSize_ - 160);
             const int maxY = std::max(180, height_ * tileSize_ - 180);
             for (int i = 0; i < decorationCount; ++i) {

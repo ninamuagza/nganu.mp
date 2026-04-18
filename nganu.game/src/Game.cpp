@@ -165,6 +165,18 @@ bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly
     return changed;
 }
 
+bool AndroidSoftEnterPressed() {
+    constexpr int kAndroidKeyCodeEnter = 66;
+    const int code = GetLastSoftKeyCode();
+    const int unicode = GetLastSoftKeyUnicode();
+    const char ch = GetLastSoftKeyChar();
+    if (code == KEY_ENTER || code == kAndroidKeyCodeEnter || unicode == '\n' || unicode == '\r' || ch == '\n' || ch == '\r') {
+        ClearLastSoftKey();
+        return true;
+    }
+    return false;
+}
+
 bool AndroidPointPressedIn(Rectangle rect, bool& wasDown) {
     bool down = false;
     for (int i = 0; i < GetTouchPointCount(); ++i) {
@@ -1566,14 +1578,7 @@ std::string Game::NameForPlayer(int playerId) const {
 }
 
 void Game::UpdateChatInput() {
-#if defined(PLATFORM_ANDROID)
-    if (AndroidChatPressed()) {
-        if (!chatFocused_) {
-            chatFocused_ = true;
-            ShowAndroidKeyboard();
-            return;
-        }
-
+    auto sendChatAndClose = [&]() {
         if (!chatInput_.empty()) {
             if (!network_.SendChatMessage(chatInput_)) {
                 AddChatLine("[System] Chat send failed");
@@ -1582,6 +1587,17 @@ void Game::UpdateChatInput() {
         }
         chatFocused_ = false;
         HideAndroidKeyboard();
+    };
+
+#if defined(PLATFORM_ANDROID)
+    if (AndroidChatPressed()) {
+        if (!chatFocused_) {
+            chatFocused_ = true;
+            ShowAndroidKeyboard();
+            return;
+        }
+
+        sendChatAndClose();
         return;
     }
 #endif
@@ -1595,17 +1611,17 @@ void Game::UpdateChatInput() {
             return;
         }
 
-        if (!chatInput_.empty()) {
-            if (!network_.SendChatMessage(chatInput_)) {
-                AddChatLine("[System] Chat send failed");
-            }
-            chatInput_.clear();
-        }
-        chatFocused_ = false;
-        HideAndroidKeyboard();
+        sendChatAndClose();
     }
 
     if (!chatFocused_) return;
+
+#if defined(PLATFORM_ANDROID)
+    if (AndroidSoftEnterPressed()) {
+        sendChatAndClose();
+        return;
+    }
+#endif
 
     if (IsKeyPressed(KEY_ESCAPE)) {
         chatFocused_ = false;
@@ -2143,9 +2159,7 @@ void Game::DrawNpc(const WorldObject& object) const {
 void Game::DrawHud() const {
     DrawTopBar();
 #if defined(PLATFORM_ANDROID)
-    if (chatFocused_) {
-        DrawChatPanel();
-    }
+    DrawChatPanel();
     if (showDebug_) {
         DrawDebugPanel();
     }
