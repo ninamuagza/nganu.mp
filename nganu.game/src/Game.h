@@ -126,6 +126,7 @@ private:
     float stateTimer_ = 0.0f;
     float retryCountdown_ = 0.0f;
     float manifestWait_ = 0.0f;
+    float keepAliveAccumulator_ = 0.0f;
     bool bootStarted_ = false;
     bool bootstrapRequested_ = false;
     bool handshakeReady_ = false;

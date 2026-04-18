@@ -788,6 +788,7 @@ void Game::BeginBootUpdateCheck() {
     handshakeReady_ = false;
     bootstrapRequested_ = false;
     manifestWait_ = 0.0f;
+    keepAliveAccumulator_ = 0.0f;
     retryCountdown_ = 0.0f;
     stateTimer_ = 0.0f;
     hasAuthoritativePosition_ = false;
@@ -1127,6 +1128,16 @@ void Game::UpdateNetwork(float dt) {
     network_.Update(dt);
     for (const NetworkEvent& event : network_.ConsumeEvents()) {
         HandleNetworkEvent(event);
+    }
+
+    if (network_.IsConnected() && (uiMode_ != UiMode::World || !mapReady_)) {
+        keepAliveAccumulator_ += dt;
+        if (keepAliveAccumulator_ >= 1.5f) {
+            network_.SendHeartbeat();
+            keepAliveAccumulator_ = 0.0f;
+        }
+    } else {
+        keepAliveAccumulator_ = 0.0f;
     }
 
     if (uiMode_ == UiMode::Boot && bootstrapRequested_ && !manifest_.valid) {

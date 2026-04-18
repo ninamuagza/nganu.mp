@@ -49,6 +49,7 @@ enum class GameStateType : uint8_t {
 
 enum class PluginMessageType : uint8_t {
     PLAYER_NAME = 0x01,
+    HEARTBEAT = 0x02,
     UPDATE_PROBE = 0x20,
     UPDATE_MANIFEST = 0x21,
     ASSET_REQUEST = 0x22,

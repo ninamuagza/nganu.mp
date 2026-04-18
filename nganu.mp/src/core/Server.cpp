@@ -1383,6 +1383,9 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             script_.callFunction("OnPlayerNameChange", playerid);
             break;
         }
+        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::HEARTBEAT)) {
+            break;
+        }
         if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::UPDATE_PROBE)) {
             sendUpdateManifestToPeer(network_.peerForPlayer(playerid));
             break;

@@ -294,6 +294,17 @@ bool NetworkClient::SendObjectInteract(const std::string& objectId) {
     return enet_peer_send(peer_, 0, packet) == 0;
 }
 
+bool NetworkClient::SendHeartbeat() {
+    if (!IsConnected()) return false;
+
+    uint8_t pkt[2];
+    pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
+    pkt[1] = static_cast<uint8_t>(PluginMessageType::HEARTBEAT);
+
+    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), 0);
+    return enet_peer_send(peer_, 0, packet) == 0;
+}
+
 bool NetworkClient::RequestUpdateManifest() {
     if (!IsConnected()) return false;
 

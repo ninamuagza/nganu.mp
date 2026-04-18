@@ -66,6 +66,7 @@ public:
     bool SendChatMessage(const std::string& text);
     bool SendPlayerName(const std::string& name);
     bool SendObjectInteract(const std::string& objectId);
+    bool SendHeartbeat();
     bool RequestUpdateManifest();
     bool RequestAsset(const std::string& assetKey);
     /* Inventory */
