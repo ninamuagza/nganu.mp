@@ -5,8 +5,10 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <iterator>
 #include <optional>
 #include <sstream>
+#include <vector>
 
 namespace {
 Color GrassColor() { return Color {84, 148, 92, 255}; }
@@ -274,6 +276,35 @@ const char* DomainKey(AssetDomain domain) {
     return domain == AssetDomain::Character ? "character" : "map";
 }
 
+Texture2D LoadTextureFromDiskBytes(const std::filesystem::path& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        return Texture2D {};
+    }
+
+    std::vector<unsigned char> bytes((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    if (bytes.empty()) {
+        return Texture2D {};
+    }
+
+    std::string ext = path.extension().string();
+    if (ext.empty()) {
+        ext = ".png";
+    }
+    std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+
+    Image image = LoadImageFromMemory(ext.c_str(), bytes.data(), static_cast<int>(bytes.size()));
+    if (image.data == nullptr) {
+        return Texture2D {};
+    }
+
+    Texture2D texture = LoadTextureFromImage(image);
+    UnloadImage(image);
+    return texture;
+}
+
 Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textures, const AtlasRef& ref,
                                const std::filesystem::path& mapRoot, const std::filesystem::path& characterRoot) {
     const std::string cacheKey = std::string(DomainKey(ref.domain)) + ":" + ref.file;
@@ -291,7 +322,10 @@ Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textu
         return nullptr;
     }
 
-    Texture2D texture = LoadTexture(path.string().c_str());
+    Texture2D texture = LoadTextureFromDiskBytes(path);
+    if (texture.id <= 0) {
+        texture = LoadTexture(path.string().c_str());
+    }
     if (texture.id <= 0 || texture.width <= 0 || texture.height <= 0) {
         return nullptr;
     }
@@ -572,9 +606,7 @@ void World::DrawGround(Rectangle visibleArea) const {
     }
 
     const bool hasGroundStamps = HasStampsOnLayer(stamps_, "ground");
-    if (!hasGroundStamps) {
-        DrawRectangleRec(clippedView, GrassColor());
-    }
+    DrawRectangleRec(clippedView, GrassColor());
 
     for (const WorldLayer& layer : layers_) {
         if (layer.name == "ground" && layer.kind == "color") {

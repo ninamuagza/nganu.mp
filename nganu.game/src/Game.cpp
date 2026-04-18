@@ -1840,12 +1840,6 @@ void Game::RefreshMapAssetReadiness() {
         return;
     }
 
-    if (!world_.PreloadReferencedTextures()) {
-        mapReady_ = false;
-        loginStatus_ = "Preparing map textures...";
-        return;
-    }
-
     if (!mapReady_) {
         mapReady_ = true;
         loginStatus_ = "Server ready. Press Enter to log in.";
