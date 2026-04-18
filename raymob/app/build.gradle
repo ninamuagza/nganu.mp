@@ -145,8 +145,8 @@ android {
             // debug key keeps the APK installable on physical devices while still
             // using release native/compiler settings for FPS testing.
             signingConfig signingConfigs.debug
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             debuggable false

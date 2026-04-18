@@ -20,7 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Keep the NativeLoader class and its methods for launching the native application.
--keep class com.raylib.raymob.NativeLoader {
-    public <methods>;
-}
+# Keep raymob Java classes and members stable. Native code resolves these
+# classes, fields, and methods by name through JNI.
+-keep class com.raylib.raymob.NativeLoader { *; }
+-keep class com.raylib.raymob.DisplayManager { *; }
+-keep class com.raylib.raymob.SoftKeyboard { *; }
