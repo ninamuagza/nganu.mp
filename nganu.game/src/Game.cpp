@@ -857,6 +857,14 @@ void Game::BeginRetryWait(const std::string& reason) {
     manifestWait_ = 0.0f;
     retryCountdown_ = 10.0f;
     loginStatus_ = reason;
+#if defined(PLATFORM_ANDROID)
+    if (loginHost_.empty() || loginHost_ == "Auto LAN" || loginHost_ == "auto") {
+        loginStatus_ = reason + " Enter ZeroTier/server IP manually.";
+        uiMode_ = UiMode::MainMenu;
+        AddChatLine("[System] " + loginStatus_);
+        return;
+    }
+#endif
     uiMode_ = UiMode::RetryWait;
     AddChatLine("[System] " + reason);
 }
@@ -2380,14 +2388,14 @@ void Game::DrawLoginScreen() const {
     };
 
     drawField(nameBox, "Player Name", loginName_, loginField_ == LoginField::Name);
-    drawField(hostBox, "Server Host", loginHost_, loginField_ == LoginField::Host);
+    drawField(hostBox, "Server Host / ZeroTier IP", loginHost_, loginField_ == LoginField::Host);
     drawField(portBox, "Port", loginPort_, loginField_ == LoginField::Port);
 
     const bool canEnterWorld = manifest_.valid && mapReady_ && network_.IsConnected() && handshakeReady_;
     DrawRectangleRounded(buttonBox, 0.22f, 8, canEnterWorld || uiMode_ == UiMode::LoggingIn ? AccentColor() : Fade(WHITE, 0.18f));
     const std::string buttonText = uiMode_ == UiMode::LoggingIn
         ? "Spawning..."
-        : (canEnterWorld ? "Enter World" : "Preparing Content...");
+        : (canEnterWorld ? "Enter World" : "Check Server");
     DrawUiText(buttonText,
                buttonBox.x + (buttonBox.width - static_cast<float>(MeasureUiText(buttonText, buttonFont))) * 0.5f,
                buttonBox.y + (tiny ? 11.0f : 13.0f),
@@ -2411,7 +2419,7 @@ void Game::DrawLoginScreen() const {
 
     DrawWrappedText(loginStatus_, Rectangle {innerX, card.y + card.height - (tiny ? 88.0f : 72.0f), innerWidth, tiny ? 52.0f : 40.0f}, tiny ? 16 : 18, Fade(RAYWHITE, 0.82f), tiny ? 3 : 2);
 #if defined(PLATFORM_ANDROID)
-    const char* loginHelp = "Tap fields to edit. Enter World logs in or re-checks server.";
+    const char* loginHelp = "Auto LAN uses broadcast. For ZeroTier, enter server IP directly.";
 #else
     const char* loginHelp = compact ? "Tab switch, Enter login, F5 re-check" : "Tab to switch fields, Enter to login, F5 to re-check update";
 #endif
