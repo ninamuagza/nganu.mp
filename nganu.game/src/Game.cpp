@@ -1011,7 +1011,11 @@ void Game::StartLogin() {
     }
     if (!mapReady_) {
 #if defined(PLATFORM_ANDROID)
-        BeginBootUpdateCheck();
+        EnsureReferencedImagesRequested();
+        RefreshMapAssetReadiness();
+        loginStatus_ = pendingMapImageAssetKeys_.empty()
+            ? "Map textures are preparing. Wait a moment."
+            : "Downloading map textures: " + std::to_string(pendingMapImageAssetKeys_.size()) + " remaining";
 #else
         loginStatus_ = "Map content is still loading. Press F5 if needed.";
 #endif
@@ -1233,7 +1237,14 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
             BeginRetryWait("Received invalid asset blob. Retrying in 10 seconds.");
             break;
         }
-        SaveAssetToCache(*blob);
+        const bool savedAsset = SaveAssetToCache(*blob);
+        if (!savedAsset) {
+            AddChatLine("[System] Failed to cache asset: " + blob->key);
+            if (blob->key.rfind("map_image:", 0) == 0 || blob->key.rfind("character_image:", 0) == 0) {
+                mapReady_ = false;
+            }
+            break;
+        }
         if (blob->kind == "image" && blob->key.rfind("ui_image:", 0) == 0) {
             LoadUiTextureFromCache(blob->key);
         }
@@ -1608,8 +1619,9 @@ bool Game::SaveAssetToCache(const AssetBlob& asset) const {
                 return false;
             }
             std::filesystem::path outPath = ImageCachePathForAsset(asset.key, asset.revision);
+            const std::filesystem::path tmpPath = outPath.string() + ".tmp";
             std::filesystem::create_directories(outPath.parent_path());
-            std::ofstream out(outPath, std::ios::binary);
+            std::ofstream out(tmpPath, std::ios::binary | std::ios::trunc);
             if (!out.is_open()) {
                 return false;
             }
@@ -1617,12 +1629,21 @@ bool Game::SaveAssetToCache(const AssetBlob& asset) const {
                 const int hi = HexNibble(asset.content[i]);
                 const int lo = HexNibble(asset.content[i + 1]);
                 if (hi < 0 || lo < 0) {
+                    out.close();
+                    std::filesystem::remove(tmpPath);
                     return false;
                 }
                 const char byte = static_cast<char>((hi << 4) | lo);
                 out.write(&byte, 1);
             }
-            return out.good();
+            out.close();
+            if (!out.good()) {
+                std::filesystem::remove(tmpPath);
+                return false;
+            }
+            std::filesystem::remove(outPath);
+            std::filesystem::rename(tmpPath, outPath);
+            return true;
         } else if (asset.kind == "meta") {
             std::filesystem::path outPath = ImageCachePathForAsset(asset.key, asset.revision);
             std::filesystem::create_directories(outPath.parent_path());
@@ -1664,7 +1685,21 @@ bool Game::LoadCachedAsset(const std::string& assetKey, const std::string& revis
 bool Game::HasCachedImageAsset(const std::string& assetKey, const std::string& revision) const {
     try {
         const std::filesystem::path path = ImageCachePathForAsset(assetKey, revision);
-        return std::filesystem::is_regular_file(path) && std::filesystem::file_size(path) > 0;
+        if (!std::filesystem::is_regular_file(path) || std::filesystem::file_size(path) <= 8) {
+            return false;
+        }
+        if (assetKey.rfind("map_meta:", 0) == 0 || assetKey.rfind("ui_meta:", 0) == 0) {
+            return true;
+        }
+        std::ifstream in(path, std::ios::binary);
+        unsigned char header[8] {};
+        in.read(reinterpret_cast<char*>(header), sizeof(header));
+        const unsigned char pngHeader[8] {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
+        const bool validPng = std::equal(std::begin(header), std::end(header), std::begin(pngHeader));
+        if (!validPng) {
+            std::filesystem::remove(path);
+        }
+        return validPng;
     } catch (...) {
         return false;
     }
@@ -1791,6 +1826,12 @@ void Game::RefreshMapAssetReadiness() {
     if (!pendingMapImageAssetKeys_.empty()) {
         mapReady_ = false;
         loginStatus_ = "Downloading map textures: " + std::to_string(pendingMapImageAssetKeys_.size()) + " remaining";
+        return;
+    }
+
+    if (!world_.PreloadReferencedTextures()) {
+        mapReady_ = false;
+        loginStatus_ = "Preparing map textures...";
         return;
     }
 
@@ -2334,13 +2375,16 @@ void Game::DrawLoginScreen() const {
     drawField(hostBox, "Server Host", loginHost_, loginField_ == LoginField::Host);
     drawField(portBox, "Port", loginPort_, loginField_ == LoginField::Port);
 
-    DrawRectangleRounded(buttonBox, 0.22f, 8, AccentColor());
-    const std::string buttonText = uiMode_ == UiMode::LoggingIn ? "Spawning..." : "Enter World";
+    const bool canEnterWorld = manifest_.valid && mapReady_ && network_.IsConnected() && handshakeReady_;
+    DrawRectangleRounded(buttonBox, 0.22f, 8, canEnterWorld || uiMode_ == UiMode::LoggingIn ? AccentColor() : Fade(WHITE, 0.18f));
+    const std::string buttonText = uiMode_ == UiMode::LoggingIn
+        ? "Spawning..."
+        : (canEnterWorld ? "Enter World" : "Preparing Content...");
     DrawUiText(buttonText,
                buttonBox.x + (buttonBox.width - static_cast<float>(MeasureUiText(buttonText, buttonFont))) * 0.5f,
                buttonBox.y + (tiny ? 11.0f : 13.0f),
                buttonFont,
-               Color {15, 31, 25, 255});
+               canEnterWorld ? Color {15, 31, 25, 255} : Fade(RAYWHITE, 0.78f));
 
     const Rectangle manifestBox {innerX, buttonBox.y + buttonBox.height + (tiny ? 16.0f : 12.0f), innerWidth, tiny ? 78.0f : (compact ? 84.0f : 74.0f)};
     DrawRectangleRounded(manifestBox, 0.15f, 8, Fade(WHITE, 0.05f));

@@ -629,17 +629,11 @@ void World::DrawGround(Rectangle visibleArea) const {
             if (!ref.valid) {
                 continue;
             }
-            auto textureIt = textures_.find(ref.file);
-            if (textureIt == textures_.end()) {
-                const std::filesystem::path path = mapAssetRoot_ / ref.file;
-                if (std::filesystem::exists(path)) {
-                    textureIt = textures_.emplace(ref.file, LoadTexture(path.string().c_str())).first;
-                }
-            }
-            if (textureIt != textures_.end() && textureIt->second.id > 0) {
+            Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
+            if (texture != nullptr) {
                 const Rectangle clippedArea = ClampRectToBounds(area, clippedView);
                 if (HasArea(clippedArea)) {
-                    DrawTiledTexture(textureIt->second, ref.source, clippedArea, layer.tint);
+                    DrawTiledTexture(*texture, ref.source, clippedArea, layer.tint);
                 }
                 drewTexture = true;
             }
@@ -868,6 +862,43 @@ bool World::DrawObjectSprite(const WorldObject& object, Color tint) const {
         return false;
     }
     return DrawSpriteRef(*sprite, object.bounds, objectPivot(object), objectFacing(object), tint);
+}
+
+bool World::PreloadReferencedTextures() const {
+    bool ready = true;
+    auto preloadRef = [&](const std::string& spriteRef) {
+        if (spriteRef.empty()) {
+            return;
+        }
+        const AtlasRef ref = ParseAtlasRef(spriteRef);
+        if (!ref.valid) {
+            return;
+        }
+        if (EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_) == nullptr) {
+            ready = false;
+        }
+    };
+
+    for (const WorldLayer& layer : layers_) {
+        if (layer.kind == "image") {
+            preloadRef(layer.asset);
+        }
+    }
+    for (const WorldStamp& stamp : stamps_) {
+        preloadRef(stamp.asset);
+    }
+    for (const WorldObject& object : objects_) {
+        const auto it = object.properties.find("sprite");
+        if (it != object.properties.end()) {
+            preloadRef(it->second);
+        }
+    }
+    for (const auto& [key, value] : properties_) {
+        if (key.rfind("player_sprite_", 0) == 0) {
+            preloadRef(value);
+        }
+    }
+    return ready;
 }
 
 std::vector<std::string> World::referencedMapImageFiles() const {
