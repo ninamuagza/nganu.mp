@@ -29,6 +29,16 @@ bool g_ownsUiFont = false;
 
 #if defined(PLATFORM_ANDROID)
 bool g_androidSoftKeyboardVisible = false;
+
+struct AndroidJoystickState {
+    bool active = false;
+    int touchId = -1;
+    Vector2 center {};
+    Vector2 knob {};
+    Vector2 input {};
+};
+
+AndroidJoystickState g_androidJoystick;
 #endif
 
 struct HudLayout {
@@ -198,45 +208,104 @@ Rectangle AndroidJoystickBounds() {
     return Rectangle {screenWidth * 0.055f, screenHeight - (radius * 2.25f), radius * 2.0f, radius * 2.0f};
 }
 
-Vector2 AndroidMovementInput() {
+Vector2 AndroidJoystickDefaultCenter() {
     const Rectangle joy = AndroidJoystickBounds();
-    const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
-    const float radius = joy.width * 0.5f;
-    const float captureRadius = radius * 1.65f;
-    const float effectiveRadius = radius * 1.08f;
-    const float deadzone = 0.18f;
+    return Vector2 {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
+}
 
-    bool found = false;
-    Vector2 bestTouch {};
-    float bestDistanceSq = captureRadius * captureRadius;
-    for (int i = 0; i < GetTouchPointCount(); ++i) {
-        const Vector2 touch = GetTouchPosition(i);
-        const float dx = touch.x - center.x;
-        const float dy = touch.y - center.y;
-        const float distanceSq = dx * dx + dy * dy;
-        if (distanceSq <= bestDistanceSq) {
-            bestDistanceSq = distanceSq;
-            bestTouch = touch;
-            found = true;
+float AndroidJoystickRadius() {
+    return AndroidJoystickBounds().width * 0.5f;
+}
+
+void ResetAndroidJoystick() {
+    const Vector2 center = AndroidJoystickDefaultCenter();
+    g_androidJoystick.active = false;
+    g_androidJoystick.touchId = -1;
+    g_androidJoystick.center = center;
+    g_androidJoystick.knob = center;
+    g_androidJoystick.input = Vector2 {};
+}
+
+void UpdateAndroidJoystick() {
+    const Vector2 defaultCenter = AndroidJoystickDefaultCenter();
+    const float radius = AndroidJoystickRadius();
+    const float activationRadius = radius * 1.80f;
+    const float deadzone = 0.16f;
+
+    int touchIndex = -1;
+    Vector2 touch {};
+    if (g_androidJoystick.active) {
+        for (int i = 0; i < GetTouchPointCount(); ++i) {
+            if (GetTouchPointId(i) == g_androidJoystick.touchId) {
+                touchIndex = i;
+                touch = GetTouchPosition(i);
+                break;
+            }
+        }
+    } else {
+        float bestDistanceSq = activationRadius * activationRadius;
+        for (int i = 0; i < GetTouchPointCount(); ++i) {
+            const Vector2 candidate = GetTouchPosition(i);
+            const float dx = candidate.x - defaultCenter.x;
+            const float dy = candidate.y - defaultCenter.y;
+            const float distanceSq = (dx * dx) + (dy * dy);
+            if (distanceSq <= bestDistanceSq) {
+                bestDistanceSq = distanceSq;
+                touchIndex = i;
+                touch = candidate;
+            }
+        }
+        if (touchIndex >= 0) {
+            g_androidJoystick.active = true;
+            g_androidJoystick.touchId = GetTouchPointId(touchIndex);
+            g_androidJoystick.center = defaultCenter;
+            g_androidJoystick.knob = defaultCenter;
         }
     }
 
-    if (!found) {
-        return Vector2 {};
+    if (touchIndex < 0) {
+        ResetAndroidJoystick();
+        return;
     }
 
-    const float dx = bestTouch.x - center.x;
-    const float dy = bestTouch.y - center.y;
-    const float distance = std::sqrt((dx * dx) + (dy * dy));
-    const float normalizedDistance = std::clamp(distance / effectiveRadius, 0.0f, 1.0f);
+    Vector2 offset {touch.x - g_androidJoystick.center.x, touch.y - g_androidJoystick.center.y};
+    float distance = std::sqrt((offset.x * offset.x) + (offset.y * offset.y));
+    Vector2 direction = distance > 0.001f ? ScaleVector(offset, 1.0f / distance) : Vector2 {};
+    if (distance > radius) {
+        g_androidJoystick.center = Vector2 {
+            touch.x - direction.x * radius,
+            touch.y - direction.y * radius
+        };
+        g_androidJoystick.knob = touch;
+        distance = radius;
+    } else {
+        g_androidJoystick.knob = touch;
+    }
+
+    const float normalizedDistance = std::clamp(distance / radius, 0.0f, 1.0f);
     if (normalizedDistance <= deadzone) {
-        return Vector2 {};
+        g_androidJoystick.input = Vector2 {};
+        return;
     }
 
-    const Vector2 direction = NormalizeOrZero(Vector2 {dx, dy});
     const float amount = (normalizedDistance - deadzone) / (1.0f - deadzone);
     const float curvedAmount = amount * amount * (3.0f - (2.0f * amount));
-    return ScaleVector(direction, curvedAmount);
+    g_androidJoystick.input = ScaleVector(direction, curvedAmount);
+}
+
+Vector2 AndroidMovementInput() {
+    UpdateAndroidJoystick();
+    return g_androidJoystick.input;
+}
+
+Vector2 AndroidJoystickCenter() {
+    UpdateAndroidJoystick();
+    return g_androidJoystick.center;
+}
+
+Vector2 AndroidJoystickKnob() {
+    UpdateAndroidJoystick();
+    return g_androidJoystick.knob;
 }
 
 float AndroidMovementAmount(Vector2 input) {
@@ -301,14 +370,12 @@ bool AndroidDebugPressed() {
 }
 
 void DrawAndroidTouchControls(bool chatFocused, bool showDebug) {
-    const Rectangle joy = AndroidJoystickBounds();
-    const Vector2 center {joy.x + joy.width * 0.5f, joy.y + joy.height * 0.5f};
-    const float radius = joy.width * 0.5f;
+    const Vector2 center = AndroidJoystickCenter();
+    const float radius = AndroidJoystickRadius();
     DrawCircleV(center, radius, Fade(Color {8, 18, 20, 255}, 0.34f));
     DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), radius, Fade(RAYWHITE, 0.34f));
 
-    Vector2 knob = AndroidMovementInput();
-    knob = Vector2 {center.x + knob.x * radius * 0.72f, center.y + knob.y * radius * 0.72f};
+    const Vector2 knob = AndroidJoystickKnob();
     DrawCircleV(knob, radius * 0.32f, Fade(RAYWHITE, 0.34f));
 
     auto drawButton = [](Rectangle rect, const char* label, Color color) {
