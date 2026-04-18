@@ -386,6 +386,17 @@ bool NetworkClient::IsConnected() const {
     return peer_ && peer_->state == ENET_PEER_STATE_CONNECTED;
 }
 
+uint32_t NetworkClient::RoundTripTimeMs() const {
+    return IsConnected() ? peer_->roundTripTime : 0;
+}
+
+float NetworkClient::PacketLossPercent() const {
+    if (!IsConnected()) {
+        return 0.0f;
+    }
+    return (static_cast<float>(peer_->packetLoss) / static_cast<float>(ENET_PEER_PACKET_LOSS_SCALE)) * 100.0f;
+}
+
 std::vector<NetworkEvent> NetworkClient::ConsumeEvents() {
     std::vector<NetworkEvent> out;
     out.swap(events_);

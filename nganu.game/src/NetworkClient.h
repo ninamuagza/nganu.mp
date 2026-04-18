@@ -78,6 +78,8 @@ public:
 
     bool IsConnected() const;
     std::string StatusText() const { return statusText_; }
+    uint32_t RoundTripTimeMs() const;
+    float PacketLossPercent() const;
     std::vector<NetworkEvent> ConsumeEvents();
 
 private:

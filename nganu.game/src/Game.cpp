@@ -1099,7 +1099,7 @@ void Game::UpdatePlayer(float dt) {
 
     const float correctionDistance = DistanceBetween(Vector2 {}, localCorrectionRemaining_);
     if (correctionDistance > 0.01f) {
-        const float amount = std::clamp(dt * 6.0f, 0.0f, 1.0f);
+        const float amount = std::clamp(dt * 3.0f, 0.0f, 0.12f);
         const Vector2 correctionStep = ScaleVector(localCorrectionRemaining_, amount);
         player_.position.x += correctionStep.x;
         player_.position.y += correctionStep.y;
@@ -1156,7 +1156,7 @@ void Game::UpdateNetwork(float dt) {
     const bool movedEnough =
         std::fabs(player_.position.x - lastSentPosition_.x) > 0.5f ||
         std::fabs(player_.position.y - lastSentPosition_.y) > 0.5f;
-    const float sendInterval = movedEnough ? 0.10f : 1.0f;
+    const float sendInterval = movedEnough ? (1.0f / 30.0f) : 0.50f;
 
     if (network_.IsConnected() && sendAccumulator_ >= sendInterval) {
         if (network_.SendPlayerPosition(player_.position.x, player_.position.y)) {
@@ -1306,12 +1306,15 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         {
             const Vector2 authoritative {event.x, event.y};
             const float correctionDistance = DistanceBetween(player_.position, authoritative);
-            if (!hasAuthoritativePosition_ || correctionDistance > 96.0f) {
+            if (!hasAuthoritativePosition_ || correctionDistance > 128.0f) {
                 player_.position = authoritative;
                 localCorrectionRemaining_ = Vector2 {};
-            } else if (correctionDistance > 1.5f) {
-                localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.65f;
-                localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.65f;
+            } else if (correctionDistance > 32.0f) {
+                localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.35f;
+                localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.35f;
+            } else if (correctionDistance > 8.0f) {
+                localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.12f;
+                localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.12f;
             }
             lastSentPosition_ = player_.position;
         }
@@ -2162,7 +2165,7 @@ void Game::UpdateNpcAndQuest() {
 }
 
 void Game::UpdateRemoteSmoothing(float dt) {
-    constexpr float kInterpolationDelay = 0.12f;
+    constexpr float kInterpolationDelay = 0.06f;
     const float renderTime = worldTime_ - kInterpolationDelay;
     for (auto& [playerId, remote] : remotePlayers_) {
         (void)playerId;
@@ -2194,7 +2197,7 @@ void Game::UpdateRemoteSmoothing(float dt) {
         if (distance > 128.0f) {
             remote.avatar.position = target;
         } else {
-            const float amount = std::clamp(dt * 16.0f, 0.0f, 1.0f);
+            const float amount = std::clamp(dt * 24.0f, 0.0f, 1.0f);
             remote.avatar.position.x = LerpValue(remote.avatar.position.x, target.x, amount);
             remote.avatar.position.y = LerpValue(remote.avatar.position.y, target.y, amount);
         }
@@ -2887,32 +2890,34 @@ void Game::DrawDebugPanel() const {
     char line[192];
     std::snprintf(line, sizeof(line), "Id: %d  Remote: %zu", localPlayerId_, remotePlayers_.size());
     DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + 12), layout.bodyFont, Fade(RAYWHITE, 0.82f));
-    std::snprintf(line, sizeof(line), "Player: %.1f, %.1f", player_.position.x, player_.position.y);
+    std::snprintf(line, sizeof(line), "Net: %u ms  Loss: %.2f%%", network_.RoundTripTimeMs(), network_.PacketLossPercent());
     DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + layout.bodyFont + 18), layout.bodyFont, Fade(RAYWHITE, 0.82f));
-    std::snprintf(line, sizeof(line), "Map: %s  Layers: %zu", world_.mapId().c_str(), world_.layers().size());
+    std::snprintf(line, sizeof(line), "Player: %.1f, %.1f", player_.position.x, player_.position.y);
     DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 2), layout.bodyFont, Fade(RAYWHITE, 0.82f));
-    std::snprintf(line, sizeof(line), "Objects: %zu  Music: %s", world_.objects().size(), world_.property("music").value_or("n/a").c_str());
+    std::snprintf(line, sizeof(line), "Map: %s  Layers: %zu", world_.mapId().c_str(), world_.layers().size());
     DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 3), layout.bodyFont, Fade(RAYWHITE, 0.82f));
+    std::snprintf(line, sizeof(line), "Objects: %zu  Music: %s", world_.objects().size(), world_.property("music").value_or("n/a").c_str());
+    DrawUiText(line, panel.x + 18.0f, panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 4), layout.bodyFont, Fade(RAYWHITE, 0.82f));
     DrawUiText(EllipsizeText(("Revision: " + (manifest_.revision.empty() ? std::string("n/a") : manifest_.revision)), layout.bodyFont, panel.width - 36.0f),
                panel.x + 18.0f,
-               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 4),
+               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 5),
                layout.bodyFont,
                Fade(RAYWHITE, 0.82f));
     DrawUiText(EllipsizeText(("Asset Source: " + lastMapAssetSource_), layout.bodyFont, panel.width - 36.0f),
                panel.x + 18.0f,
-               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 5),
+               panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 6),
                layout.bodyFont,
                Fade(RAYWHITE, 0.82f));
     if (!pendingMapId_.empty() && pendingMapId_ != world_.mapId()) {
         DrawUiText(EllipsizeText(("Pending Map: " + pendingMapId_), layout.bodyFont, panel.width - 36.0f),
                    panel.x + 18.0f,
-                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 6),
+                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 7),
                    layout.bodyFont,
                    AccentColor());
     } else {
         DrawUiText(EllipsizeText(("Applied Asset: " + (lastAppliedMapAssetKey_.empty() ? std::string("n/a") : lastAppliedMapAssetKey_)), layout.bodyFont, panel.width - 36.0f),
                    panel.x + 18.0f,
-                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 6),
+                   panel.y + 14.0f + static_cast<float>(layout.titleFont + (layout.bodyFont + 6) * 7),
                    layout.bodyFont,
                    AccentColor());
     }

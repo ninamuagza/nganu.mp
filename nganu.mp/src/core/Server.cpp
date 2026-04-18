@@ -1206,12 +1206,12 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             const uint64_t currentMs = nowMs();
             const uint64_t lastMs = playerLastMoveAtMs_.count(playerid) ? playerLastMoveAtMs_[playerid] : currentMs;
             const float rawDtSeconds = static_cast<float>(currentMs - lastMs) / 1000.0f;
-            const float dtSeconds = std::clamp(rawDtSeconds, 0.16f, 0.25f);
+            const float dtSeconds = std::clamp(rawDtSeconds, 0.030f, 0.25f);
             const float dx = pos.x - prevIt->second.x;
             const float dy = pos.y - prevIt->second.y;
             const float distance = std::sqrt((dx * dx) + (dy * dy));
             constexpr float kMaxMoveSpeed = 260.0f;
-            constexpr float kMoveSlack = 32.0f;
+            constexpr float kMoveSlack = 42.0f;
             const bool speedValid = distance <= (kMaxMoveSpeed * dtSeconds) + kMoveSlack;
             const bool walkable = activeMap->isWalkable(pos.x, pos.y, 15.0f);
 
