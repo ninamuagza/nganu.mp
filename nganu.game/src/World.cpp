@@ -278,15 +278,25 @@ Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textu
                                const std::filesystem::path& mapRoot, const std::filesystem::path& characterRoot) {
     const std::string cacheKey = std::string(DomainKey(ref.domain)) + ":" + ref.file;
     auto textureIt = textures.find(cacheKey);
-    if (textureIt == textures.end()) {
-        const std::filesystem::path path = RootForDomain(ref.domain, mapRoot, characterRoot) / ref.file;
-        if (std::filesystem::exists(path)) {
-            textureIt = textures.emplace(cacheKey, LoadTexture(path.string().c_str())).first;
+    if (textureIt != textures.end()) {
+        if (textureIt->second.id > 0) {
+            return &textureIt->second;
         }
+        textures.erase(textureIt);
     }
-    if (textureIt == textures.end() || textureIt->second.id <= 0) {
+
+    const std::filesystem::path path = RootForDomain(ref.domain, mapRoot, characterRoot) / ref.file;
+    std::error_code ec;
+    if (!std::filesystem::is_regular_file(path, ec) || std::filesystem::file_size(path, ec) <= 8) {
         return nullptr;
     }
+
+    Texture2D texture = LoadTexture(path.string().c_str());
+    if (texture.id <= 0 || texture.width <= 0 || texture.height <= 0) {
+        return nullptr;
+    }
+
+    textureIt = textures.emplace(cacheKey, texture).first;
     return &textureIt->second;
 }
 
