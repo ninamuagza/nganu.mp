@@ -87,6 +87,9 @@ Rectangle GameplayViewport(float screenWidth, float screenHeight) {
 }
 
 Rectangle CenteredCardInFrame(const Rectangle& frame, float preferredWidth, float maxWidth, float preferredHeight, float minHeight);
+Vector2 NormalizeOrZero(Vector2 value);
+int MeasureUiText(const std::string& text, int fontSize);
+void DrawUiText(const char* text, float x, float y, int fontSize, Color color);
 
 struct LoginHitRects {
     Rectangle nameBox {};
