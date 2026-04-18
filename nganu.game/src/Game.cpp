@@ -1976,7 +1976,11 @@ void Game::DrawBootScreen() const {
 
 void Game::DrawScene() const {
     BeginMode2D(camera_);
+#if defined(PLATFORM_ANDROID)
+    const float margin = 32.0f;
+#else
     const float margin = 96.0f;
+#endif
     const Vector2 topLeft = GetScreenToWorld2D(Vector2 {-margin, -margin}, camera_);
     const Vector2 bottomRight = GetScreenToWorld2D(Vector2 {static_cast<float>(GetScreenWidth()) + margin,
                                                             static_cast<float>(GetScreenHeight()) + margin}, camera_);
@@ -1997,13 +2001,20 @@ void Game::DrawScene() const {
             world_.DrawObjectSprite(object);
             if (IsInteractableObject(object)) {
                 const Vector2 center = world_.objectCenter(object);
-                DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawUiText(DisplayNameForObject(object),
-                           center.x - 54.0f,
-                           center.y - 44.0f,
-                           16,
-                           Fade(RAYWHITE, 0.88f));
-                if (IsNearPosition(player_.position, center, InteractionRangeForObject(object))) {
+                const bool inRange = IsNearPosition(player_.position, center, InteractionRangeForObject(object));
+#if defined(PLATFORM_ANDROID)
+                if (inRange) {
+#else
+                {
+#endif
+                    DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
+                    DrawUiText(DisplayNameForObject(object),
+                               center.x - 54.0f,
+                               center.y - 44.0f,
+                               16,
+                               Fade(RAYWHITE, 0.88f));
+                }
+                if (inRange) {
                     DrawUiText(InteractionPromptForObject(object), center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
@@ -2037,13 +2048,20 @@ void Game::DrawScene() const {
             world_.DrawObjectSprite(object);
             if (IsInteractableObject(object)) {
                 const Vector2 center = world_.objectCenter(object);
-                DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
-                DrawUiText(DisplayNameForObject(object),
-                           center.x - 54.0f,
-                           center.y - 44.0f,
-                           16,
-                           Fade(RAYWHITE, 0.88f));
-                if (IsNearPosition(player_.position, center, InteractionRangeForObject(object))) {
+                const bool inRange = IsNearPosition(player_.position, center, InteractionRangeForObject(object));
+#if defined(PLATFORM_ANDROID)
+                if (inRange) {
+#else
+                {
+#endif
+                    DrawCircleLines(static_cast<int>(center.x), static_cast<int>(center.y), std::max(object.bounds.width, object.bounds.height) * 0.5f + 6.0f, Fade(AccentColor(), 0.75f));
+                    DrawUiText(DisplayNameForObject(object),
+                               center.x - 54.0f,
+                               center.y - 44.0f,
+                               16,
+                               Fade(RAYWHITE, 0.88f));
+                }
+                if (inRange) {
                     DrawUiText(InteractionPromptForObject(object), center.x - 28.0f, center.y + 24.0f, 16, AccentColor());
                 }
             }
@@ -2076,7 +2094,13 @@ void Game::DrawAvatar(const Avatar& avatar, bool localPlayer) const {
     if (!drewSprite) {
         DrawCircleLinesV(avatar.position, avatar.radius, outline);
     }
+#if defined(PLATFORM_ANDROID)
+    if (localPlayer || IsNearPosition(player_.position, avatar.position, 180.0f)) {
+        DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
+    }
+#else
     DrawUiText(avatar.name, avatar.position.x - 28.0f, avatar.position.y - 34.0f, 16, RAYWHITE);
+#endif
 }
 
 void Game::DrawNpc(const WorldObject& object) const {
@@ -2100,17 +2124,33 @@ void Game::DrawNpc(const WorldObject& object) const {
         DrawCircleLinesV(drawPosition, radius, Color {255, 244, 171, 255});
     }
 
-    DrawUiText(drawName, drawPosition.x - 24.0f, drawPosition.y - 40.0f, 16, Color {255, 244, 171, 255});
-    if (!drawTitle.empty()) {
-        DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
+    const bool inRange = IsNearPosition(player_.position, drawPosition, InteractionRangeForObject(object));
+#if defined(PLATFORM_ANDROID)
+    if (inRange) {
+#else
+    {
+#endif
+        DrawUiText(drawName, drawPosition.x - 24.0f, drawPosition.y - 40.0f, 16, Color {255, 244, 171, 255});
+        if (!drawTitle.empty()) {
+            DrawUiText(drawTitle, drawPosition.x - 36.0f, drawPosition.y - 58.0f, 14, Fade(RAYWHITE, 0.72f));
+        }
     }
-    if (IsNearPosition(player_.position, drawPosition, InteractionRangeForObject(object))) {
+    if (inRange) {
         DrawUiText(InteractionPromptForObject(object), drawPosition.x - 20.0f, drawPosition.y - 84.0f, 16, AccentColor());
     }
 }
 
 void Game::DrawHud() const {
     DrawTopBar();
+#if defined(PLATFORM_ANDROID)
+    if (chatFocused_) {
+        DrawChatPanel();
+    }
+    if (showDebug_) {
+        DrawDebugPanel();
+    }
+    uiSystem_.Draw();
+#else
     DrawChatPanel();
     DrawPartyPanel();
     DrawQuestPanel();
@@ -2120,6 +2160,7 @@ void Game::DrawHud() const {
     }
 
     uiSystem_.Draw();
+#endif
 }
 
 void Game::DrawTopBar() const {

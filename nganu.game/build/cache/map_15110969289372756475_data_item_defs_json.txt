@@ -1,0 +1,9 @@
+[
+  {"id": 1, "name": "Health Potion",  "icon": "ui:icons/potion_health.png",  "rarity": "common",   "category": "consumable"},
+  {"id": 2, "name": "Iron Sword",     "icon": "ui:icons/sword_iron.png",     "rarity": "common",   "category": "weapon"},
+  {"id": 3, "name": "Leather Armor",  "icon": "ui:icons/armor_leather.png",  "rarity": "common",   "category": "armor"},
+  {"id": 4, "name": "Wooden Shield",  "icon": "ui:icons/shield_wood.png",    "rarity": "common",   "category": "armor"},
+  {"id": 5, "name": "Mana Potion",    "icon": "ui:icons/potion_mana.png",    "rarity": "common",   "category": "consumable"},
+  {"id": 6, "name": "Steel Sword",    "icon": "ui:icons/sword_steel.png",    "rarity": "uncommon", "category": "weapon"},
+  {"id": 7, "name": "Gold Coin",      "icon": "ui:icons/gold_coin.png",      "rarity": "common",   "category": "currency"}
+]

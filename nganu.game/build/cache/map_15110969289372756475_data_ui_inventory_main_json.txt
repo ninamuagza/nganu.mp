@@ -1,0 +1,13 @@
+{
+  "window_id":       "inventory_main",
+  "title":           "Inventory",
+  "size_w":          440,
+  "size_h":          340,
+  "slot_size":       48,
+  "columns":         5,
+  "rows":            4,
+  "padding":         10,
+  "slot_spacing":    4,
+  "show_use_button": true,
+  "show_drop_button":true
+}

@@ -17,6 +17,12 @@ Color WaterEdgeColor() { return Color {94, 163, 209, 255}; }
 Color CanopyColor() { return Color {64, 114, 71, 255}; }
 Color CanopyShade() { return Color {88, 146, 95, 255}; }
 
+#if defined(PLATFORM_ANDROID)
+constexpr bool kFastMobileRender = true;
+#else
+constexpr bool kFastMobileRender = false;
+#endif
+
 struct AtlasRef {
     AssetDomain domain = AssetDomain::Map;
     std::string file;
@@ -550,6 +556,10 @@ void World::DrawGround(Rectangle visibleArea) const {
         if (layer.name == "ground" && layer.kind == "color") {
             DrawRectangleRec(clippedView, Fade(layer.tint, 0.18f));
         } else if (layer.name == "ground" && layer.kind == "image") {
+            if (kFastMobileRender) {
+                DrawRectangleRec(clippedView, Fade(layer.tint, 0.10f));
+                continue;
+            }
             const AtlasRef ref = ParseAtlasRef(layer.asset);
             if (ref.valid) {
                 auto textureIt = textures_.find(ref.file);
@@ -586,40 +596,44 @@ void World::DrawGround(Rectangle visibleArea) const {
     const int minTileY = std::max(0, static_cast<int>(std::floor(clippedView.y / tileSize_)));
     const int maxTileX = std::min(width_, static_cast<int>(std::ceil((clippedView.x + clippedView.width) / tileSize_)));
     const int maxTileY = std::min(height_, static_cast<int>(std::ceil((clippedView.y + clippedView.height) / tileSize_)));
-    for (int y = minTileY; y < maxTileY; ++y) {
-        for (int x = minTileX; x < maxTileX; ++x) {
-            if ((x + y) % 2 == 0) {
-                DrawRectangle(
-                    x * tileSize_,
-                    y * tileSize_,
-                    tileSize_,
-                    tileSize_,
-                    Fade(GrassShade(), 0.22f)
-                );
+    if (!kFastMobileRender) {
+        for (int y = minTileY; y < maxTileY; ++y) {
+            for (int x = minTileX; x < maxTileX; ++x) {
+                if ((x + y) % 2 == 0) {
+                    DrawRectangle(
+                        x * tileSize_,
+                        y * tileSize_,
+                        tileSize_,
+                        tileSize_,
+                        Fade(GrassShade(), 0.22f)
+                    );
+                }
             }
         }
     }
 
-    for (const WorldLayer& layer : layers_) {
-        if (layer.kind != "image") {
-            continue;
-        }
-        if (layer.asset.find("water") != std::string::npos) {
-            continue;
-        }
-        if (layer.asset.find("road") != std::string::npos) {
-            continue;
-        }
+    if (!kFastMobileRender) {
+        for (const WorldLayer& layer : layers_) {
+            if (layer.kind != "image") {
+                continue;
+            }
+            if (layer.asset.find("water") != std::string::npos) {
+                continue;
+            }
+            if (layer.asset.find("road") != std::string::npos) {
+                continue;
+            }
 
-        const int step = std::max(28, tileSize_ / 2);
-        const int minY = static_cast<int>(std::floor(clippedView.y / step)) * step;
-        const int minX = static_cast<int>(std::floor(clippedView.x / step)) * step;
-        const int maxY = static_cast<int>(std::ceil((clippedView.y + clippedView.height) / step)) * step;
-        const int maxX = static_cast<int>(std::ceil((clippedView.x + clippedView.width) / step)) * step;
-        for (int y = minY; y < maxY; y += step) {
-            for (int x = minX; x < maxX; x += step) {
-                if (((x / step) + (y / step)) % 3 == 0) {
-                    DrawCircle(x + (step / 2), y + (step / 2), step * 0.14f, Fade(layer.tint, 0.08f));
+            const int step = std::max(28, tileSize_ / 2);
+            const int minY = static_cast<int>(std::floor(clippedView.y / step)) * step;
+            const int minX = static_cast<int>(std::floor(clippedView.x / step)) * step;
+            const int maxY = static_cast<int>(std::ceil((clippedView.y + clippedView.height) / step)) * step;
+            const int maxX = static_cast<int>(std::ceil((clippedView.x + clippedView.width) / step)) * step;
+            for (int y = minY; y < maxY; y += step) {
+                for (int x = minX; x < maxX; x += step) {
+                    if (((x / step) + (y / step)) % 3 == 0) {
+                        DrawCircle(x + (step / 2), y + (step / 2), step * 0.14f, Fade(layer.tint, 0.08f));
+                    }
                 }
             }
         }
@@ -656,7 +670,9 @@ void World::DrawGround(Rectangle visibleArea) const {
         if (!drewTexture) {
             DrawRectangleRounded(area, 0.18f, 10, WaterColor());
         }
-        DrawRectangleRoundedLinesEx(area, 0.18f, 10, 4.0f, WaterEdgeColor());
+        if (!kFastMobileRender) {
+            DrawRectangleRoundedLinesEx(area, 0.18f, 10, 4.0f, WaterEdgeColor());
+        }
     }
 }
 
@@ -711,7 +727,7 @@ void World::DrawDecorations(Rectangle visibleArea) const {
                 }
                 DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
             }
-        } else if (layer.asset.find("trees") != std::string::npos) {
+        } else if (!kFastMobileRender && layer.asset.find("trees") != std::string::npos) {
             const int decorationCount = std::max(18, (width_ * height_) / 60);
             const int maxX = std::max(160, width_ * tileSize_ - 160);
             const int maxY = std::max(180, height_ * tileSize_ - 180);
@@ -745,24 +761,28 @@ void World::DrawDecorations(Rectangle visibleArea) const {
         DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
     }
 
-    for (const Rectangle& area : blockedAreas_) {
-        if (!CheckCollisionRecs(area, clippedView)) {
-            continue;
-        }
-        DrawRectangleRounded(area, 0.12f, 6, Color {111, 83, 61, 255});
-        DrawRectangleRounded(
-            Rectangle {area.x + 10.0f, area.y + 10.0f, area.width - 20.0f, area.height - 20.0f},
-            0.1f,
-            6,
-            Color {155, 122, 81, 255}
-        );
-    }
-    for (const WorldObject& object : objects_) {
-        if (object.kind == "trigger") {
-            if (!CheckCollisionRecs(object.bounds, clippedView)) {
+    if (!kFastMobileRender) {
+        for (const Rectangle& area : blockedAreas_) {
+            if (!CheckCollisionRecs(area, clippedView)) {
                 continue;
             }
-            DrawRectangleRoundedLinesEx(object.bounds, 0.12f, 8, 2.0f, Fade(Color {245, 226, 120, 255}, 0.65f));
+            DrawRectangleRounded(area, 0.12f, 6, Color {111, 83, 61, 255});
+            DrawRectangleRounded(
+                Rectangle {area.x + 10.0f, area.y + 10.0f, area.width - 20.0f, area.height - 20.0f},
+                0.1f,
+                6,
+                Color {155, 122, 81, 255}
+            );
+        }
+    }
+    if (!kFastMobileRender) {
+        for (const WorldObject& object : objects_) {
+            if (object.kind == "trigger") {
+                if (!CheckCollisionRecs(object.bounds, clippedView)) {
+                    continue;
+                }
+                DrawRectangleRoundedLinesEx(object.bounds, 0.12f, 8, 2.0f, Fade(Color {245, 226, 120, 255}, 0.65f));
+            }
         }
     }
 }
