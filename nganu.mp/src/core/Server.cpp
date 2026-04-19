@@ -1489,7 +1489,9 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             }
             const uint64_t currentMs = nowMs();
             const uint64_t lastProbeMs = playerLastManifestProbeAtMs_.count(playerid) ? playerLastManifestProbeAtMs_[playerid] : 0;
-            if (lastProbeMs != 0 && currentMs > lastProbeMs && (currentMs - lastProbeMs) < kManifestProbeMinIntervalMs) {
+            if (lastProbeMs != 0 && currentMs < lastProbeMs) {
+                logger_.warn("Server", "Clock anomaly for player %d while rate-limiting UPDATE_PROBE", playerid);
+            } else if (lastProbeMs != 0 && (currentMs - lastProbeMs) < kManifestProbeMinIntervalMs) {
                 logger_.warn("Server", "Rate-limited UPDATE_PROBE from player %d", playerid);
                 break;
             }
@@ -1506,7 +1508,11 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             const uint64_t currentMs = nowMs();
             uint64_t& windowStartMs = playerAssetReqWindowStartAtMs_[playerid];
             uint32_t& windowCount = playerAssetReqCountInWindow_[playerid];
-            if (windowStartMs == 0 || currentMs < windowStartMs || (currentMs - windowStartMs) >= kAssetRequestWindowMs) {
+            if (windowStartMs != 0 && currentMs < windowStartMs) {
+                logger_.warn("Server", "Clock anomaly for player %d while rate-limiting ASSET_REQUEST", playerid);
+                windowStartMs = currentMs;
+                windowCount = 0;
+            } else if (windowStartMs == 0 || (currentMs - windowStartMs) >= kAssetRequestWindowMs) {
                 windowStartMs = currentMs;
                 windowCount = 0;
             }
