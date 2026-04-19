@@ -940,7 +940,7 @@ void Game::BeginRetryWait(const std::string& reason) {
     loginStatus_ = reason;
 #if defined(PLATFORM_ANDROID)
     if (loginHost_.empty() || loginHost_ == "Auto LAN" || loginHost_ == "auto") {
-        loginStatus_ = reason + " Enter ZeroTier/server IP manually.";
+        loginStatus_ = reason + " Enter server IP manually.";
         uiMode_ = UiMode::MainMenu;
         AddChatLine("[System] " + loginStatus_);
         return;
@@ -2008,7 +2008,7 @@ void Game::DrawLoginScreen() const {
     };
 
     drawField(nameBox, "Player Name", loginName_, loginField_ == LoginField::Name);
-    drawField(hostBox, "Server Host / ZeroTier IP", loginHost_, loginField_ == LoginField::Host);
+    drawField(hostBox, "Server Host", loginHost_, loginField_ == LoginField::Host);
     drawField(portBox, "Port", loginPort_, loginField_ == LoginField::Port);
 
     const bool canEnterWorld = manifest_.valid && mapReady_ && network_.IsConnected() && handshakeReady_;
