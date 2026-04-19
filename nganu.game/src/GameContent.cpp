@@ -9,6 +9,10 @@
 #include <optional>
 #include <sstream>
 
+#if defined(PLATFORM_ANDROID)
+#include "raymob.h"
+#endif
+
 namespace {
 int HexNibble(char ch) {
     if (ch >= '0' && ch <= '9') return ch - '0';
