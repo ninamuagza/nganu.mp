@@ -109,30 +109,78 @@ struct LoginHitRects {
     Rectangle buttonBox {};
 };
 
-LoginHitRects ComputeLoginHitRects(float screenWidth, float screenHeight) {
-    const Rectangle safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
-    const bool compact = safeFrame.width < 760.0f;
-    const bool tiny = safeFrame.width < 620.0f || safeFrame.height < 560.0f;
-    const float cardPadding = tiny ? 18.0f : 28.0f;
-    const float fieldHeight = tiny ? 40.0f : 44.0f;
-    const float cardWidth = std::min(tiny ? 520.0f : 620.0f, safeFrame.width);
-    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 540.0f : 520.0f), safeFrame.height);
-    const Rectangle card = CenteredCardInFrame(safeFrame, cardWidth, 620.0f, cardHeight, tiny ? 420.0f : 460.0f);
+struct LoginLayout {
+    Rectangle safeFrame {};
+    Rectangle card {};
+    LoginHitRects hitRects {};
+    bool compact = false;
+    bool tiny = false;
+    float cardPadding = 28.0f;
+    float fieldHeight = 44.0f;
+};
+
+float LoginKeyboardOffsetY(float screenHeight, const Rectangle& card, const LoginHitRects& hitRects) {
+#if defined(PLATFORM_ANDROID)
+    if (!g_androidSoftKeyboardVisible) {
+        return 0.0f;
+    }
+
+    const float keyboardTop = screenHeight * 0.58f;
+    const float margin = std::clamp(screenHeight * 0.025f, 16.0f, 28.0f);
+    const float formBottom = hitRects.buttonBox.y + hitRects.buttonBox.height;
+    const float desiredOffset = std::min(0.0f, keyboardTop - margin - formBottom);
+    const float maxLift = card.y + card.height * 0.32f;
+    return std::max(desiredOffset, -maxLift);
+#else
+    (void)screenHeight;
+    (void)card;
+    (void)hitRects;
+    return 0.0f;
+#endif
+}
+
+LoginLayout ComputeLoginLayout(float screenWidth, float screenHeight) {
+    LoginLayout layout;
+    layout.safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
+    layout.compact = layout.safeFrame.width < 760.0f;
+    layout.tiny = layout.safeFrame.width < 620.0f || layout.safeFrame.height < 560.0f;
+    layout.cardPadding = layout.tiny ? 18.0f : 28.0f;
+    layout.fieldHeight = layout.tiny ? 40.0f : 44.0f;
+    const float cardWidth = std::min(layout.tiny ? 520.0f : 620.0f, layout.safeFrame.width);
+    const float cardHeight = std::min(layout.tiny ? 470.0f : (layout.compact ? 540.0f : 520.0f), layout.safeFrame.height);
+    layout.card = CenteredCardInFrame(layout.safeFrame, cardWidth, 620.0f, cardHeight, layout.tiny ? 420.0f : 460.0f);
+    const Rectangle& card = layout.card;
+    const bool compact = layout.compact;
+    const bool tiny = layout.tiny;
+    const float cardPadding = layout.cardPadding;
+    const float fieldHeight = layout.fieldHeight;
     const float innerX = card.x + cardPadding;
     const float innerWidth = card.width - cardPadding * 2.0f;
     const float hostWidth = (compact || tiny) ? innerWidth : innerWidth - 120.0f;
 
-    LoginHitRects rects;
-    rects.nameBox = Rectangle {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
-    rects.hostBox = Rectangle {innerX, rects.nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
-    rects.portBox = Rectangle {
-        compact || tiny ? innerX : rects.hostBox.x + rects.hostBox.width + 14.0f,
-        compact || tiny ? rects.hostBox.y + fieldHeight + 28.0f : rects.hostBox.y,
+    layout.hitRects.nameBox = Rectangle {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
+    layout.hitRects.hostBox = Rectangle {innerX, layout.hitRects.nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
+    layout.hitRects.portBox = Rectangle {
+        compact || tiny ? innerX : layout.hitRects.hostBox.x + layout.hitRects.hostBox.width + 14.0f,
+        compact || tiny ? layout.hitRects.hostBox.y + fieldHeight + 28.0f : layout.hitRects.hostBox.y,
         compact || tiny ? innerWidth : 106.0f,
         fieldHeight
     };
-    rects.buttonBox = Rectangle {innerX, rects.portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
-    return rects;
+    layout.hitRects.buttonBox = Rectangle {innerX, layout.hitRects.portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
+
+    const float offsetY = LoginKeyboardOffsetY(screenHeight, layout.card, layout.hitRects);
+    if (offsetY != 0.0f) {
+        layout.card.y += offsetY;
+        layout.hitRects.nameBox.y += offsetY;
+        layout.hitRects.hostBox.y += offsetY;
+        layout.hitRects.portBox.y += offsetY;
+        layout.hitRects.buttonBox.y += offsetY;
+    }
+    return layout;
+}
+
+LoginHitRects ComputeLoginHitRects(float screenWidth, float screenHeight) {
+    return ComputeLoginLayout(screenWidth, screenHeight).hitRects;
 }
 
 #if defined(PLATFORM_ANDROID)
@@ -902,6 +950,8 @@ void Game::UpdateLoginInput() {
             HideAndroidKeyboard();
             StartLogin();
             return;
+        } else {
+            HideAndroidKeyboard();
         }
     }
 
@@ -1892,11 +1942,10 @@ void Game::DrawLoginScreen() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
     const float scale = UiScaleForScreen(screenWidth, screenHeight);
-    const Rectangle safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
-    const bool compact = safeFrame.width < 760.0f;
-    const bool tiny = safeFrame.width < 620.0f || safeFrame.height < 560.0f;
-    const float cardPadding = tiny ? 18.0f : 28.0f;
-    const float fieldHeight = tiny ? 40.0f : 44.0f;
+    const LoginLayout layout = ComputeLoginLayout(screenWidth, screenHeight);
+    const bool compact = layout.compact;
+    const bool tiny = layout.tiny;
+    const float cardPadding = layout.cardPadding;
     const float labelOffset = tiny ? 18.0f : 22.0f;
     const int titleFont = tiny ? 26 : (compact ? 30 : 34);
     const int subtitleFont = tiny ? 16 : (compact ? 18 : 20);
@@ -1904,15 +1953,13 @@ void Game::DrawLoginScreen() const {
     const int fieldFont = tiny ? 19 : 22;
     const int buttonFont = tiny ? 21 : 24;
     const int infoFont = tiny ? 15 : 17;
-    const float cardWidth = std::min(tiny ? 520.0f : 620.0f, safeFrame.width);
-    const float cardHeight = std::min(tiny ? 470.0f : (compact ? 540.0f : 520.0f), safeFrame.height);
 
     DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {209, 236, 227, 255}, Color {138, 180, 160, 255});
     DrawCircle(static_cast<int>(screenWidth - 180.0f), 140, 150.0f, Fade(WHITE, 0.18f));
     DrawCircle(120, static_cast<int>(screenHeight - 120.0f), 180.0f, Fade(Color {54, 110, 77, 255}, 0.16f));
     DrawCircleGradient(static_cast<int>(screenWidth * 0.5f), static_cast<int>(screenHeight * 0.22f), 180.0f * scale, Fade(Color {255, 255, 255, 40}, 0.55f), Fade(WHITE, 0.0f));
 
-    const Rectangle card = CenteredCardInFrame(safeFrame, cardWidth, 620.0f, cardHeight, tiny ? 420.0f : 460.0f);
+    const Rectangle card = layout.card;
 
     DrawCardSurface(card);
     DrawRectangleRounded(Rectangle {card.x + cardPadding - 10.0f, card.y + cardPadding - 10.0f, card.width - (cardPadding * 2.0f) + 20.0f, tiny ? 78.0f : 90.0f}, 0.14f, 10, Fade(WHITE, 0.04f));
@@ -1922,11 +1969,10 @@ void Game::DrawLoginScreen() const {
 
     const float innerX = card.x + cardPadding;
     const float innerWidth = card.width - cardPadding * 2.0f;
-    const float hostWidth = (compact || tiny) ? innerWidth : innerWidth - 120.0f;
-    const Rectangle nameBox {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
-    const Rectangle hostBox {innerX, nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
-    const Rectangle portBox {compact || tiny ? innerX : hostBox.x + hostBox.width + 14.0f, compact || tiny ? hostBox.y + fieldHeight + 28.0f : hostBox.y, compact || tiny ? innerWidth : 106.0f, fieldHeight};
-    const Rectangle buttonBox {innerX, portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
+    const Rectangle nameBox = layout.hitRects.nameBox;
+    const Rectangle hostBox = layout.hitRects.hostBox;
+    const Rectangle portBox = layout.hitRects.portBox;
+    const Rectangle buttonBox = layout.hitRects.buttonBox;
 
     auto drawField = [&](const Rectangle& box, const char* label, const std::string& value, bool active) {
         DrawUiText(label, box.x, box.y - labelOffset, tiny ? 16 : 18, Fade(RAYWHITE, 0.72f));
