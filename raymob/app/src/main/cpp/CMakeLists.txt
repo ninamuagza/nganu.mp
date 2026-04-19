@@ -28,6 +28,7 @@ set(SOURCES
     "${REPO_ROOT}/shared/MapFormat.cpp"
     "${NGANU_GAME_ROOT}/src/main.cpp"
     "${NGANU_GAME_ROOT}/src/Game.cpp"
+    "${NGANU_GAME_ROOT}/src/GameContent.cpp"
     "${NGANU_GAME_ROOT}/src/World.cpp"
     "${NGANU_GAME_ROOT}/src/NetworkClient.cpp"
     "${NGANU_GAME_ROOT}/src/AssetManager.cpp"
