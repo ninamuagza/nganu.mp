@@ -5,6 +5,7 @@ nganu-game: \
   CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o \
   CMakeFiles/nganu-game.dir/src/main.cpp.o \
   CMakeFiles/nganu-game.dir/src/Game.cpp.o \
+  CMakeFiles/nganu-game.dir/src/GameContent.cpp.o \
   CMakeFiles/nganu-game.dir/src/World.cpp.o \
   CMakeFiles/nganu-game.dir/src/NetworkClient.cpp.o \
   CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o \
@@ -65,6 +66,8 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o:
 CMakeFiles/nganu-game.dir/src/main.cpp.o:
 
 CMakeFiles/nganu-game.dir/src/Game.cpp.o:
+
+CMakeFiles/nganu-game.dir/src/GameContent.cpp.o:
 
 CMakeFiles/nganu-game.dir/src/World.cpp.o:
 

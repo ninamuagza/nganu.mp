@@ -179,6 +179,30 @@ home/fanorisky/GameProject/shared/MapFormat.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.s
 .PHONY : home/fanorisky/GameProject/shared/MapFormat.cpp.s
 
+src/core/ContentRevision.o: src/core/ContentRevision.cpp.o
+.PHONY : src/core/ContentRevision.o
+
+# target to build an object file
+src/core/ContentRevision.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.o
+.PHONY : src/core/ContentRevision.cpp.o
+
+src/core/ContentRevision.i: src/core/ContentRevision.cpp.i
+.PHONY : src/core/ContentRevision.i
+
+# target to preprocess a source file
+src/core/ContentRevision.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.i
+.PHONY : src/core/ContentRevision.cpp.i
+
+src/core/ContentRevision.s: src/core/ContentRevision.cpp.s
+.PHONY : src/core/ContentRevision.s
+
+# target to generate assembly for a file
+src/core/ContentRevision.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.s
+.PHONY : src/core/ContentRevision.cpp.s
+
 src/core/MapData.o: src/core/MapData.cpp.o
 .PHONY : src/core/MapData.o
 
@@ -202,6 +226,30 @@ src/core/MapData.s: src/core/MapData.cpp.s
 src/core/MapData.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/MapData.cpp.s
 .PHONY : src/core/MapData.cpp.s
+
+src/core/MovementValidation.o: src/core/MovementValidation.cpp.o
+.PHONY : src/core/MovementValidation.o
+
+# target to build an object file
+src/core/MovementValidation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o
+.PHONY : src/core/MovementValidation.cpp.o
+
+src/core/MovementValidation.i: src/core/MovementValidation.cpp.i
+.PHONY : src/core/MovementValidation.i
+
+# target to preprocess a source file
+src/core/MovementValidation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.i
+.PHONY : src/core/MovementValidation.cpp.i
+
+src/core/MovementValidation.s: src/core/MovementValidation.cpp.s
+.PHONY : src/core/MovementValidation.s
+
+# target to generate assembly for a file
+src/core/MovementValidation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.s
+.PHONY : src/core/MovementValidation.cpp.s
 
 src/core/Runtime.o: src/core/Runtime.cpp.o
 .PHONY : src/core/Runtime.o
@@ -250,6 +298,30 @@ src/core/Server.s: src/core/Server.cpp.s
 src/core/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/Server.cpp.s
 .PHONY : src/core/Server.cpp.s
+
+src/core/ServerContent.o: src/core/ServerContent.cpp.o
+.PHONY : src/core/ServerContent.o
+
+# target to build an object file
+src/core/ServerContent.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o
+.PHONY : src/core/ServerContent.cpp.o
+
+src/core/ServerContent.i: src/core/ServerContent.cpp.i
+.PHONY : src/core/ServerContent.i
+
+# target to preprocess a source file
+src/core/ServerContent.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ServerContent.cpp.i
+.PHONY : src/core/ServerContent.cpp.i
+
+src/core/ServerContent.s: src/core/ServerContent.cpp.s
+.PHONY : src/core/ServerContent.s
+
+# target to generate assembly for a file
+src/core/ServerContent.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/src/core/ServerContent.cpp.s
+.PHONY : src/core/ServerContent.cpp.s
 
 src/inventory/InventoryService.o: src/inventory/InventoryService.cpp.o
 .PHONY : src/inventory/InventoryService.o
@@ -625,15 +697,24 @@ help:
 	@echo "... home/fanorisky/GameProject/shared/MapFormat.o"
 	@echo "... home/fanorisky/GameProject/shared/MapFormat.i"
 	@echo "... home/fanorisky/GameProject/shared/MapFormat.s"
+	@echo "... src/core/ContentRevision.o"
+	@echo "... src/core/ContentRevision.i"
+	@echo "... src/core/ContentRevision.s"
 	@echo "... src/core/MapData.o"
 	@echo "... src/core/MapData.i"
 	@echo "... src/core/MapData.s"
+	@echo "... src/core/MovementValidation.o"
+	@echo "... src/core/MovementValidation.i"
+	@echo "... src/core/MovementValidation.s"
 	@echo "... src/core/Runtime.o"
 	@echo "... src/core/Runtime.i"
 	@echo "... src/core/Runtime.s"
 	@echo "... src/core/Server.o"
 	@echo "... src/core/Server.i"
 	@echo "... src/core/Server.s"
+	@echo "... src/core/ServerContent.o"
+	@echo "... src/core/ServerContent.i"
+	@echo "... src/core/ServerContent.s"
 	@echo "... src/inventory/InventoryService.o"
 	@echo "... src/inventory/InventoryService.i"
 	@echo "... src/inventory/InventoryService.s"

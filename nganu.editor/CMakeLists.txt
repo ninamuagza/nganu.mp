@@ -21,6 +21,7 @@ add_executable(nganu-editor
     ../shared/MapFormat.cpp
     src/main.cpp
     src/EditorApp.cpp
+    src/EditorUi.cpp
 )
 
 target_include_directories(nganu-editor PRIVATE src ..)

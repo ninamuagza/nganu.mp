@@ -1,5 +1,6 @@
 #include "EditorApp.h"
 
+#include "EditorUi.h"
 #include "shared/MapFormat.h"
 
 #include <algorithm>
@@ -11,15 +12,6 @@
 #include <set>
 
 namespace {
-Color BackgroundColor() { return Color {238, 232, 220, 255}; }
-Color PanelColor() { return Color {34, 43, 47, 255}; }
-Color AccentColor() { return Color {219, 142, 71, 255}; }
-Color AccentSoft() { return Color {241, 191, 140, 255}; }
-Color InkColor() { return Color {20, 24, 26, 255}; }
-Color MapGridColor() { return Color {40, 51, 58, 70}; }
-Color BlockedColor() { return Color {184, 83, 67, 180}; }
-Color WaterColor() { return Color {64, 139, 196, 170}; }
-constexpr float kUiFontScale = 0.7f;
 
 bool HasPngExtension(const std::filesystem::path& path) {
     std::string ext = path.extension().string();
@@ -31,18 +23,6 @@ bool HasPngExtension(const std::filesystem::path& path) {
 
 float ClampZoom(float value) {
     return std::clamp(value, 0.35f, 12.0f);
-}
-
-int UiFont(int px) {
-    return std::max(10, static_cast<int>(std::round(static_cast<float>(px) * kUiFontScale)));
-}
-
-void DrawUiText(const Font& font, const char* text, float x, float y, int size, Color color) {
-    DrawTextEx(font, text, Vector2 {x, y}, static_cast<float>(size), 0.0f, color);
-}
-
-void DrawUiText(const Font& font, const std::string& text, float x, float y, int size, Color color) {
-    DrawUiText(font, text.c_str(), x, y, size, color);
 }
 
 bool ConsumeRepeat(bool pressed, bool down, float& timer, float dt) {
@@ -158,6 +138,8 @@ void SetPropertyValue(PropertyCollection& properties, const std::string& key, co
     properties.push_back({key, value});
 }
 }
+
+namespace Ui = EditorUi;
 
 EditorApp::EditorApp() {
     projectRoot_ = std::filesystem::path(NGANU_REPO_ROOT).lexically_normal();
@@ -1087,26 +1069,20 @@ void EditorApp::Update(float dt) {
     HandleKeyboardInput(dt);
     HandleMapKeyboardInput(dt);
 
-    const Rectangle canvasBounds {18.0f, 76.0f, static_cast<float>(GetScreenWidth()) - 370.0f, static_cast<float>(GetScreenHeight()) - 94.0f};
-    HandleMouseInput(canvasBounds);
-    HandleMapMouseInput(canvasBounds);
-}
-
-void EditorApp::DrawTopBar() const {
-    const Rectangle bar {0.0f, 0.0f, static_cast<float>(GetScreenWidth()), 60.0f};
-    DrawRectangleRec(bar, PanelColor());
-    DrawUiText(uiFont_, "nganu.editor", 18, 14, UiFont(28), RAYWHITE);
-    DrawUiText(uiFont_, "F1 Atlas | F2 Map", 190, 20, UiFont(18), AccentSoft());
-    DrawUiText(uiFont_, ModeLabel(mode_), 340, 20, UiFont(18), Fade(RAYWHITE, 0.8f));
+    const Ui::Layout layout = Ui::BuildLayout(GetScreenWidth(), GetScreenHeight());
+    HandleMouseInput(layout.canvas);
+    HandleMapMouseInput(layout.canvas);
 }
 
 void EditorApp::DrawAtlasCanvas(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.02f, 8, Color {252, 248, 241, 255});
-    DrawRectangleLinesEx(bounds, 1.0f, Fade(InkColor(), 0.14f));
+    DrawRectangleLinesEx(bounds, 1.0f, Fade(Ui::InkColor(), 0.14f));
 
     const AtlasAsset* asset = CurrentAsset();
     if (!asset || !asset->loaded) {
-        DrawUiText(uiFont_, "No atlas available for this domain.", bounds.x + 20.0f, bounds.y + 20.0f, UiFont(20), Fade(InkColor(), 0.65f));
+        Ui::DrawTextClipped(uiFont_, "No atlas available for this domain.",
+            Rectangle {bounds.x + 20.0f, bounds.y + 20.0f, bounds.width - 40.0f, 28.0f},
+            Ui::FontSize(20), Fade(Ui::InkColor(), 0.65f));
         return;
     }
 
@@ -1118,65 +1094,41 @@ void EditorApp::DrawAtlasCanvas(Rectangle bounds) const {
         drawRect, Vector2 {}, 0.0f, WHITE);
     for (int x = 0; x <= asset->texture.width; x += std::max(1, gridWidth_)) {
         const float drawX = drawRect.x + static_cast<float>(x) * zoom_;
-        DrawLineEx(Vector2 {drawX, drawRect.y}, Vector2 {drawX, drawRect.y + drawRect.height}, 1.0f, Fade(InkColor(), 0.16f));
+        DrawLineEx(Vector2 {drawX, drawRect.y}, Vector2 {drawX, drawRect.y + drawRect.height}, 1.0f, Fade(Ui::InkColor(), 0.16f));
     }
     for (int y = 0; y <= asset->texture.height; y += std::max(1, gridHeight_)) {
         const float drawY = drawRect.y + static_cast<float>(y) * zoom_;
-        DrawLineEx(Vector2 {drawRect.x, drawY}, Vector2 {drawRect.x + drawRect.width, drawY}, 1.0f, Fade(InkColor(), 0.16f));
+        DrawLineEx(Vector2 {drawRect.x, drawY}, Vector2 {drawRect.x + drawRect.width, drawY}, 1.0f, Fade(Ui::InkColor(), 0.16f));
     }
     const Rectangle selection = SelectionRectPixels();
     const Rectangle highlight {drawRect.x + selection.x * zoom_, drawRect.y + selection.y * zoom_, selection.width * zoom_, selection.height * zoom_};
-    DrawRectangleRec(highlight, Fade(AccentColor(), 0.22f));
-    DrawRectangleLinesEx(highlight, 3.0f, AccentColor());
+    DrawRectangleRec(highlight, Fade(Ui::AccentColor(), 0.22f));
+    DrawRectangleLinesEx(highlight, 3.0f, Ui::AccentColor());
     EndScissorMode();
 }
 
 void EditorApp::DrawSidePanel(Rectangle bounds) const {
-    DrawRectangleRounded(bounds, 0.04f, 8, PanelColor());
-
     const AtlasAsset* asset = CurrentAsset();
-    const std::string ref = BuildAtlasRef();
-    const Rectangle previewBox {bounds.x + 18.0f, bounds.y + 206.0f, bounds.width - 36.0f, 170.0f};
-
-    DrawUiText(uiFont_, "Domain", bounds.x + 18.0f, bounds.y + 18.0f, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawUiText(uiFont_, DomainLabel(activeDomain_), bounds.x + 18.0f, bounds.y + 42.0f, UiFont(30), AccentSoft());
-    DrawUiText(uiFont_, "Atlas", bounds.x + 18.0f, bounds.y + 86.0f, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawUiText(uiFont_, asset ? asset->filename.c_str() : "(none)", bounds.x + 18.0f, bounds.y + 110.0f, UiFont(20), RAYWHITE);
-
     std::ostringstream gridText;
     gridText << gridWidth_ << " x " << gridHeight_;
-    DrawUiText(uiFont_, "Grid", bounds.x + 18.0f, bounds.y + 146.0f, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawUiText(uiFont_, gridText.str(), bounds.x + 18.0f, bounds.y + 170.0f, UiFont(20), RAYWHITE);
 
-    DrawRectangleRounded(previewBox, 0.07f, 8, Fade(WHITE, 0.06f));
-    DrawUiText(uiFont_, "Selection", previewBox.x + 12.0f, previewBox.y + 10.0f, UiFont(18), Fade(RAYWHITE, 0.75f));
-    if (asset && asset->loaded) {
-        const Rectangle selection = SelectionRectPixels();
-        const float scale = std::min((previewBox.width - 24.0f) / selection.width, (previewBox.height - 52.0f) / selection.height);
-        const Rectangle dest {
-            previewBox.x + (previewBox.width * 0.5f) - ((selection.width * scale) * 0.5f),
-            previewBox.y + 34.0f + ((previewBox.height - 52.0f) * 0.5f) - ((selection.height * scale) * 0.5f),
-            selection.width * scale, selection.height * scale};
-        DrawTexturePro(asset->texture, selection, dest, Vector2 {}, 0.0f, WHITE);
-        DrawRectangleLinesEx(dest, 2.0f, Fade(AccentSoft(), 0.9f));
+    Ui::AtlasPanelState state;
+    state.domain = DomainLabel(activeDomain_);
+    state.atlasName = asset ? asset->filename : "";
+    state.grid = gridText.str();
+    state.ref = BuildAtlasRef();
+    state.status = statusText_;
+    state.hasSelection = asset && asset->loaded;
+    if (state.hasSelection) {
+        state.texture = asset->texture;
+        state.source = SelectionRectPixels();
     }
-
-    DrawUiText(uiFont_, "Atlas Ref", bounds.x + 18.0f, bounds.y + 392.0f, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawRectangleRounded(Rectangle {bounds.x + 18.0f, bounds.y + 418.0f, bounds.width - 36.0f, 88.0f}, 0.05f, 8, Fade(WHITE, 0.06f));
-    DrawUiText(uiFont_, ref, bounds.x + 18.0f, bounds.y + 430.0f, UiFont(18), AccentSoft());
-
-    DrawUiText(uiFont_, "Controls", bounds.x + 18.0f, bounds.y + 526.0f, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawUiText(uiFont_, "Tab domain | Q/E atlas", bounds.x + 18.0f, bounds.y + 550.0f, UiFont(17), RAYWHITE);
-    DrawUiText(uiFont_, "Wheel zoom | RMB/MMB drag pan", bounds.x + 18.0f, bounds.y + 572.0f, UiFont(17), RAYWHITE);
-    DrawUiText(uiFont_, "WASD pan | Arrows move select", bounds.x + 18.0f, bounds.y + 594.0f, UiFont(17), RAYWHITE);
-    DrawUiText(uiFont_, "Shift+Arrows resize | C copy", bounds.x + 18.0f, bounds.y + 616.0f, UiFont(17), RAYWHITE);
-    DrawUiText(uiFont_, "Switch to Map mode with F2", bounds.x + 18.0f, bounds.y + 638.0f, UiFont(17), AccentSoft());
-    DrawUiText(uiFont_, statusText_, bounds.x + 18.0f, bounds.y + bounds.height - 30.0f, UiFont(16), Fade(RAYWHITE, 0.62f));
+    Ui::DrawAtlasPanel(uiFont_, bounds, state);
 }
 
 void EditorApp::DrawMapCanvas(Rectangle bounds) const {
     DrawRectangleRounded(bounds, 0.02f, 8, Color {252, 248, 241, 255});
-    DrawRectangleLinesEx(bounds, 1.0f, Fade(InkColor(), 0.14f));
+    DrawRectangleLinesEx(bounds, 1.0f, Fade(Ui::InkColor(), 0.14f));
 
     const Rectangle canvas = MapCanvasRect(bounds);
     BeginScissorMode(static_cast<int>(bounds.x), static_cast<int>(bounds.y), static_cast<int>(bounds.width), static_cast<int>(bounds.height));
@@ -1232,20 +1184,20 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
 
     for (int x = 0; x <= mapWidth_; ++x) {
         const float drawX = canvas.x + (x * mapTileSize_ * mapZoom_);
-        DrawLineEx(Vector2 {drawX, canvas.y}, Vector2 {drawX, canvas.y + canvas.height}, 1.0f, MapGridColor());
+        DrawLineEx(Vector2 {drawX, canvas.y}, Vector2 {drawX, canvas.y + canvas.height}, 1.0f, Ui::MapGridColor());
     }
     for (int y = 0; y <= mapHeight_; ++y) {
         const float drawY = canvas.y + (y * mapTileSize_ * mapZoom_);
-        DrawLineEx(Vector2 {canvas.x, drawY}, Vector2 {canvas.x + canvas.width, drawY}, 1.0f, MapGridColor());
+        DrawLineEx(Vector2 {canvas.x, drawY}, Vector2 {canvas.x + canvas.width, drawY}, 1.0f, Ui::MapGridColor());
     }
 
     for (const MapRect& rect : blockedAreas_) {
         Rectangle drawRect {canvas.x + rect.x * mapZoom_, canvas.y + rect.y * mapZoom_, rect.width * mapZoom_, rect.height * mapZoom_};
-        DrawRectangleRec(drawRect, BlockedColor());
+        DrawRectangleRec(drawRect, Ui::BlockedColor());
     }
     for (const MapRect& rect : waterAreas_) {
         Rectangle drawRect {canvas.x + rect.x * mapZoom_, canvas.y + rect.y * mapZoom_, rect.width * mapZoom_, rect.height * mapZoom_};
-        DrawRectangleRec(drawRect, WaterColor());
+        DrawRectangleRec(drawRect, Ui::WaterColor());
     }
 
     for (int i = 0; i < static_cast<int>(mapObjects_.size()); ++i) {
@@ -1270,7 +1222,7 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
             }
         }
         if (!drewSprite) {
-            Color tint = AccentSoft();
+            Color tint = Ui::AccentSoft();
             if (object.kind == "portal") tint = Color {155, 214, 255, 255};
             else if (object.kind == "trigger") tint = Color {247, 215, 107, 255};
             else if (object.kind == "npc") tint = Color {140, 235, 176, 255};
@@ -1278,7 +1230,7 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
             DrawRectangleRec(drawRect, Fade(tint, 0.55f));
         }
         DrawRectangleLinesEx(drawRect, i == selectedMapObjectIndex_ ? 3.0f : 2.0f,
-            i == selectedMapObjectIndex_ ? AccentColor() : Fade(InkColor(), 0.65f));
+            i == selectedMapObjectIndex_ ? Ui::AccentColor() : Fade(Ui::InkColor(), 0.65f));
     }
 
     const Rectangle spawnRect {
@@ -1287,7 +1239,7 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
         12.0f,
         12.0f
     };
-    DrawRectangleRec(spawnRect, AccentColor());
+    DrawRectangleRec(spawnRect, Ui::AccentColor());
 
     int hoverTileX = 0;
     int hoverTileY = 0;
@@ -1318,184 +1270,61 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
             hoverCols * mapTileSize_ * mapZoom_,
             hoverRows * mapTileSize_ * mapZoom_
         };
-        DrawRectangleRec(hover, Fade(AccentColor(), 0.14f));
-        DrawRectangleLinesEx(hover, 2.0f, Fade(AccentColor(), 0.9f));
+        DrawRectangleRec(hover, Fade(Ui::AccentColor(), 0.14f));
+        DrawRectangleLinesEx(hover, 2.0f, Fade(Ui::AccentColor(), 0.9f));
     }
 
     EndScissorMode();
 }
 
 void EditorApp::DrawMapSidePanel(Rectangle bounds) const {
-    DrawRectangleRounded(bounds, 0.04f, 8, PanelColor());
-    const MapLayerDef* activeLayer = ActiveMapLayer();
-    float y = bounds.y + 18.0f;
-    const float left = bounds.x + 18.0f;
-    const float width = bounds.width - 36.0f;
-    const float rowGap = 6.0f;
-
-    DrawUiText(uiFont_, "Map", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-    y += 22.0f;
-    DrawUiText(uiFont_, mapId_, left, y, UiFont(28), AccentSoft());
-    y += 24.0f;
-    DrawUiText(uiFont_, worldName_, left, y, UiFont(18), RAYWHITE);
-    y += 28.0f;
+    Ui::MapPanelState state;
+    state.mapId = mapId_;
+    state.worldName = worldName_;
 
     std::ostringstream sizeText;
     sizeText << mapWidth_ << " x " << mapHeight_ << "  tile " << mapTileSize_;
-    DrawUiText(uiFont_, sizeText.str(), left, y, UiFont(18), RAYWHITE);
-    y += 32.0f;
+    state.size = sizeText.str();
+    state.section = static_cast<Ui::MapSection>(activeMapSection_);
+    state.tool = static_cast<Ui::MapTool>(mapTool_);
+    state.activeLayer = activeMapLayerIndex_;
+    state.brushRef = CurrentBrushRef();
+    state.blockedCount = static_cast<int>(blockedAreas_.size());
+    state.waterCount = static_cast<int>(waterAreas_.size());
+    state.spawn = std::to_string(static_cast<int>(mapSpawn_.x)) + "," + std::to_string(static_cast<int>(mapSpawn_.y));
+    state.objectKind = objectPlacementKind_;
+    state.selectedObject = selectedMapObjectIndex_;
+    state.mapFile = currentMapFile_.empty() ? "(unsaved)" : currentMapFile_.filename().string();
+    state.status = statusText_;
 
-    DrawUiText(uiFont_, "Section", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-    y += 24.0f;
-    const float tabWidth = (width - 12.0f) / 3.0f;
-    for (int i = 0; i < 3; ++i) {
-        Rectangle tab {left + (i * (tabWidth + 6.0f)), y, tabWidth, 28.0f};
-        DrawRectangleRounded(tab, 0.18f, 6, i == static_cast<int>(activeMapSection_) ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.06f));
-        DrawUiText(uiFont_, MapSectionLabel(static_cast<MapSection>(i)), tab.x + 6.0f, tab.y + 7.0f, UiFont(15), RAYWHITE);
-    }
-    y += 40.0f;
-
-    DrawUiText(uiFont_, "Tool", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-    y += 22.0f;
-    if (activeMapSection_ == MapSection::Tile) {
-        Rectangle rowA {left, y, width, 24.0f};
-        Rectangle rowB {left, y + 28.0f, width, 24.0f};
-        DrawRectangleRounded(rowA, 0.15f, 6, mapTool_ == MapTool::Paint ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowB, 0.15f, 6, mapTool_ == MapTool::Erase ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawUiText(uiFont_, "Paint", rowA.x + 8.0f, rowA.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Erase", rowB.x + 8.0f, rowB.y + 5.0f, UiFont(16), RAYWHITE);
-        y += 64.0f;
-    } else if (activeMapSection_ == MapSection::Region) {
-        Rectangle rowA {left, y, width, 24.0f};
-        Rectangle rowB {left, y + 28.0f, width, 24.0f};
-        Rectangle rowC {left, y + 56.0f, width, 24.0f};
-        DrawRectangleRounded(rowA, 0.15f, 6, mapTool_ == MapTool::Blocked ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowB, 0.15f, 6, mapTool_ == MapTool::Water ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowC, 0.15f, 6, mapTool_ == MapTool::Spawn ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawUiText(uiFont_, "Blocked", rowA.x + 8.0f, rowA.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Water", rowB.x + 8.0f, rowB.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Spawn", rowC.x + 8.0f, rowC.y + 5.0f, UiFont(16), RAYWHITE);
-        y += 88.0f;
-    } else {
-        Rectangle rowA {left, y, width, 24.0f};
-        Rectangle rowB {left, y + 28.0f, width, 24.0f};
-        Rectangle rowC {left, y + 56.0f, width, 24.0f};
-        Rectangle rowD {left, y + 84.0f, width, 24.0f};
-        Rectangle rowE {left, y + 112.0f, width, 24.0f};
-        DrawRectangleRounded(rowA, 0.15f, 6, objectPlacementKind_ == "prop" ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowB, 0.15f, 6, objectPlacementKind_ == "npc" ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowC, 0.15f, 6, objectPlacementKind_ == "portal" ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowD, 0.15f, 6, objectPlacementKind_ == "trigger" ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawRectangleRounded(rowE, 0.15f, 6, objectPlacementKind_ == "region" ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-        DrawUiText(uiFont_, "Prop", rowA.x + 8.0f, rowA.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "NPC", rowB.x + 8.0f, rowB.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Portal", rowC.x + 8.0f, rowC.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Trigger", rowD.x + 8.0f, rowD.y + 5.0f, UiFont(16), RAYWHITE);
-        DrawUiText(uiFont_, "Region", rowE.x + 8.0f, rowE.y + 5.0f, UiFont(16), RAYWHITE);
-        y += 144.0f;
+    state.layers.reserve(mapLayers_.size());
+    for (const MapLayerDef& layer : mapLayers_) {
+        state.layers.push_back(layer.name);
     }
 
-    if (activeMapSection_ == MapSection::Tile) {
-        DrawUiText(uiFont_, "Layers", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 24.0f;
-        for (int i = 0; i < static_cast<int>(mapLayers_.size()) && y < bounds.y + bounds.height - 220.0f; ++i) {
-            Rectangle row {left, y, width, 22.0f};
-            DrawRectangleRounded(row, 0.15f, 6, i == activeMapLayerIndex_ ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-            DrawUiText(uiFont_, mapLayers_[static_cast<size_t>(i)].name, row.x + 8.0f, row.y + 5.0f, UiFont(16), RAYWHITE);
-            y += 26.0f;
-        }
-        y += rowGap;
-        DrawUiText(uiFont_, "Brush", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 24.0f;
-        DrawRectangleRounded(Rectangle {left, y, width, 60.0f}, 0.05f, 8, Fade(WHITE, 0.06f));
-        DrawUiText(uiFont_, CurrentBrushRef().empty() ? "(pick in Atlas mode)" : CurrentBrushRef(), left, y + 12.0f, UiFont(18), AccentSoft());
-        y += 48.0f;
-        DrawUiText(uiFont_, "Paint memakai atlas brush aktif.", left, y + 4.0f, UiFont(14), Fade(RAYWHITE, 0.72f));
-        y += 24.0f;
-    } else if (activeMapSection_ == MapSection::Region) {
-        DrawUiText(uiFont_, "Region Tools", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 24.0f;
-        const std::string blockedLabel = "Blocked cells: " + std::to_string(blockedAreas_.size());
-        DrawUiText(uiFont_, blockedLabel, left, y, UiFont(16), RAYWHITE);
-        y += 20.0f;
-        const std::string waterLabel = "Water cells: " + std::to_string(waterAreas_.size());
-        DrawUiText(uiFont_, waterLabel, left, y, UiFont(16), RAYWHITE);
-        y += 20.0f;
-        const std::string spawnLabel = "Spawn: " + std::to_string(static_cast<int>(mapSpawn_.x)) + "," + std::to_string(static_cast<int>(mapSpawn_.y));
-        DrawUiText(uiFont_, spawnLabel, left, y, UiFont(16), RAYWHITE);
-        y += 26.0f;
-        DrawUiText(uiFont_, "Use B/V/G and click on map.", left, y, UiFont(15), AccentSoft());
-        y += 24.0f;
-    } else if (activeMapSection_ == MapSection::Object) {
-        DrawUiText(uiFont_, "Object Kind", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 22.0f;
-        DrawUiText(uiFont_, objectPlacementKind_, left, y, UiFont(18), AccentSoft());
-        y += 26.0f;
-        DrawUiText(uiFont_, "Brush", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 22.0f;
-        DrawUiText(uiFont_, CurrentBrushRef().empty() ? "(pick in Atlas mode)" : CurrentBrushRef(), left, y, UiFont(16), AccentSoft());
-        y += 28.0f;
-        DrawUiText(uiFont_, "Objects", left, y, UiFont(18), Fade(RAYWHITE, 0.72f));
-        y += 24.0f;
-        for (int i = 0; i < static_cast<int>(mapObjects_.size()) && y < bounds.y + bounds.height - 220.0f; ++i) {
-            Rectangle row {left, y, width, 20.0f};
-            DrawRectangleRounded(row, 0.15f, 6, i == selectedMapObjectIndex_ ? Fade(AccentColor(), 0.24f) : Fade(WHITE, 0.05f));
-            const std::string label = mapObjects_[static_cast<size_t>(i)].kind + ":" + mapObjects_[static_cast<size_t>(i)].id;
-            DrawUiText(uiFont_, label, row.x + 8.0f, row.y + 4.0f, UiFont(15), RAYWHITE);
-            y += 24.0f;
-        }
+    state.objects.reserve(mapObjects_.size());
+    for (const MapObject& object : mapObjects_) {
+        state.objects.push_back(object.kind + ":" + object.id);
     }
 
-    const float footerTop = bounds.y + bounds.height - 132.0f;
-    DrawUiText(uiFont_, "Map File", left, footerTop, UiFont(18), Fade(RAYWHITE, 0.72f));
-    DrawUiText(uiFont_, currentMapFile_.empty() ? "(unsaved)" : currentMapFile_.filename().string(), left, footerTop + 24.0f, UiFont(16), RAYWHITE);
-    DrawUiText(uiFont_, "Tab section | Ctrl+S save | Ctrl+N new", left, footerTop + 48.0f, UiFont(14), RAYWHITE);
-    DrawUiText(uiFont_, "PgUp/PgDn map | F1 atlas | F2 map", left, footerTop + 66.0f, UiFont(14), RAYWHITE);
-    DrawUiText(uiFont_, statusText_, left, bounds.y + bounds.height - 24.0f, UiFont(16), Fade(RAYWHITE, 0.62f));
+    Ui::DrawMapPanel(uiFont_, bounds, state);
 }
 
 void EditorApp::Draw() const {
-    ClearBackground(BackgroundColor());
-    DrawTopBar();
-
-    const Rectangle canvasBounds {18.0f, 76.0f, static_cast<float>(GetScreenWidth()) - 370.0f, static_cast<float>(GetScreenHeight()) - 94.0f};
-    const Rectangle sideBounds {static_cast<float>(GetScreenWidth()) - 336.0f, 76.0f, 318.0f, static_cast<float>(GetScreenHeight()) - 94.0f};
+    ClearBackground(Ui::BackgroundColor());
+    const Ui::Layout layout = Ui::BuildLayout(GetScreenWidth(), GetScreenHeight());
+    Ui::DrawTopBar(uiFont_, layout, mode_ == EditorMode::Atlas ? Ui::Mode::Atlas : Ui::Mode::Map);
 
     if (mode_ == EditorMode::Atlas) {
-        DrawAtlasCanvas(canvasBounds);
-        DrawSidePanel(sideBounds);
+        DrawAtlasCanvas(layout.canvas);
+        DrawSidePanel(layout.sidePanel);
         return;
     }
 
-    DrawMapCanvas(canvasBounds);
-    DrawMapSidePanel(sideBounds);
-}
-
-const char* EditorApp::ModeLabel(EditorMode mode) {
-    return mode == EditorMode::Atlas ? "Atlas Picker" : "Map Editor";
+    DrawMapCanvas(layout.canvas);
+    DrawMapSidePanel(layout.sidePanel);
 }
 
 const char* EditorApp::DomainLabel(Domain domain) {
     return domain == Domain::Map ? "map" : "character";
-}
-
-const char* EditorApp::MapToolLabel(MapTool tool) {
-    switch (tool) {
-        case MapTool::Paint: return "paint";
-        case MapTool::Erase: return "erase";
-        case MapTool::Blocked: return "blocked";
-        case MapTool::Water: return "water";
-        case MapTool::Spawn: return "spawn";
-        case MapTool::Object: return "object";
-    }
-    return "paint";
-}
-
-const char* EditorApp::MapSectionLabel(MapSection section) {
-    switch (section) {
-        case MapSection::Tile: return "Tile";
-        case MapSection::Region: return "Region";
-        case MapSection::Object: return "Object";
-    }
-    return "Tile";
 }

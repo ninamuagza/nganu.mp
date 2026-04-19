@@ -229,6 +229,9 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: \
  /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h \
  /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/callbacks.h \
  /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/ContentRevision.h \
+ /home/fanorisky/GameProject/nganu.mp/src/core/MovementValidation.h \
+ /home/fanorisky/GameProject/nganu.mp/../shared/ContentIntegrity.h \
  /home/fanorisky/GameProject/nganu.mp/src/script/Builtins.h \
  /home/fanorisky/GameProject/nganu.mp/src/network/Packet.h \
  /home/fanorisky/GameProject/nganu.mp/../shared/Protocol.h \

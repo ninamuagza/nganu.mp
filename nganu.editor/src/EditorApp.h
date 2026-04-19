@@ -182,13 +182,9 @@ private:
     Rectangle SelectionRectPixels() const;
     std::string BuildAtlasRef() const;
     void CopyCurrentRef();
-    void DrawTopBar() const;
     void DrawAtlasCanvas(Rectangle bounds) const;
     void DrawSidePanel(Rectangle bounds) const;
     void DrawMapCanvas(Rectangle bounds) const;
     void DrawMapSidePanel(Rectangle bounds) const;
-    static const char* ModeLabel(EditorMode mode);
     static const char* DomainLabel(Domain domain);
-    static const char* MapToolLabel(MapTool tool);
-    static const char* MapSectionLabel(MapSection section);
 };

@@ -23,6 +23,11 @@ void AssetManager::EnsureFallback() {
 bool AssetManager::LoadFromBytes(const std::string& key, const std::vector<uint8_t>& bytes) {
     if (bytes.empty()) return false;
 
+    const unsigned char pngHeader[8] {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
+    if (bytes.size() < sizeof(pngHeader) || std::memcmp(bytes.data(), pngHeader, sizeof(pngHeader)) != 0) {
+        return false;
+    }
+
     /* Load from memory using raylib extension */
     const char* ext = ".png";
     Image img = LoadImageFromMemory(ext, bytes.data(), static_cast<int>(bytes.size()));

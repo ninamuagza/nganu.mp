@@ -5,6 +5,9 @@
   CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o \
   CMakeFiles/game-server.dir/src/main.cpp.o \
   CMakeFiles/game-server.dir/src/core/MapData.cpp.o \
+  CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.o \
+  CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o \
+  CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o \
   CMakeFiles/game-server.dir/src/core/Server.cpp.o \
   CMakeFiles/game-server.dir/src/core/Runtime.cpp.o \
   CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o \
@@ -55,6 +58,12 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o:
 CMakeFiles/game-server.dir/src/main.cpp.o:
 
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
+
+CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.o:
+
+CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o:
+
+CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o:
 
 CMakeFiles/game-server.dir/src/core/Server.cpp.o:
 

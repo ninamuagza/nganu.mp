@@ -139,6 +139,11 @@ Texture2D LoadTextureFromDiskBytes(const std::filesystem::path& path) {
         return Texture2D {};
     }
 
+    const unsigned char pngHeader[8] {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
+    if (bytes.size() < sizeof(pngHeader) || !std::equal(std::begin(pngHeader), std::end(pngHeader), bytes.begin())) {
+        return Texture2D {};
+    }
+
     std::string ext = path.extension().string();
     if (ext.empty()) {
         ext = ".png";
@@ -175,10 +180,8 @@ Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textu
     }
 
     Texture2D texture = LoadTextureFromDiskBytes(path);
-    if (texture.id <= 0) {
-        texture = LoadTexture(path.string().c_str());
-    }
     if (texture.id <= 0 || texture.width <= 0 || texture.height <= 0) {
+        std::filesystem::remove(path, ec);
         return nullptr;
     }
     SetTextureFilter(texture, TEXTURE_FILTER_POINT);

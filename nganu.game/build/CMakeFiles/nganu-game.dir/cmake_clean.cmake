@@ -22,6 +22,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o.d"
   "CMakeFiles/nganu-game.dir/src/Game.cpp.o"
   "CMakeFiles/nganu-game.dir/src/Game.cpp.o.d"
+  "CMakeFiles/nganu-game.dir/src/GameContent.cpp.o"
+  "CMakeFiles/nganu-game.dir/src/GameContent.cpp.o.d"
   "CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o"
   "CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o.d"
   "CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o"

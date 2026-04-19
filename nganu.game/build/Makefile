@@ -393,6 +393,30 @@ src/Game.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/Game.cpp.s
 .PHONY : src/Game.cpp.s
 
+src/GameContent.o: src/GameContent.cpp.o
+.PHONY : src/GameContent.o
+
+# target to build an object file
+src/GameContent.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/GameContent.cpp.o
+.PHONY : src/GameContent.cpp.o
+
+src/GameContent.i: src/GameContent.cpp.i
+.PHONY : src/GameContent.i
+
+# target to preprocess a source file
+src/GameContent.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/GameContent.cpp.i
+.PHONY : src/GameContent.cpp.i
+
+src/GameContent.s: src/GameContent.cpp.s
+.PHONY : src/GameContent.s
+
+# target to generate assembly for a file
+src/GameContent.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nganu-game.dir/build.make CMakeFiles/nganu-game.dir/src/GameContent.cpp.s
+.PHONY : src/GameContent.cpp.s
+
 src/InventoryUi.o: src/InventoryUi.cpp.o
 .PHONY : src/InventoryUi.o
 
@@ -699,6 +723,9 @@ help:
 	@echo "... src/Game.o"
 	@echo "... src/Game.i"
 	@echo "... src/Game.s"
+	@echo "... src/GameContent.o"
+	@echo "... src/GameContent.i"
+	@echo "... src/GameContent.s"
 	@echo "... src/InventoryUi.o"
 	@echo "... src/InventoryUi.i"
 	@echo "... src/InventoryUi.s"

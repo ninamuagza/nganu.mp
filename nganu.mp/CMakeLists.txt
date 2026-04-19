@@ -40,6 +40,7 @@ set(SERVER_SOURCES
     src/main.cpp
     src/core/MapData.cpp
     src/core/ContentRevision.cpp
+    src/core/ServerContent.cpp
     src/core/MovementValidation.cpp
     src/core/Server.cpp
     src/core/Runtime.cpp

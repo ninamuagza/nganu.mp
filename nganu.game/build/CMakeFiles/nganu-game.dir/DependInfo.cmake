@@ -19,6 +19,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/fanorisky/GameProject/shared/MapFormat.cpp" "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.game/src/AssetManager.cpp" "CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.game/src/Game.cpp" "CMakeFiles/nganu-game.dir/src/Game.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/Game.cpp.o.d"
+  "/home/fanorisky/GameProject/nganu.game/src/GameContent.cpp" "CMakeFiles/nganu-game.dir/src/GameContent.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/GameContent.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.game/src/InventoryUi.cpp" "CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.game/src/ItemDefs.cpp" "CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o.d"
   "/home/fanorisky/GameProject/nganu.game/src/ModalDialogUi.cpp" "CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o" "gcc" "CMakeFiles/nganu-game.dir/src/ModalDialogUi.cpp.o.d"

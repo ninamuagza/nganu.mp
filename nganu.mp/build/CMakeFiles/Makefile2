@@ -142,12 +142,12 @@ CMakeFiles/enet_static.dir/clean:
 CMakeFiles/game-server.dir/all: CMakeFiles/enet_static.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=12,13,14,15,16,17,18,19,20,21,22,23 "Built target game-server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 "Built target game-server"
 .PHONY : CMakeFiles/game-server.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/game-server.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles 21
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles 24
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/game-server.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/fanorisky/GameProject/nganu.mp/build/CMakeFiles 0
 .PHONY : CMakeFiles/game-server.dir/rule
@@ -159,7 +159,7 @@ game-server: CMakeFiles/game-server.dir/rule
 # codegen rule for target.
 CMakeFiles/game-server.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game-server.dir/build.make CMakeFiles/game-server.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=12,13,14,15,16,17,18,19,20,21,22,23 "Finished codegen for target game-server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 "Finished codegen for target game-server"
 .PHONY : CMakeFiles/game-server.dir/codegen
 
 # clean rule for target.

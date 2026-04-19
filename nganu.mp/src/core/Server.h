@@ -124,6 +124,7 @@ private:
     void broadcastPlayerLeave(int playerid, const std::string& mapId);
     void sendServerText(void* peer, const std::string& text);
     void sendServerText(int playerid, const std::string& text);
+    void sendHandshakeToPeer(void* peer, int playerid);
     void sendUpdateManifestToPeer(void* peer);
     void sendAssetBlobToPeer(void* peer, const std::string& assetKey);
     void sendMapTransfer(int playerid, const std::string& mapId, float x, float y);
