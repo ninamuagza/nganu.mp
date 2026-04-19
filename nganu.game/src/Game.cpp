@@ -2221,12 +2221,11 @@ void Game::DrawAvatar(const Avatar& avatar, bool localPlayer) const {
 }
 
 void Game::DrawChatBubble(Vector2 anchor, const ChatBubble& bubble, bool localPlayer) const {
-    const float fadeIn = std::clamp(bubble.age / 0.18f, 0.0f, 1.0f);
-    const float fadeOutStart = bubble.duration - 0.85f;
-    const float fadeOut = 1.0f - std::clamp((bubble.age - fadeOutStart) / 0.85f, 0.0f, 1.0f);
-    const float easedIn = fadeIn * fadeIn * (3.0f - (2.0f * fadeIn));
+    constexpr float kFadeOutSeconds = 0.45f;
+    const float fadeOutStart = bubble.duration - kFadeOutSeconds;
+    const float fadeOut = 1.0f - std::clamp((bubble.age - fadeOutStart) / kFadeOutSeconds, 0.0f, 1.0f);
     const float easedOut = fadeOut * fadeOut * (3.0f - (2.0f * fadeOut));
-    const float alpha = std::clamp(std::min(easedIn, easedOut), 0.0f, 1.0f);
+    const float alpha = std::clamp(easedOut, 0.0f, 1.0f);
     if (alpha <= 0.01f) {
         return;
     }
@@ -2241,19 +2240,18 @@ void Game::DrawChatBubble(Vector2 anchor, const ChatBubble& bubble, bool localPl
     for (const std::string& line : bubble.lines) {
         textWidth = std::max(textWidth, static_cast<float>(MeasureUiText(line, fontSize)));
     }
-    const float paddingX = 10.0f;
-    const float paddingY = 7.0f;
-    const float lineHeight = static_cast<float>(fontSize + 4);
-    const float bubbleWidth = std::clamp(textWidth + paddingX * 2.0f, 34.0f, maxTextWidth + paddingX * 2.0f);
+    const float paddingX = 7.0f;
+    const float paddingY = 4.0f;
+    const float lineHeight = static_cast<float>(fontSize + 2);
+    const float bubbleWidth = std::clamp(textWidth + paddingX * 2.0f, 24.0f, maxTextWidth + paddingX * 2.0f);
     const float resizeT = std::clamp(bubble.linePopAge / 0.16f, 0.0f, 1.0f);
     const float resizeEase = resizeT * resizeT * (3.0f - (2.0f * resizeT));
     const float previousLineCount = static_cast<float>(std::min(bubble.previousLineCount, bubble.lines.size()));
     const float animatedLineCount = previousLineCount + ((static_cast<float>(bubble.lines.size()) - previousLineCount) * resizeEase);
     const float bubbleHeight = paddingY * 2.0f + lineHeight * std::max(1.0f, animatedLineCount);
-    const float yLift = (1.0f - easedIn) * 10.0f;
     const Rectangle rect {
         anchor.x - bubbleWidth * 0.5f,
-        anchor.y - 82.0f - bubbleHeight - yLift,
+        anchor.y - 82.0f - bubbleHeight,
         bubbleWidth,
         bubbleHeight
     };
@@ -2265,20 +2263,20 @@ void Game::DrawChatBubble(Vector2 anchor, const ChatBubble& bubble, bool localPl
     DrawRectangleRounded(rect, 0.34f, 10, Fade(fill, alpha * 0.92f));
     DrawRectangleRoundedLinesEx(rect, 0.34f, 10, 1.6f, Fade(border, alpha * 0.72f));
 
-    const float popT = std::clamp(bubble.linePopAge / 0.18f, 0.0f, 1.0f);
-    const float popEase = popT * popT * (3.0f - (2.0f * popT));
     for (size_t i = 0; i < bubble.lines.size(); ++i) {
         const std::string& line = bubble.lines[i];
         const float lineWidth = static_cast<float>(MeasureUiText(line, fontSize));
-        const bool isNewLine = i >= bubble.previousLineCount;
-        const float lineAlpha = alpha * (isNewLine ? popEase : 0.92f);
+        const float lineY = rect.y + paddingY + lineHeight * static_cast<float>(i);
+        if (lineY + static_cast<float>(fontSize) > rect.y + rect.height - paddingY + 1.0f) {
+            continue;
+        }
+        const float lineAlpha = alpha * 0.94f;
         if (lineAlpha <= 0.01f) {
             continue;
         }
-        const float popScaleOffset = isNewLine ? (1.0f - popEase) * 3.0f : 0.0f;
         DrawUiText(line,
                    rect.x + (rect.width - lineWidth) * 0.5f,
-                   rect.y + paddingY + lineHeight * static_cast<float>(i) + popScaleOffset,
+                   lineY,
                    fontSize,
                    Fade(RAYWHITE, lineAlpha));
     }
