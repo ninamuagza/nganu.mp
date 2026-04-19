@@ -1,6 +1,7 @@
 #include "core/Server.h"
 #include "core/ContentRevision.h"
 #include "core/MovementValidation.h"
+#include "shared/ContentIntegrity.h"
 #include "script/Builtins.h"
 #include "network/Packet.h"
 
@@ -893,6 +894,8 @@ void Server::sendUpdateManifestToPeer(void* peer) {
 
     std::ostringstream manifest;
     manifest << "server_name=nganu.mp\n";
+    manifest << "protocol_version=" << Protocol::kProtocolVersion << "\n";
+    manifest << "asset_chunk_bytes=" << Protocol::kAssetChunkBytes << "\n";
     manifest << "content_revision=" << contentRevision_ << "\n";
     manifest << "world_name=" << map_.worldName() << "\n";
     manifest << "map_id=" << map_.mapId() << "\n";
@@ -1019,22 +1022,36 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
         return;
     }
 
-    std::ostringstream blob;
-    blob << "key=" << assetKey << "\n";
-    blob << "kind=" << kind << "\n";
-    blob << "revision=" << contentRevision_ << "\n";
-    if (kind == "image") {
-        blob << "encoding=hex\n";
-    }
-    blob << "---\n";
-    blob << content;
+    const std::string checksum = Nganu::ContentIntegrity::Fnv1a64Hex(content);
+    const size_t chunkBytes = std::max<size_t>(1, Protocol::kAssetChunkBytes);
+    const size_t chunkTotal = std::max<size_t>(1, (content.size() + chunkBytes - 1) / chunkBytes);
+    for (size_t chunkIndex = 0; chunkIndex < chunkTotal; ++chunkIndex) {
+        const size_t start = chunkIndex * chunkBytes;
+        const size_t count = (start < content.size())
+                                 ? std::min(chunkBytes, content.size() - start)
+                                 : 0;
+        const std::string chunkContent = content.substr(start, count);
+        std::ostringstream blob;
+        blob << "key=" << assetKey << "\n";
+        blob << "kind=" << kind << "\n";
+        blob << "revision=" << contentRevision_ << "\n";
+        blob << "checksum=" << checksum << "\n";
+        blob << "content_size=" << content.size() << "\n";
+        blob << "chunk_index=" << chunkIndex << "\n";
+        blob << "chunk_total=" << chunkTotal << "\n";
+        if (kind == "image") {
+            blob << "encoding=hex\n";
+        }
+        blob << "---\n";
+        blob << chunkContent;
 
-    const std::string payload = blob.str();
-    std::vector<uint8_t> pkt(1 + 1 + payload.size());
-    pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
-    pkt[1] = static_cast<uint8_t>(PluginMessageType::ASSET_BLOB);
-    std::memcpy(pkt.data() + 2, payload.data(), payload.size());
-    network_.sendPacket(peer, pkt.data(), pkt.size(), 0);
+        const std::string payload = blob.str();
+        std::vector<uint8_t> pkt(1 + 1 + payload.size());
+        pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
+        pkt[1] = static_cast<uint8_t>(PluginMessageType::ASSET_BLOB);
+        std::memcpy(pkt.data() + 2, payload.data(), payload.size());
+        network_.sendPacket(peer, pkt.data(), pkt.size(), 0);
+    }
 }
 
 void Server::sendMapTransfer(int playerid, const std::string& mapId, float x, float y) {
@@ -1177,10 +1194,12 @@ void Server::processNetworkEvents() {
             script_.callFunction("OnPlayerEnterMap", pid);
             plugins_.firePlayerConnect(pid);
 
-            /* Send HANDSHAKE with player ID */
-            uint8_t pkt[5];
+            /* Send HANDSHAKE with player ID + protocol version */
+            uint8_t pkt[1 + sizeof(int32_t) + sizeof(uint16_t)];
             pkt[0] = static_cast<uint8_t>(PacketOpcode::HANDSHAKE);
             std::memcpy(pkt + 1, &pid, sizeof(pid));
+            const uint16_t protocolVersion = Protocol::kProtocolVersion;
+            std::memcpy(pkt + 1 + sizeof(pid), &protocolVersion, sizeof(protocolVersion));
             network_.sendPacket(event.peer, pkt, sizeof(pkt), 0);
             sendAuthoritativePlayerPosition(pid);
             sendSnapshotToPeer(event.peer, defaultMapId_);
