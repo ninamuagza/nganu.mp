@@ -140,7 +140,12 @@ void NetworkClient::Update(float dt) {
             awaitingConnect_ = false;
             connectTimeout_ = 0.0f;
             statusText_ = "Disconnected";
-            PushEvent(NetworkEvent {NetworkEvent::Type::Disconnected});
+            {
+                NetworkEvent disconnectedEvent {};
+                disconnectedEvent.type = NetworkEvent::Type::Disconnected;
+                disconnectedEvent.reasonCode = event.data;
+                PushEvent(std::move(disconnectedEvent));
+            }
             break;
         case ENET_EVENT_TYPE_RECEIVE:
             HandlePacket(event.packet->data, event.packet->dataLength);

@@ -101,8 +101,11 @@ private:
     std::unordered_map<int, uint64_t> playerAssetReqWindowStartAtMs_;
     std::unordered_map<int, uint32_t> playerAssetReqCountInWindow_;
     std::unordered_map<int, std::unordered_set<int>> playerActiveTriggers_;
+    std::unordered_set<int> playerSessionReadyIds_;
     std::unordered_set<std::string> allowedAssetKeys_;
     std::string       lastPlayerText_;
+    uint64_t          bootstrapClientTimeoutMs_ = 60000;
+    uint64_t          activeClientTimeoutMs_ = 20000;
 
     void processNetworkEvents();
     void processStdin();

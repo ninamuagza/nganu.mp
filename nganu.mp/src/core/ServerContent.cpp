@@ -321,7 +321,7 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
     }
 
     const std::string mapId = playerMapId(playerid);
-    logger_.info("Server", "Player %d disconnected", playerid);
+    logger_.info("Server", "Player %d disconnected (reason=%d)", playerid, reason);
     script_.callFunction("OnPlayerLeaveMap", playerid);
     script_.callFunction("OnPlayerDisconnect", playerid, reason);
     plugins_.firePlayerDisconnect(playerid, reason);
@@ -337,6 +337,7 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
     playerAssetReqWindowStartAtMs_.erase(playerid);
     playerAssetReqCountInWindow_.erase(playerid);
     playerActiveTriggers_.erase(playerid);
+    playerSessionReadyIds_.erase(playerid);
     inventory_.removeInventory(playerid);
     releasePlayerId(playerid);
 
@@ -347,21 +348,29 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
 
 void Server::disconnectTimedOutPlayers() {
     const uint64_t currentMs = nowMs();
-    constexpr uint64_t kClientTimeoutMs = 15000;
-    std::vector<int> stalePlayers;
+    struct TimedOutPlayer {
+        int playerid = 0;
+        bool sessionReady = false;
+        uint64_t timeoutMs = 0;
+    };
+    std::vector<TimedOutPlayer> stalePlayers;
     stalePlayers.reserve(playerLastSeenAtMs_.size());
 
     for (const auto& [playerid, lastSeenMs] : playerLastSeenAtMs_) {
-        if (currentMs > lastSeenMs && (currentMs - lastSeenMs) >= kClientTimeoutMs) {
-            stalePlayers.push_back(playerid);
+        const bool sessionReady = playerSessionReadyIds_.find(playerid) != playerSessionReadyIds_.end();
+        const uint64_t timeoutMs = sessionReady ? activeClientTimeoutMs_ : bootstrapClientTimeoutMs_;
+        if (currentMs > lastSeenMs && (currentMs - lastSeenMs) >= timeoutMs) {
+            stalePlayers.push_back(TimedOutPlayer {playerid, sessionReady, timeoutMs});
         }
     }
 
-    for (int playerid : stalePlayers) {
-        logger_.warn("Server", "Timing out player %d after %llu ms without packets",
-                     playerid,
-                     static_cast<unsigned long long>(currentMs - playerLastSeenAtMs_[playerid]));
-        cleanupPlayerSession(playerid, 11, true);
+    for (const TimedOutPlayer& timedOut : stalePlayers) {
+        logger_.warn("Server", "Timing out player %d after %llu ms without packets (phase=%s timeout=%llu ms)",
+                     timedOut.playerid,
+                     static_cast<unsigned long long>(currentMs - playerLastSeenAtMs_[timedOut.playerid]),
+                     timedOut.sessionReady ? "active" : "bootstrap",
+                     static_cast<unsigned long long>(timedOut.timeoutMs));
+        cleanupPlayerSession(timedOut.playerid, 11, true);
     }
 }
 

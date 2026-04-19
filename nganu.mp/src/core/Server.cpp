@@ -137,8 +137,17 @@ bool Server::startup(const std::string& cfgPath) {
     tickRate_ = std::clamp(runtime_.getInt("tickrate", 100), 1, 1000);
     maxPacketSize_ = static_cast<size_t>(std::clamp(runtime_.getInt("maxpacketsize", 1024), 64, 65535));
     maxChatLen_ = static_cast<size_t>(std::clamp(runtime_.getInt("chatmaxlen", 200), 16, 512));
-    logger_.info("Server", "Config: tickrate=%d, maxpacketsize=%zu, chatmaxlen=%zu",
-                 tickRate_, maxPacketSize_, maxChatLen_);
+    bootstrapClientTimeoutMs_ = static_cast<uint64_t>(
+        std::clamp(runtime_.getInt("clienttimeout_boot_ms", 60000), 5000, 300000));
+    activeClientTimeoutMs_ = static_cast<uint64_t>(
+        std::clamp(runtime_.getInt("clienttimeout_active_ms", 20000), 5000, 300000));
+    logger_.info("Server",
+                 "Config: tickrate=%d, maxpacketsize=%zu, chatmaxlen=%zu, clienttimeout_boot_ms=%llu, clienttimeout_active_ms=%llu",
+                 tickRate_,
+                 maxPacketSize_,
+                 maxChatLen_,
+                 static_cast<unsigned long long>(bootstrapClientTimeoutMs_),
+                 static_cast<unsigned long long>(activeClientTimeoutMs_));
 
     worldMapPath_ = runtime_.getString("worldmap", "assets/maps/overworld.map");
     mapDirectory_ = std::filesystem::path(worldMapPath_).parent_path();
@@ -488,6 +497,7 @@ void Server::shutdown() {
     playerAssetReqWindowStartAtMs_.clear();
     playerAssetReqCountInWindow_.clear();
     playerActiveTriggers_.clear();
+    playerSessionReadyIds_.clear();
     freePlayerIds_.clear();
     nextPlayerId_ = 1;
 
@@ -525,6 +535,7 @@ void Server::processNetworkEvents() {
             playerLastManifestProbeAtMs_[pid] = 0;
             playerAssetReqWindowStartAtMs_[pid] = connectedAtMs;
             playerAssetReqCountInWindow_[pid] = 0;
+            playerSessionReadyIds_.erase(pid);
             playerNames_[pid] = "Player " + std::to_string(pid);
             logger_.info("Server", "Player %d connected", pid);
 
@@ -772,6 +783,7 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
                 logger_.warn("Server", "Rejected invalid player name from player %d", playerid);
                 break;
             }
+            playerSessionReadyIds_.insert(playerid);
             script_.callFunction("OnPlayerNameChange", playerid);
             break;
         }

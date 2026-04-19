@@ -755,6 +755,24 @@ std::string TrimAsciiWhitespace(const std::string& value) {
     return value.substr(first, last - first);
 }
 
+std::string RetryStatusMessage(const std::string& reason, int secondsLeft) {
+    std::string base = TrimAsciiWhitespace(reason);
+    const size_t retryPos = base.find("Retrying in");
+    if (retryPos != std::string::npos) {
+        base = TrimAsciiWhitespace(base.substr(0, retryPos));
+    }
+    const size_t trimmedPos = base.find_last_not_of(" \t\r\n.");
+    if (trimmedPos != std::string::npos) {
+        base = base.substr(0, trimmedPos + 1);
+    } else {
+        base.clear();
+    }
+    if (base.empty()) {
+        base = "Server did not respond";
+    }
+    return base + ". Retrying in " + std::to_string(std::max(0, secondsLeft)) + " seconds.";
+}
+
 }
 
 Game::Game() {
@@ -871,6 +889,7 @@ void Game::BeginBootUpdateCheck() {
     manifestWait_ = 0.0f;
     keepAliveAccumulator_ = 0.0f;
     retryCountdown_ = 0.0f;
+    retryReasonBase_.clear();
     stateTimer_ = 0.0f;
     hasAuthoritativePosition_ = false;
     manifest_ = ContentManifest {};
@@ -937,6 +956,7 @@ void Game::BeginRetryWait(const std::string& reason) {
     bootstrapRequested_ = false;
     manifestWait_ = 0.0f;
     retryCountdown_ = 10.0f;
+    retryReasonBase_ = reason;
     loginStatus_ = reason;
 #if defined(PLATFORM_ANDROID)
     if (loginHost_.empty() || loginHost_ == "Auto LAN" || loginHost_ == "auto") {
@@ -1069,7 +1089,7 @@ void Game::StartConnection() {
 void Game::UpdateRetryWait(float dt) {
     retryCountdown_ = std::max(0.0f, retryCountdown_ - dt);
     const int secondsLeft = static_cast<int>(std::ceil(retryCountdown_));
-    loginStatus_ = "Server did not respond. Retrying in " + std::to_string(secondsLeft) + " seconds.";
+    loginStatus_ = RetryStatusMessage(retryReasonBase_, secondsLeft);
     if (retryCountdown_ <= 0.0f) {
         BeginBootUpdateCheck();
     }
@@ -1297,9 +1317,17 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         if (inventoryUi_ != nullptr && inventoryUi_->IsOpen()) {
             inventoryUi_->Close();
         }
-        AddChatLine("[System] Disconnected from server");
-        if (uiMode_ == UiMode::Boot && !manifest_.valid) {
-            BeginRetryWait("Server did not respond. Retrying in 10 seconds.");
+        if (event.reasonCode != 0) {
+            AddChatLine("[System] Disconnected from server (reason " + std::to_string(event.reasonCode) + ")");
+        } else {
+            AddChatLine("[System] Disconnected from server");
+        }
+        if (uiMode_ == UiMode::Boot) {
+            if (event.reasonCode == 11) {
+                BeginRetryWait("Bootstrap session timed out on server. Retrying in 10 seconds.");
+            } else {
+                BeginRetryWait("Connection lost during bootstrap. Retrying in 10 seconds.");
+            }
         } else {
             manifest_ = ContentManifest {};
             loginStatus_ = "Connection lost. Back at main menu. Press F5 to reconnect.";

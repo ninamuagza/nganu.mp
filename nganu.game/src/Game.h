@@ -141,6 +141,7 @@ private:
     ContentManifest manifest_;
     float stateTimer_ = 0.0f;
     float retryCountdown_ = 0.0f;
+    std::string retryReasonBase_;
     float manifestWait_ = 0.0f;
     float keepAliveAccumulator_ = 0.0f;
     bool bootStarted_ = false;
