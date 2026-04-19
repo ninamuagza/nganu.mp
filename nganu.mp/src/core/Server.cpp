@@ -1023,7 +1023,8 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
     }
 
     const std::string checksum = Nganu::ContentIntegrity::Fnv1a64Hex(content);
-    const size_t chunkBytes = std::max<size_t>(1, Protocol::kAssetChunkBytes);
+    static_assert(Protocol::kAssetChunkBytes > 0, "Asset chunk size must be greater than zero");
+    const size_t chunkBytes = Protocol::kAssetChunkBytes;
     const size_t chunkTotal = std::max<size_t>(1, (content.size() + chunkBytes - 1) / chunkBytes);
     for (size_t chunkIndex = 0; chunkIndex < chunkTotal; ++chunkIndex) {
         const size_t start = chunkIndex * chunkBytes;

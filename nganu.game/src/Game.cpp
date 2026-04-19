@@ -1602,7 +1602,7 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
     }
 
     if (blob.key.empty() || blob.kind.empty() || blob.checksum.empty() ||
-        blob.chunkTotal == 0 || blob.chunkTotal > 4096 || blob.chunkIndex >= blob.chunkTotal) {
+        blob.chunkTotal == 0 || blob.chunkTotal > Protocol::kMaxAssetChunks || blob.chunkIndex >= blob.chunkTotal) {
         return std::nullopt;
     }
 
