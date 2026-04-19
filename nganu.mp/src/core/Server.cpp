@@ -156,16 +156,27 @@ bool playerCanInteractWithObject(const Server::PlayerPosition& playerPosition, c
     return (dx * dx) + (dy * dy) <= (range * range);
 }
 
-void addAssetKeysFromDirectory(std::unordered_set<std::string>& outKeys,
+void addAssetKeysFromDirectory(Logger& logger,
+                               std::unordered_set<std::string>& outKeys,
                                const std::filesystem::path& root,
                                const std::string& prefix,
                                const std::unordered_set<std::string>& allowedExtensions = {}) {
     std::error_code ec;
     if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec)) {
+        if (ec) {
+            logger.warn("Server",
+                        "Failed to inspect asset directory %s: %s",
+                        root.string().c_str(),
+                        ec.message().c_str());
+        }
         return;
     }
     for (const auto& entry : std::filesystem::recursive_directory_iterator(root, ec)) {
         if (ec) {
+            logger.warn("Server",
+                        "Failed to scan asset directory %s: %s",
+                        root.string().c_str(),
+                        ec.message().c_str());
             break;
         }
         if (!entry.is_regular_file(ec)) {
@@ -481,9 +492,9 @@ void Server::rebuildAllowedAssetKeys() {
     allowedAssetKeys_.clear();
 
     const std::filesystem::path assetsRoot = mapDirectory_.parent_path();
-    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "data", "data:");
-    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "ui", "ui_image:", {".png"});
-    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "ui", "ui_meta:", {".atlas"});
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "data", "data:");
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "ui", "ui_image:", {".png"});
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "ui", "ui_meta:", {".atlas"});
 
     for (const auto& [mapId, loadedMap] : maps_) {
         allowedAssetKeys_.insert("map:" + mapId);
