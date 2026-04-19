@@ -34,6 +34,8 @@ public class SoftKeyboard {
     private final Context context;
     private final InputMethodManager imm;
     private KeyEvent lastKeyEvent = null;
+    private int pendingDeleteCount = 0;
+    private boolean suppressNextDeleteUp = false;
 
     public SoftKeyboard(Context context) {
         imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -51,27 +53,46 @@ public class SoftKeyboard {
     }
 
     public int getLastKeyCode() {
+        if (pendingDeleteCount > 0) return KeyEvent.KEYCODE_DEL;
         if (lastKeyEvent != null) return lastKeyEvent.getKeyCode();
         return 0;
     }
 
     public char getLastKeyLabel() {
+        if (pendingDeleteCount > 0) return '\b';
         if (lastKeyEvent != null) return lastKeyEvent.getDisplayLabel();
         return '\0';
     }
 
     public int getLastKeyUnicode() {
+        if (pendingDeleteCount > 0) return 0;
         if (lastKeyEvent != null) return lastKeyEvent.getUnicodeChar();
         return 0;
     }
 
     public void clearLastKeyEvent() {
+        if (pendingDeleteCount > 0) {
+            pendingDeleteCount--;
+            if (pendingDeleteCount > 0) return;
+        }
         lastKeyEvent = null;
     }
 
     /* PRIVATE FOR JNI (raymob.h) */
 
+    public void onKeyDownEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+            pendingDeleteCount++;
+            suppressNextDeleteUp = true;
+            lastKeyEvent = event;
+        }
+    }
+
     public void onKeyUpEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_DEL && suppressNextDeleteUp) {
+            suppressNextDeleteUp = false;
+            return;
+        }
         lastKeyEvent = event;
     }
 }

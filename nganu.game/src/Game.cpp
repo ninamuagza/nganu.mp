@@ -198,7 +198,7 @@ void HideAndroidKeyboard() {
     }
 }
 
-bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly) {
+bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly, bool allowSpaces = true) {
     const int code = GetLastSoftKeyCode();
     const int unicode = GetLastSoftKeyUnicode();
     const char ch = GetLastSoftKeyChar();
@@ -206,14 +206,20 @@ bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly
         return false;
     }
 
+    constexpr int kAndroidKeyCodeEnter = 66;
+    if (code == KEY_ENTER || code == kAndroidKeyCodeEnter || unicode == '\n' || unicode == '\r' || ch == '\n' || ch == '\r') {
+        return false;
+    }
+
     bool changed = false;
-    if ((code == KEY_BACKSPACE || code == 67) && !target.empty()) {
+    if ((code == KEY_BACKSPACE || code == 67 || ch == '\b') && !target.empty()) {
         target.pop_back();
         changed = true;
     } else {
         const int value = unicode != 0 ? unicode : static_cast<unsigned char>(ch);
         if (value >= 32 && value <= 126 && target.size() < maxLen) {
-            if (!numericOnly || std::isdigit(value)) {
+            const bool isSpace = std::isspace(static_cast<unsigned char>(value));
+            if ((!numericOnly || std::isdigit(value)) && (allowSpaces || !isSpace)) {
                 target.push_back(static_cast<char>(value));
                 changed = true;
             }
@@ -737,6 +743,18 @@ std::string FacingForVelocity(Vector2 velocity) {
     return velocity.y >= 0.0f ? "south" : "north";
 }
 
+std::string TrimAsciiWhitespace(const std::string& value) {
+    size_t first = 0;
+    while (first < value.size() && std::isspace(static_cast<unsigned char>(value[first]))) {
+        ++first;
+    }
+    size_t last = value.size();
+    while (last > first && std::isspace(static_cast<unsigned char>(value[last - 1]))) {
+        --last;
+    }
+    return value.substr(first, last - first);
+}
+
 }
 
 Game::Game() {
@@ -842,6 +860,8 @@ void Game::Update(float dt) {
 }
 
 void Game::BeginBootUpdateCheck() {
+    loginHost_ = TrimAsciiWhitespace(loginHost_);
+    loginPort_ = TrimAsciiWhitespace(loginPort_);
     bootStarted_ = true;
     network_.Disconnect();
     remotePlayers_.clear();
@@ -961,7 +981,7 @@ void Game::UpdateLoginInput() {
         AndroidConsumeSoftChar(loginName_, 24, false);
         break;
     case LoginField::Host:
-        AndroidConsumeSoftChar(loginHost_, 64, false);
+        AndroidConsumeSoftChar(loginHost_, 64, false, false);
         break;
     case LoginField::Port:
         AndroidConsumeSoftChar(loginPort_, 5, true);
@@ -1250,7 +1270,11 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
             BeginRetryWait("Server did not respond. Retrying in 10 seconds.");
         } else {
             AddChatLine("[System] Connection failed");
+#if defined(PLATFORM_ANDROID)
+            loginStatus_ = "Connection failed. Tap Check Server to retry, or enter server IP.";
+#else
             loginStatus_ = "Connection failed. Press F5 to retry.";
+#endif
             uiMode_ = UiMode::MainMenu;
         }
         break;
