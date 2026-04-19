@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+namespace {
 Ui::Anchor AnchorFromString(const std::string& value) {
     if (value == "top_left") return Ui::Anchor::TopLeft;
     if (value == "top_right") return Ui::Anchor::TopRight;

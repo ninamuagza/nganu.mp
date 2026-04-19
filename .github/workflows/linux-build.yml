@@ -30,8 +30,8 @@ jobs:
       - name: Configure and build server
         working-directory: nganu.mp
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel
+          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ci --parallel
 
       - name: Server smoke test
         working-directory: nganu.mp
@@ -50,13 +50,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake pkg-config libraylib-dev
+          sudo apt-get install -y cmake pkg-config raylib-dev
 
       - name: Configure and build game client
         working-directory: nganu.game
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel
+          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ci --parallel
 
   editor:
     runs-on: ubuntu-latest
@@ -71,10 +71,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake pkg-config libraylib-dev
+          sudo apt-get install -y cmake pkg-config raylib-dev
 
       - name: Configure and build editor
         working-directory: nganu.editor
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel
+          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ci --parallel
