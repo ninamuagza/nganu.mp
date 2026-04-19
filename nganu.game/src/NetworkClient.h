@@ -47,6 +47,7 @@ struct NetworkEvent {
     int  amount     = 0;
     uint8_t flags   = 0;
     uint8_t errCode = 0;
+    uint32_t reasonCode = 0;
 };
 
 class NetworkClient {
