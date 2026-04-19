@@ -1,28 +1,9 @@
 #include "ui/UiTheme.h"
+#include "shared/JsonRuntime.h"
 
 #include <algorithm>
-#include <cctype>
 
 namespace {
-
-std::string ExtractJsonValue(const std::string& json, const std::string& key) {
-    const std::string needle = "\"" + key + "\"";
-    size_t pos = json.find(needle);
-    if (pos == std::string::npos) return {};
-    pos = json.find(':', pos + needle.size());
-    if (pos == std::string::npos) return {};
-    ++pos;
-    while (pos < json.size() && std::isspace(static_cast<unsigned char>(json[pos]))) ++pos;
-    if (pos >= json.size()) return {};
-    if (json[pos] == '"') {
-        ++pos;
-        const size_t end = json.find('"', pos);
-        if (end == std::string::npos) return {};
-        return json.substr(pos, end - pos);
-    }
-    const size_t end = json.find_first_of(",}\n\r", pos);
-    return json.substr(pos, end == std::string::npos ? std::string::npos : end - pos);
-}
 
 Ui::ThemeSprite ParseThemeSprite(const std::string& value) {
     Ui::ThemeSprite sprite;
@@ -87,12 +68,13 @@ void Theme::Clear() {
 
 bool Theme::LoadFromJson(const std::string& json) {
     Clear();
-    themeId_ = ExtractJsonValue(json, "theme_id");
-    windowBackground_ = ParseThemeSprite(ExtractJsonValue(json, "window_bg"));
-    panelBackground_ = ParseThemeSprite(ExtractJsonValue(json, "panel_bg"));
-    titleBarBackground_ = ParseThemeSprite(ExtractJsonValue(json, "title_bar_bg"));
-    buttonPrimary_ = ParseThemeSprite(ExtractJsonValue(json, "button_primary"));
-    buttonDanger_ = ParseThemeSprite(ExtractJsonValue(json, "button_danger"));
+    const auto fields = Nganu::JsonRuntime::ParseFlatObject(json);
+    themeId_ = Nganu::JsonRuntime::GetString(fields, "theme_id").value_or("");
+    windowBackground_ = ParseThemeSprite(Nganu::JsonRuntime::GetString(fields, "window_bg").value_or(""));
+    panelBackground_ = ParseThemeSprite(Nganu::JsonRuntime::GetString(fields, "panel_bg").value_or(""));
+    titleBarBackground_ = ParseThemeSprite(Nganu::JsonRuntime::GetString(fields, "title_bar_bg").value_or(""));
+    buttonPrimary_ = ParseThemeSprite(Nganu::JsonRuntime::GetString(fields, "button_primary").value_or(""));
+    buttonDanger_ = ParseThemeSprite(Nganu::JsonRuntime::GetString(fields, "button_danger").value_or(""));
     return !themeId_.empty();
 }
 

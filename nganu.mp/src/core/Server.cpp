@@ -1,4 +1,6 @@
 #include "core/Server.h"
+#include "core/ContentRevision.h"
+#include "core/MovementValidation.h"
 #include "script/Builtins.h"
 #include "network/Packet.h"
 
@@ -17,6 +19,7 @@
 #include <functional>
 #include <filesystem>
 #include <optional>
+#include <system_error>
 
 #ifndef _WIN32
   #include <sys/select.h>
@@ -151,6 +154,39 @@ bool playerCanInteractWithObject(const Server::PlayerPosition& playerPosition, c
     const float dy = playerPosition.y - centerY;
     const float range = objectInteractionRange(object);
     return (dx * dx) + (dy * dy) <= (range * range);
+}
+
+void addAssetKeysFromDirectory(std::unordered_set<std::string>& outKeys,
+                               const std::filesystem::path& root,
+                               const std::string& prefix,
+                               const std::unordered_set<std::string>& allowedExtensions = {}) {
+    std::error_code ec;
+    if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec)) {
+        return;
+    }
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(root, ec)) {
+        if (ec) {
+            break;
+        }
+        if (!entry.is_regular_file(ec)) {
+            continue;
+        }
+        if (!allowedExtensions.empty()) {
+            const std::string ext = entry.path().extension().string();
+            if (allowedExtensions.find(ext) == allowedExtensions.end()) {
+                continue;
+            }
+        }
+        const std::filesystem::path relative = std::filesystem::relative(entry.path(), root, ec);
+        if (ec || relative.empty()) {
+            continue;
+        }
+        std::string key = relative.generic_string();
+        if (key.empty()) {
+            continue;
+        }
+        outKeys.insert(prefix + key);
+    }
 }
 
 }
@@ -444,13 +480,10 @@ bool Server::loadMaps() {
 void Server::rebuildAllowedAssetKeys() {
     allowedAssetKeys_.clear();
 
-    allowedAssetKeys_.insert("data:item_defs.json");
-    allowedAssetKeys_.insert("data:ui/inventory_main.json");
-    allowedAssetKeys_.insert("data:ui/objective_journal.json");
-    allowedAssetKeys_.insert("data:ui/system_modal.json");
-    allowedAssetKeys_.insert("data:ui/theme_default.json");
-    allowedAssetKeys_.insert("ui_image:theme_default.png");
-    allowedAssetKeys_.insert("ui_meta:theme_default.atlas");
+    const std::filesystem::path assetsRoot = mapDirectory_.parent_path();
+    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "data", "data:");
+    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "ui", "ui_image:", {".png"});
+    addAssetKeysFromDirectory(allowedAssetKeys_, assetsRoot / "ui", "ui_meta:", {".atlas"});
 
     for (const auto& [mapId, loadedMap] : maps_) {
         allowedAssetKeys_.insert("map:" + mapId);
@@ -528,7 +561,7 @@ std::string Server::computeContentRevision() const {
         }
         combined += "\n---\n";
     }
-    return "map-" + std::to_string(std::hash<std::string> {}(combined));
+    return BuildDeterministicContentRevision(combined);
 }
 
 Server::PlayerPosition Server::defaultSpawnPosition(int playerid, const std::string& mapId) const {
@@ -1208,25 +1241,16 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
 
             const uint64_t currentMs = nowMs();
             const uint64_t lastMs = playerLastMoveAtMs_.count(playerid) ? playerLastMoveAtMs_[playerid] : currentMs;
-            const float rawDtSeconds = static_cast<float>(currentMs - lastMs) / 1000.0f;
-            const float dtSeconds = std::clamp(rawDtSeconds, 0.030f, 0.25f);
-            const float dx = pos.x - prevIt->second.x;
-            const float dy = pos.y - prevIt->second.y;
-            const float distance = std::sqrt((dx * dx) + (dy * dy));
-            constexpr float kMaxMoveSpeed = 260.0f;
-            constexpr float kMoveSlack = 42.0f;
-            const bool speedValid = distance <= (kMaxMoveSpeed * dtSeconds) + kMoveSlack;
-            const bool walkable = activeMap->isWalkable(pos.x, pos.y, 15.0f);
-
-            if (!speedValid || !walkable) {
+            const MovementValidationResult validation = ValidateMovement(prevIt->second, pos, currentMs, lastMs, *activeMap);
+            if (!validation.accepted) {
                 logger_.warn("Server",
-                             "Rejected movement from player %d on %s (dist=%.2f dt=%.3f raw_dt=%.3f walkable=%d)",
-                             playerid,
-                             playerMapId(playerid).c_str(),
-                             distance,
-                             dtSeconds,
-                             rawDtSeconds,
-                             walkable ? 1 : 0);
+                              "Rejected movement from player %d on %s (dist=%.2f dt=%.3f raw_dt=%.3f walkable=%d)",
+                              playerid,
+                              playerMapId(playerid).c_str(),
+                              validation.distance,
+                              validation.dtSeconds,
+                              validation.rawDtSeconds,
+                              validation.walkable ? 1 : 0);
                 sendAuthoritativePlayerPosition(playerid);
                 break;
             }
