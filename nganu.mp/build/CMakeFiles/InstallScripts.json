@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/fanorisky/GameProject/nganu.mp/build/cmake_install.cmake",
+		"/home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
