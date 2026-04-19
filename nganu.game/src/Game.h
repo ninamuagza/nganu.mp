@@ -71,7 +71,23 @@ struct AssetBlob {
     std::string kind;
     std::string revision;
     std::string encoding;
+    std::string checksum;
+    size_t contentSize = 0;
+    size_t chunkIndex = 0;
+    size_t chunkTotal = 1;
     std::string content;
+};
+
+struct AssetBlobAssembly {
+    std::string key;
+    std::string kind;
+    std::string revision;
+    std::string encoding;
+    std::string checksum;
+    size_t contentSize = 0;
+    std::vector<std::string> chunks;
+    std::vector<bool> received;
+    size_t receivedCount = 0;
 };
 
 class Game {
@@ -151,6 +167,7 @@ private:
     bool uiInputBlockingWorld_ = false;
     bool inventoryReady_ = false;
     bool inventoryLayoutReady_ = false;
+    std::unordered_map<std::string, AssetBlobAssembly> pendingAssetAssemblies_;
 
     void BeginBootUpdateCheck();
     void BeginRetryWait(const std::string& reason);
@@ -167,6 +184,7 @@ private:
     void PushChatBubble(int senderId, const std::string& text);
     void ApplyManifest(const std::string& rawManifest);
     std::optional<AssetBlob> ParseAssetBlob(const std::string& rawBlob) const;
+    std::optional<AssetBlob> AccumulateAssetBlobChunk(const AssetBlob& chunk);
     std::filesystem::path CacheDirectory() const;
     std::filesystem::path CachePathForAsset(const std::string& assetKey, const std::string& revision) const;
     std::filesystem::path ImageCachePathForAsset(const std::string& assetKey, const std::string& revision) const;

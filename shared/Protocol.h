@@ -58,6 +58,10 @@ enum class PluginMessageType : uint8_t {
 
 namespace Protocol {
 
+constexpr uint16_t kProtocolVersion = 2;
+constexpr size_t kAssetChunkBytes = 24 * 1024;
+constexpr size_t kMaxAssetChunks = 4096;
+
 inline PacketOpcode readOpcode(const void* data, size_t len) {
     if (len < 1) return static_cast<PacketOpcode>(0);
     return static_cast<PacketOpcode>(static_cast<const uint8_t*>(data)[0]);

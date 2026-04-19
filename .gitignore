@@ -2,3 +2,4 @@
 **/build-*/
 **/cache/
 nganu.mp/bin/
+nganu.mp/plugins/*.so

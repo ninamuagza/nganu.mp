@@ -1,4 +1,7 @@
 #include "core/Server.h"
+#include "core/ContentRevision.h"
+#include "core/MovementValidation.h"
+#include "shared/ContentIntegrity.h"
 #include "script/Builtins.h"
 #include "network/Packet.h"
 
@@ -17,6 +20,7 @@
 #include <functional>
 #include <filesystem>
 #include <optional>
+#include <system_error>
 
 #ifndef _WIN32
   #include <sys/select.h>
@@ -38,6 +42,10 @@
 Server* Server::s_instance = nullptr;
 
 namespace {
+constexpr uint64_t kManifestProbeMinIntervalMs = 500;
+constexpr uint64_t kAssetRequestWindowMs = 1000;
+constexpr uint32_t kMaxAssetRequestsPerWindow = 64;
+
 std::string readTextFile(const std::string& path) {
     std::ifstream in(path, std::ios::binary);
     if (!in.is_open()) {
@@ -89,6 +97,25 @@ bool isSafeRelativeAssetPath(const std::string& value) {
         if (part.empty() || part == "." || part == "..") {
             return false;
         }
+    }
+    return true;
+}
+
+bool isSafeAssetKey(const std::string& value) {
+    if (value.empty() || value.size() > 128) {
+        return false;
+    }
+    if (value.find('\0') != std::string::npos || value.find('\\') != std::string::npos) {
+        return false;
+    }
+    for (unsigned char ch : value) {
+        if (std::isalnum(ch)) {
+            continue;
+        }
+        if (ch == '_' || ch == '-' || ch == '.' || ch == ':' || ch == '/') {
+            continue;
+        }
+        return false;
     }
     return true;
 }
@@ -151,6 +178,50 @@ bool playerCanInteractWithObject(const Server::PlayerPosition& playerPosition, c
     const float dy = playerPosition.y - centerY;
     const float range = objectInteractionRange(object);
     return (dx * dx) + (dy * dy) <= (range * range);
+}
+
+void addAssetKeysFromDirectory(Logger& logger,
+                               std::unordered_set<std::string>& outKeys,
+                               const std::filesystem::path& root,
+                               const std::string& prefix,
+                               const std::unordered_set<std::string>& allowedExtensions = {}) {
+    std::error_code ec;
+    if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec)) {
+        if (ec) {
+            logger.warn("Server",
+                        "Failed to inspect asset directory %s: %s",
+                        root.string().c_str(),
+                        ec.message().c_str());
+        }
+        return;
+    }
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(root, ec)) {
+        if (ec) {
+            logger.warn("Server",
+                        "Failed to scan asset directory %s: %s",
+                        root.string().c_str(),
+                        ec.message().c_str());
+            break;
+        }
+        if (!entry.is_regular_file(ec)) {
+            continue;
+        }
+        if (!allowedExtensions.empty()) {
+            const std::string ext = entry.path().extension().string();
+            if (allowedExtensions.find(ext) == allowedExtensions.end()) {
+                continue;
+            }
+        }
+        const std::filesystem::path relative = std::filesystem::relative(entry.path(), root, ec);
+        if (ec || relative.empty()) {
+            continue;
+        }
+        std::string key = relative.generic_string();
+        if (key.empty()) {
+            continue;
+        }
+        outKeys.insert(prefix + key);
+    }
 }
 
 }
@@ -444,13 +515,10 @@ bool Server::loadMaps() {
 void Server::rebuildAllowedAssetKeys() {
     allowedAssetKeys_.clear();
 
-    allowedAssetKeys_.insert("data:item_defs.json");
-    allowedAssetKeys_.insert("data:ui/inventory_main.json");
-    allowedAssetKeys_.insert("data:ui/objective_journal.json");
-    allowedAssetKeys_.insert("data:ui/system_modal.json");
-    allowedAssetKeys_.insert("data:ui/theme_default.json");
-    allowedAssetKeys_.insert("ui_image:theme_default.png");
-    allowedAssetKeys_.insert("ui_meta:theme_default.atlas");
+    const std::filesystem::path assetsRoot = mapDirectory_.parent_path();
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "data", "data:");
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "ui", "ui_image:", {".png"});
+    addAssetKeysFromDirectory(logger_, allowedAssetKeys_, assetsRoot / "ui", "ui_meta:", {".atlas"});
 
     for (const auto& [mapId, loadedMap] : maps_) {
         allowedAssetKeys_.insert("map:" + mapId);
@@ -528,7 +596,7 @@ std::string Server::computeContentRevision() const {
         }
         combined += "\n---\n";
     }
-    return "map-" + std::to_string(std::hash<std::string> {}(combined));
+    return BuildDeterministicContentRevision(combined);
 }
 
 Server::PlayerPosition Server::defaultSpawnPosition(int playerid, const std::string& mapId) const {
@@ -629,6 +697,9 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
     playerMapIds_.erase(playerid);
     playerLastMoveAtMs_.erase(playerid);
     playerLastSeenAtMs_.erase(playerid);
+    playerLastManifestProbeAtMs_.erase(playerid);
+    playerAssetReqWindowStartAtMs_.erase(playerid);
+    playerAssetReqCountInWindow_.erase(playerid);
     playerActiveTriggers_.erase(playerid);
     inventory_.removeInventory(playerid);
     releasePlayerId(playerid);
@@ -849,6 +920,8 @@ void Server::sendUpdateManifestToPeer(void* peer) {
 
     std::ostringstream manifest;
     manifest << "server_name=nganu.mp\n";
+    manifest << "protocol_version=" << Protocol::kProtocolVersion << "\n";
+    manifest << "asset_chunk_bytes=" << Protocol::kAssetChunkBytes << "\n";
     manifest << "content_revision=" << contentRevision_ << "\n";
     manifest << "world_name=" << map_.worldName() << "\n";
     manifest << "map_id=" << map_.mapId() << "\n";
@@ -975,22 +1048,37 @@ void Server::sendAssetBlobToPeer(void* peer, const std::string& assetKey) {
         return;
     }
 
-    std::ostringstream blob;
-    blob << "key=" << assetKey << "\n";
-    blob << "kind=" << kind << "\n";
-    blob << "revision=" << contentRevision_ << "\n";
-    if (kind == "image") {
-        blob << "encoding=hex\n";
-    }
-    blob << "---\n";
-    blob << content;
+    const std::string checksum = Nganu::ContentIntegrity::Fnv1a64Hex(content);
+    static_assert(Protocol::kAssetChunkBytes > 0, "Asset chunk size must be greater than zero");
+    const size_t chunkBytes = Protocol::kAssetChunkBytes;
+    const size_t chunkTotal = std::max<size_t>(1, (content.size() + chunkBytes - 1) / chunkBytes);
+    for (size_t chunkIndex = 0; chunkIndex < chunkTotal; ++chunkIndex) {
+        const size_t start = chunkIndex * chunkBytes;
+        const size_t count = (start < content.size())
+                                 ? std::min(chunkBytes, content.size() - start)
+                                 : 0;
+        const std::string chunkContent = content.substr(start, count);
+        std::ostringstream blob;
+        blob << "key=" << assetKey << "\n";
+        blob << "kind=" << kind << "\n";
+        blob << "revision=" << contentRevision_ << "\n";
+        blob << "checksum=" << checksum << "\n";
+        blob << "content_size=" << content.size() << "\n";
+        blob << "chunk_index=" << chunkIndex << "\n";
+        blob << "chunk_total=" << chunkTotal << "\n";
+        if (kind == "image") {
+            blob << "encoding=hex\n";
+        }
+        blob << "---\n";
+        blob << chunkContent;
 
-    const std::string payload = blob.str();
-    std::vector<uint8_t> pkt(1 + 1 + payload.size());
-    pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
-    pkt[1] = static_cast<uint8_t>(PluginMessageType::ASSET_BLOB);
-    std::memcpy(pkt.data() + 2, payload.data(), payload.size());
-    network_.sendPacket(peer, pkt.data(), pkt.size(), 0);
+        const std::string payload = blob.str();
+        std::vector<uint8_t> pkt(1 + 1 + payload.size());
+        pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
+        pkt[1] = static_cast<uint8_t>(PluginMessageType::ASSET_BLOB);
+        std::memcpy(pkt.data() + 2, payload.data(), payload.size());
+        network_.sendPacket(peer, pkt.data(), pkt.size(), 0);
+    }
 }
 
 void Server::sendMapTransfer(int playerid, const std::string& mapId, float x, float y) {
@@ -1091,6 +1179,9 @@ void Server::shutdown() {
     playerMapIds_.clear();
     playerLastMoveAtMs_.clear();
     playerLastSeenAtMs_.clear();
+    playerLastManifestProbeAtMs_.clear();
+    playerAssetReqWindowStartAtMs_.clear();
+    playerAssetReqCountInWindow_.clear();
     playerActiveTriggers_.clear();
     freePlayerIds_.clear();
     nextPlayerId_ = 1;
@@ -1123,8 +1214,12 @@ void Server::processNetworkEvents() {
             network_.assignPlayer(event.peer, pid);
             playerMapIds_[pid] = defaultMapId_;
             playerPositions_[pid] = defaultSpawnPosition(pid, defaultMapId_);
-            playerLastMoveAtMs_[pid] = nowMs();
-            playerLastSeenAtMs_[pid] = nowMs();
+            const uint64_t connectedAtMs = nowMs();
+            playerLastMoveAtMs_[pid] = connectedAtMs;
+            playerLastSeenAtMs_[pid] = connectedAtMs;
+            playerLastManifestProbeAtMs_[pid] = 0;
+            playerAssetReqWindowStartAtMs_[pid] = connectedAtMs;
+            playerAssetReqCountInWindow_[pid] = 0;
             playerNames_[pid] = "Player " + std::to_string(pid);
             logger_.info("Server", "Player %d connected", pid);
 
@@ -1133,10 +1228,12 @@ void Server::processNetworkEvents() {
             script_.callFunction("OnPlayerEnterMap", pid);
             plugins_.firePlayerConnect(pid);
 
-            /* Send HANDSHAKE with player ID */
-            uint8_t pkt[5];
+            /* Send HANDSHAKE with player ID + protocol version */
+            uint8_t pkt[1 + sizeof(int32_t) + sizeof(uint16_t)];
             pkt[0] = static_cast<uint8_t>(PacketOpcode::HANDSHAKE);
             std::memcpy(pkt + 1, &pid, sizeof(pid));
+            const uint16_t protocolVersion = Protocol::kProtocolVersion;
+            std::memcpy(pkt + 1 + sizeof(pid), &protocolVersion, sizeof(protocolVersion));
             network_.sendPacket(event.peer, pkt, sizeof(pkt), 0);
             sendAuthoritativePlayerPosition(pid);
             sendSnapshotToPeer(event.peer, defaultMapId_);
@@ -1208,25 +1305,16 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
 
             const uint64_t currentMs = nowMs();
             const uint64_t lastMs = playerLastMoveAtMs_.count(playerid) ? playerLastMoveAtMs_[playerid] : currentMs;
-            const float rawDtSeconds = static_cast<float>(currentMs - lastMs) / 1000.0f;
-            const float dtSeconds = std::clamp(rawDtSeconds, 0.030f, 0.25f);
-            const float dx = pos.x - prevIt->second.x;
-            const float dy = pos.y - prevIt->second.y;
-            const float distance = std::sqrt((dx * dx) + (dy * dy));
-            constexpr float kMaxMoveSpeed = 260.0f;
-            constexpr float kMoveSlack = 42.0f;
-            const bool speedValid = distance <= (kMaxMoveSpeed * dtSeconds) + kMoveSlack;
-            const bool walkable = activeMap->isWalkable(pos.x, pos.y, 15.0f);
-
-            if (!speedValid || !walkable) {
+            const MovementValidationResult validation = ValidateMovement(prevIt->second, pos, currentMs, lastMs, *activeMap);
+            if (!validation.accepted) {
                 logger_.warn("Server",
-                             "Rejected movement from player %d on %s (dist=%.2f dt=%.3f raw_dt=%.3f walkable=%d)",
-                             playerid,
-                             playerMapId(playerid).c_str(),
-                             distance,
-                             dtSeconds,
-                             rawDtSeconds,
-                             walkable ? 1 : 0);
+                              "Rejected movement from player %d on %s (dist=%.2f dt=%.3f raw_dt=%.3f walkable=%d)",
+                              playerid,
+                              playerMapId(playerid).c_str(),
+                              validation.distance,
+                              validation.dtSeconds,
+                              validation.rawDtSeconds,
+                              validation.walkable ? 1 : 0);
                 sendAuthoritativePlayerPosition(playerid);
                 break;
             }
@@ -1371,7 +1459,9 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             logger_.warn("Server", "Malformed PLUGIN_MESSAGE length %zu from player %d", len, playerid);
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::PLAYER_NAME)) {
+        {
+        const PluginMessageType msgType = static_cast<PluginMessageType>(Packet::payload(data)[0]);
+        if (msgType == PluginMessageType::PLAYER_NAME) {
             const size_t nameLen = Packet::payloadLen(len) - 1;
             if (nameLen < 1 || nameLen > 24) {
                 logger_.warn("Server", "Malformed name update length %zu from player %d", nameLen, playerid);
@@ -1386,25 +1476,62 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             script_.callFunction("OnPlayerNameChange", playerid);
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::HEARTBEAT)) {
+        if (msgType == PluginMessageType::HEARTBEAT) {
+            if (Packet::payloadLen(len) != 1) {
+                logger_.warn("Server", "Malformed HEARTBEAT length %zu from player %d", len, playerid);
+            }
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::UPDATE_PROBE)) {
+        if (msgType == PluginMessageType::UPDATE_PROBE) {
+            if (Packet::payloadLen(len) != 1 && Packet::payloadLen(len) != 2) {
+                logger_.warn("Server", "Malformed UPDATE_PROBE length %zu from player %d", len, playerid);
+                break;
+            }
+            const uint64_t currentMs = nowMs();
+            const uint64_t lastProbeMs = playerLastManifestProbeAtMs_.count(playerid) ? playerLastManifestProbeAtMs_[playerid] : 0;
+            if (lastProbeMs != 0 && currentMs < lastProbeMs) {
+                logger_.warn("Server", "Clock anomaly for player %d while rate-limiting UPDATE_PROBE", playerid);
+            } else if (lastProbeMs != 0 && (currentMs - lastProbeMs) < kManifestProbeMinIntervalMs) {
+                logger_.warn("Server", "Rate-limited UPDATE_PROBE from player %d", playerid);
+                break;
+            }
+            playerLastManifestProbeAtMs_[playerid] = currentMs;
             sendUpdateManifestToPeer(network_.peerForPlayer(playerid));
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::ASSET_REQUEST)) {
+        if (msgType == PluginMessageType::ASSET_REQUEST) {
             const size_t keyLen = Packet::payloadLen(len) - 1;
             if (keyLen < 1 || keyLen > 128) {
                 logger_.warn("Server", "Malformed asset request length %zu from player %d", keyLen, playerid);
                 break;
             }
+            const uint64_t currentMs = nowMs();
+            uint64_t& windowStartMs = playerAssetReqWindowStartAtMs_[playerid];
+            uint32_t& windowCount = playerAssetReqCountInWindow_[playerid];
+            if (windowStartMs != 0 && currentMs < windowStartMs) {
+                logger_.warn("Server", "Clock anomaly for player %d while rate-limiting ASSET_REQUEST", playerid);
+                windowStartMs = currentMs;
+                windowCount = 0;
+            } else if (windowStartMs == 0 || (currentMs - windowStartMs) >= kAssetRequestWindowMs) {
+                windowStartMs = currentMs;
+                windowCount = 0;
+            }
+            if (windowCount >= kMaxAssetRequestsPerWindow) {
+                logger_.warn("Server", "Rate-limited ASSET_REQUEST from player %d", playerid);
+                break;
+            }
+            ++windowCount;
 
             std::string assetKey(reinterpret_cast<const char*>(Packet::payload(data) + 1), keyLen);
+            if (!isSafeAssetKey(assetKey)) {
+                logger_.warn("Server", "Rejected malformed asset key from player %d", playerid);
+                break;
+            }
             sendAssetBlobToPeer(network_.peerForPlayer(playerid), assetKey);
             break;
         }
         plugins_.fireReceive(playerid, Packet::payload(data), Packet::payloadLen(len));
+        }
         break;
     default:
         logger_.warn("Server", "Unknown opcode 0x%02X from player %d", static_cast<int>(op), playerid);

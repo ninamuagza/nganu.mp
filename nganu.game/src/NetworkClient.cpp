@@ -308,9 +308,10 @@ bool NetworkClient::SendHeartbeat() {
 bool NetworkClient::RequestUpdateManifest() {
     if (!IsConnected()) return false;
 
-    uint8_t pkt[2];
+    uint8_t pkt[3];
     pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
     pkt[1] = static_cast<uint8_t>(PluginMessageType::UPDATE_PROBE);
+    pkt[2] = static_cast<uint8_t>(Protocol::kProtocolVersion & 0xFF);
 
     ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
     return enet_peer_send(peer_, 0, packet) == 0;
@@ -412,7 +413,10 @@ void NetworkClient::HandlePacket(const void* data, size_t len) {
 
     switch (Protocol::readOpcode(data, len)) {
     case PacketOpcode::HANDSHAKE: {
-        if (Protocol::payloadLen(len) != sizeof(int32_t)) return;
+        if (Protocol::payloadLen(len) != sizeof(int32_t) &&
+            Protocol::payloadLen(len) != sizeof(int32_t) + sizeof(uint16_t)) {
+            return;
+        }
         int32_t localId = 0;
         std::memcpy(&localId, Protocol::payload(data), sizeof(localId));
         NetworkEvent event {};

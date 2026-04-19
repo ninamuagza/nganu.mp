@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "shared/ContentIntegrity.h"
 
 #include <algorithm>
 #include <cmath>
@@ -1213,6 +1214,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         pendingMapId_.clear();
         pendingMapImageAssetKeys_.clear();
         hasPendingSpawnPosition_ = false;
+        pendingAssetAssemblies_.clear();
         inventory_.open = false;
         inventory_.revision = 0;
         inventoryReady_ = false;
@@ -1251,9 +1253,13 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         }
         break;
     case NetworkEvent::Type::AssetBlob: {
-        const std::optional<AssetBlob> blob = ParseAssetBlob(event.text);
-        if (!blob.has_value()) {
+        const std::optional<AssetBlob> chunk = ParseAssetBlob(event.text);
+        if (!chunk.has_value()) {
             BeginRetryWait("Received invalid asset blob. Retrying in 10 seconds.");
+            break;
+        }
+        const std::optional<AssetBlob> blob = AccumulateAssetBlobChunk(*chunk);
+        if (!blob.has_value()) {
             break;
         }
         const bool savedAsset = SaveAssetToCache(*blob);
@@ -1566,6 +1572,26 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
                 blob.revision = value;
             } else if (key == "encoding") {
                 blob.encoding = value;
+            } else if (key == "checksum") {
+                blob.checksum = value;
+            } else if (key == "content_size") {
+                try {
+                    blob.contentSize = static_cast<size_t>(std::stoull(value));
+                } catch (...) {
+                    return std::nullopt;
+                }
+            } else if (key == "chunk_index") {
+                try {
+                    blob.chunkIndex = static_cast<size_t>(std::stoull(value));
+                } catch (...) {
+                    return std::nullopt;
+                }
+            } else if (key == "chunk_total") {
+                try {
+                    blob.chunkTotal = static_cast<size_t>(std::stoull(value));
+                } catch (...) {
+                    return std::nullopt;
+                }
             }
         } else {
             if (!blob.content.empty()) {
@@ -1575,11 +1601,72 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
         }
     }
 
-    if (blob.key.empty() || blob.kind.empty()) {
+    if (blob.key.empty() || blob.kind.empty() || blob.checksum.empty() ||
+        blob.chunkTotal == 0 || blob.chunkTotal > Protocol::kMaxAssetChunks || blob.chunkIndex >= blob.chunkTotal) {
         return std::nullopt;
     }
 
     return blob;
+}
+
+std::optional<AssetBlob> Game::AccumulateAssetBlobChunk(const AssetBlob& chunk) {
+    const std::string assemblyKey = chunk.key + "|" + chunk.revision;
+    AssetBlobAssembly& assembly = pendingAssetAssemblies_[assemblyKey];
+    const bool init = assembly.chunks.empty();
+    if (init) {
+        assembly.key = chunk.key;
+        assembly.kind = chunk.kind;
+        assembly.revision = chunk.revision;
+        assembly.encoding = chunk.encoding;
+        assembly.checksum = chunk.checksum;
+        assembly.contentSize = chunk.contentSize;
+        assembly.chunks.assign(chunk.chunkTotal, std::string {});
+        assembly.received.assign(chunk.chunkTotal, false);
+        assembly.receivedCount = 0;
+    } else if (assembly.kind != chunk.kind ||
+               assembly.revision != chunk.revision ||
+               assembly.encoding != chunk.encoding ||
+               assembly.checksum != chunk.checksum ||
+               assembly.contentSize != chunk.contentSize ||
+               assembly.chunks.size() != chunk.chunkTotal) {
+        pendingAssetAssemblies_.erase(assemblyKey);
+        return std::nullopt;
+    }
+
+    if (!assembly.received[chunk.chunkIndex]) {
+        assembly.received[chunk.chunkIndex] = true;
+        assembly.chunks[chunk.chunkIndex] = chunk.content;
+        ++assembly.receivedCount;
+    }
+    if (assembly.receivedCount < assembly.chunks.size()) {
+        return std::nullopt;
+    }
+
+    std::string merged;
+    merged.reserve(assembly.contentSize);
+    for (const std::string& part : assembly.chunks) {
+        merged += part;
+    }
+    const bool sizeMatches = merged.size() == assembly.contentSize;
+    const bool checksumMatches = Nganu::ContentIntegrity::Fnv1a64Hex(merged) == assembly.checksum;
+    if (!sizeMatches || !checksumMatches) {
+        pendingAssetAssemblies_.erase(assemblyKey);
+        BeginRetryWait("Asset integrity check failed. Retrying in 10 seconds.");
+        return std::nullopt;
+    }
+
+    AssetBlob full {};
+    full.key = assembly.key;
+    full.kind = assembly.kind;
+    full.revision = assembly.revision;
+    full.encoding = assembly.encoding;
+    full.checksum = assembly.checksum;
+    full.contentSize = assembly.contentSize;
+    full.chunkIndex = 0;
+    full.chunkTotal = 1;
+    full.content = std::move(merged);
+    pendingAssetAssemblies_.erase(assemblyKey);
+    return full;
 }
 
 std::filesystem::path Game::CacheDirectory() const {
