@@ -761,8 +761,11 @@ std::string RetryStatusMessage(const std::string& reason, int secondsLeft) {
     if (retryPos != std::string::npos) {
         base = TrimAsciiWhitespace(base.substr(0, retryPos));
     }
-    while (!base.empty() && (base.back() == '.' || std::isspace(static_cast<unsigned char>(base.back())))) {
-        base.pop_back();
+    const size_t trimmedPos = base.find_last_not_of(" \t\r\n.");
+    if (trimmedPos != std::string::npos) {
+        base = base.substr(0, trimmedPos + 1);
+    } else {
+        base.clear();
     }
     if (base.empty()) {
         base = "Server did not respond";

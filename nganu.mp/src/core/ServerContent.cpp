@@ -348,26 +348,29 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
 
 void Server::disconnectTimedOutPlayers() {
     const uint64_t currentMs = nowMs();
-    std::vector<int> stalePlayers;
+    struct TimedOutPlayer {
+        int playerid = 0;
+        bool sessionReady = false;
+        uint64_t timeoutMs = 0;
+    };
+    std::vector<TimedOutPlayer> stalePlayers;
     stalePlayers.reserve(playerLastSeenAtMs_.size());
 
     for (const auto& [playerid, lastSeenMs] : playerLastSeenAtMs_) {
         const bool sessionReady = playerSessionReadyIds_.find(playerid) != playerSessionReadyIds_.end();
         const uint64_t timeoutMs = sessionReady ? activeClientTimeoutMs_ : bootstrapClientTimeoutMs_;
         if (currentMs > lastSeenMs && (currentMs - lastSeenMs) >= timeoutMs) {
-            stalePlayers.push_back(playerid);
+            stalePlayers.push_back(TimedOutPlayer {playerid, sessionReady, timeoutMs});
         }
     }
 
-    for (int playerid : stalePlayers) {
-        const bool sessionReady = playerSessionReadyIds_.find(playerid) != playerSessionReadyIds_.end();
-        const uint64_t timeoutMs = sessionReady ? activeClientTimeoutMs_ : bootstrapClientTimeoutMs_;
+    for (const TimedOutPlayer& timedOut : stalePlayers) {
         logger_.warn("Server", "Timing out player %d after %llu ms without packets (phase=%s timeout=%llu ms)",
-                     playerid,
-                     static_cast<unsigned long long>(currentMs - playerLastSeenAtMs_[playerid]),
-                     sessionReady ? "active" : "bootstrap",
-                     static_cast<unsigned long long>(timeoutMs));
-        cleanupPlayerSession(playerid, 11, true);
+                     timedOut.playerid,
+                     static_cast<unsigned long long>(currentMs - playerLastSeenAtMs_[timedOut.playerid]),
+                     timedOut.sessionReady ? "active" : "bootstrap",
+                     static_cast<unsigned long long>(timedOut.timeoutMs));
+        cleanupPlayerSession(timedOut.playerid, 11, true);
     }
 }
 
