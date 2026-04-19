@@ -42,6 +42,10 @@
 Server* Server::s_instance = nullptr;
 
 namespace {
+constexpr uint64_t kManifestProbeMinIntervalMs = 500;
+constexpr uint64_t kAssetRequestWindowMs = 1000;
+constexpr uint32_t kMaxAssetRequestsPerWindow = 64;
+
 std::string readTextFile(const std::string& path) {
     std::ifstream in(path, std::ios::binary);
     if (!in.is_open()) {
@@ -93,6 +97,25 @@ bool isSafeRelativeAssetPath(const std::string& value) {
         if (part.empty() || part == "." || part == "..") {
             return false;
         }
+    }
+    return true;
+}
+
+bool isSafeAssetKey(const std::string& value) {
+    if (value.empty() || value.size() > 128) {
+        return false;
+    }
+    if (value.find('\0') != std::string::npos || value.find('\\') != std::string::npos) {
+        return false;
+    }
+    for (unsigned char ch : value) {
+        if (std::isalnum(ch)) {
+            continue;
+        }
+        if (ch == '_' || ch == '-' || ch == '.' || ch == ':' || ch == '/') {
+            continue;
+        }
+        return false;
     }
     return true;
 }
@@ -674,6 +697,9 @@ void Server::cleanupPlayerSession(int playerid, int reason, bool notifyNetworkPe
     playerMapIds_.erase(playerid);
     playerLastMoveAtMs_.erase(playerid);
     playerLastSeenAtMs_.erase(playerid);
+    playerLastManifestProbeAtMs_.erase(playerid);
+    playerAssetReqWindowStartAtMs_.erase(playerid);
+    playerAssetReqCountInWindow_.erase(playerid);
     playerActiveTriggers_.erase(playerid);
     inventory_.removeInventory(playerid);
     releasePlayerId(playerid);
@@ -1153,6 +1179,9 @@ void Server::shutdown() {
     playerMapIds_.clear();
     playerLastMoveAtMs_.clear();
     playerLastSeenAtMs_.clear();
+    playerLastManifestProbeAtMs_.clear();
+    playerAssetReqWindowStartAtMs_.clear();
+    playerAssetReqCountInWindow_.clear();
     playerActiveTriggers_.clear();
     freePlayerIds_.clear();
     nextPlayerId_ = 1;
@@ -1185,8 +1214,12 @@ void Server::processNetworkEvents() {
             network_.assignPlayer(event.peer, pid);
             playerMapIds_[pid] = defaultMapId_;
             playerPositions_[pid] = defaultSpawnPosition(pid, defaultMapId_);
-            playerLastMoveAtMs_[pid] = nowMs();
-            playerLastSeenAtMs_[pid] = nowMs();
+            const uint64_t connectedAtMs = nowMs();
+            playerLastMoveAtMs_[pid] = connectedAtMs;
+            playerLastSeenAtMs_[pid] = connectedAtMs;
+            playerLastManifestProbeAtMs_[pid] = 0;
+            playerAssetReqWindowStartAtMs_[pid] = connectedAtMs;
+            playerAssetReqCountInWindow_[pid] = 0;
             playerNames_[pid] = "Player " + std::to_string(pid);
             logger_.info("Server", "Player %d connected", pid);
 
@@ -1426,7 +1459,9 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             logger_.warn("Server", "Malformed PLUGIN_MESSAGE length %zu from player %d", len, playerid);
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::PLAYER_NAME)) {
+        {
+        const PluginMessageType msgType = static_cast<PluginMessageType>(Packet::payload(data)[0]);
+        if (msgType == PluginMessageType::PLAYER_NAME) {
             const size_t nameLen = Packet::payloadLen(len) - 1;
             if (nameLen < 1 || nameLen > 24) {
                 logger_.warn("Server", "Malformed name update length %zu from player %d", nameLen, playerid);
@@ -1441,25 +1476,56 @@ void Server::handlePacket(int playerid, const void* data, size_t len) {
             script_.callFunction("OnPlayerNameChange", playerid);
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::HEARTBEAT)) {
+        if (msgType == PluginMessageType::HEARTBEAT) {
+            if (Packet::payloadLen(len) != 1) {
+                logger_.warn("Server", "Malformed HEARTBEAT length %zu from player %d", len, playerid);
+            }
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::UPDATE_PROBE)) {
+        if (msgType == PluginMessageType::UPDATE_PROBE) {
+            if (Packet::payloadLen(len) != 1 && Packet::payloadLen(len) != 2) {
+                logger_.warn("Server", "Malformed UPDATE_PROBE length %zu from player %d", len, playerid);
+                break;
+            }
+            const uint64_t currentMs = nowMs();
+            const uint64_t lastProbeMs = playerLastManifestProbeAtMs_.count(playerid) ? playerLastManifestProbeAtMs_[playerid] : 0;
+            if (lastProbeMs != 0 && currentMs > lastProbeMs && (currentMs - lastProbeMs) < kManifestProbeMinIntervalMs) {
+                logger_.warn("Server", "Rate-limited UPDATE_PROBE from player %d", playerid);
+                break;
+            }
+            playerLastManifestProbeAtMs_[playerid] = currentMs;
             sendUpdateManifestToPeer(network_.peerForPlayer(playerid));
             break;
         }
-        if (Packet::payload(data)[0] == static_cast<uint8_t>(PluginMessageType::ASSET_REQUEST)) {
+        if (msgType == PluginMessageType::ASSET_REQUEST) {
             const size_t keyLen = Packet::payloadLen(len) - 1;
             if (keyLen < 1 || keyLen > 128) {
                 logger_.warn("Server", "Malformed asset request length %zu from player %d", keyLen, playerid);
                 break;
             }
+            const uint64_t currentMs = nowMs();
+            uint64_t& windowStartMs = playerAssetReqWindowStartAtMs_[playerid];
+            uint32_t& windowCount = playerAssetReqCountInWindow_[playerid];
+            if (windowStartMs == 0 || currentMs < windowStartMs || (currentMs - windowStartMs) >= kAssetRequestWindowMs) {
+                windowStartMs = currentMs;
+                windowCount = 0;
+            }
+            if (windowCount >= kMaxAssetRequestsPerWindow) {
+                logger_.warn("Server", "Rate-limited ASSET_REQUEST from player %d", playerid);
+                break;
+            }
+            ++windowCount;
 
             std::string assetKey(reinterpret_cast<const char*>(Packet::payload(data) + 1), keyLen);
+            if (!isSafeAssetKey(assetKey)) {
+                logger_.warn("Server", "Rejected malformed asset key from player %d", playerid);
+                break;
+            }
             sendAssetBlobToPeer(network_.peerForPlayer(playerid), assetKey);
             break;
         }
         plugins_.fireReceive(playerid, Packet::payload(data), Packet::payloadLen(len));
+        }
         break;
     default:
         logger_.warn("Server", "Unknown opcode 0x%02X from player %d", static_cast<int>(op), playerid);
