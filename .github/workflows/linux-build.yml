@@ -13,7 +13,16 @@ on:
 
 jobs:
   server:
-    runs-on: ubuntu-latest
+    name: server (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runs_on: ubuntu-latest
+          - arch: aarch64
+            runs_on: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runs_on }}
     permissions:
       contents: read
     steps:
@@ -36,6 +45,13 @@ jobs:
       - name: Server smoke test
         working-directory: nganu.mp
         run: ./bin/game-server --test
+
+      - name: Upload server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nganu-server-linux-${{ matrix.arch }}
+          path: nganu.mp/bin/game-server
+          if-no-files-found: error
 
   game:
     runs-on: ubuntu-latest
@@ -64,6 +80,13 @@ jobs:
           cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
           cmake --build build-ci --parallel
 
+      - name: Upload game artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nganu-game-linux-x86_64
+          path: nganu.game/build-ci/nganu-game
+          if-no-files-found: error
+
   editor:
     runs-on: ubuntu-latest
     permissions:
@@ -90,3 +113,10 @@ jobs:
         run: |
           cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
           cmake --build build-ci --parallel
+
+      - name: Upload editor artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nganu-editor-linux-x86_64
+          path: nganu.editor/build-ci/nganu-editor
+          if-no-files-found: error
