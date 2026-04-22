@@ -11,9 +11,15 @@ set(CMAKE_C_STANDARD 11)
 # ------------------------------------------------------------------
 
 if(ANDROID)
-  # Expect luajit-cmake to exist at:
-  # nganu.mp/vendor/luajit-cmake
-  add_subdirectory(vendor/luajit-cmake)
+  set(LUAJIT_SRC_DIR "${CMAKE_SOURCE_DIR}/vendor/LuaJIT/src")
+  set(LUAJIT_LIB "${LUAJIT_SRC_DIR}/libluajit.a")
+
+  if(NOT EXISTS "${LUAJIT_LIB}")
+    message(FATAL_ERROR
+      "Android build requires prebuilt LuaJIT at ${LUAJIT_LIB}. "
+      "Build it first in CI before configuring game-server."
+    )
+  endif()
 else()
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(LUAJIT REQUIRED IMPORTED_TARGET luajit)
@@ -76,12 +82,20 @@ target_include_directories(game-server PRIVATE
 )
 
 if(ANDROID)
+  target_include_directories(game-server PRIVATE
+    "${LUAJIT_SRC_DIR}"
+  )
+
   target_link_libraries(game-server PRIVATE
     enet_static
-    luajit::lib
-    luajit::header
+    "${LUAJIT_LIB}"
+    m
   )
 else()
+  target_include_directories(game-server PRIVATE
+    ${LUAJIT_INCLUDE_DIRS}
+  )
+
   target_link_libraries(game-server PRIVATE
     enet_static
     PkgConfig::LUAJIT
