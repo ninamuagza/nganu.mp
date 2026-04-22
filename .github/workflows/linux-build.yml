@@ -89,14 +89,14 @@ jobs:
 
           make -j"$(nproc)" libluajit.a \
             HOST_CC="cc" \
+            CC="${TOOLCHAIN}/clang" \
             CROSS="" \
-            STATIC_CC="${TOOLCHAIN}/clang --target=aarch64-linux-android${API}" \
             TARGET_AR="${TOOLCHAIN}/llvm-ar rcus" \
             TARGET_STRIP="${TOOLCHAIN}/llvm-strip" \
             TARGET_SYS=Linux \
-            TARGET_FLAGS="--sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
-            TARGET_CFLAGS="--target=aarch64-linux-android${API} -fPIC" \
-            TARGET_LDFLAGS="--target=aarch64-linux-android${API}"
+            TARGET_FLAGS="--target=aarch64-linux-android${API} --sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
+            TARGET_CFLAGS="-fPIC" \
+            TARGET_LDFLAGS="--target=aarch64-linux-android${API} --sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 
       - name: Verify LuaJIT outputs
         run: |
