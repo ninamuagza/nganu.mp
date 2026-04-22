@@ -6,10 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 
-# ------------------------------------------------------------------
-# LuaJIT
-# ------------------------------------------------------------------
-
 if(ANDROID)
   set(LUAJIT_SRC_DIR "${CMAKE_SOURCE_DIR}/vendor/LuaJIT/src")
   set(LUAJIT_LIB "${LUAJIT_SRC_DIR}/libluajit.a")
@@ -24,10 +20,6 @@ else()
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(LUAJIT REQUIRED IMPORTED_TARGET luajit)
 endif()
-
-# ------------------------------------------------------------------
-# ENet static library
-# ------------------------------------------------------------------
 
 set(ENET_SOURCES
   vendor/enet/callbacks.c
@@ -51,10 +43,6 @@ target_include_directories(enet_static PUBLIC vendor/enet/include)
 if(WIN32)
   target_link_libraries(enet_static PUBLIC ws2_32 winmm)
 endif()
-
-# ------------------------------------------------------------------
-# game-server executable
-# ------------------------------------------------------------------
 
 set(SERVER_SOURCES
   ../shared/MapFormat.cpp
@@ -118,10 +106,6 @@ if(WIN32)
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
   )
 endif()
-
-# ------------------------------------------------------------------
-# Example plugin
-# ------------------------------------------------------------------
 
 if(NOT ANDROID)
   add_subdirectory(plugins/example_plugin)
