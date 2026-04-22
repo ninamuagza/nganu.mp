@@ -88,10 +88,10 @@ jobs:
           make clean || true
 
           make -j"$(nproc)" \
+            BUILDMODE=static \
             HOST_CC="cc" \
             CROSS="" \
             STATIC_CC="${TOOLCHAIN}/clang --target=aarch64-linux-android${API}" \
-            DYNAMIC_CC="true" \
             TARGET_AR="${TOOLCHAIN}/llvm-ar rcus" \
             TARGET_STRIP="${TOOLCHAIN}/llvm-strip" \
             TARGET_SYS=Linux \
