@@ -13,7 +13,7 @@ on:
 
 jobs:
   server:
-    name: server (${{ matrix.arch }})
+    name: server-linux (${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
@@ -53,70 +53,45 @@ jobs:
           path: nganu.mp/bin/game-server
           if-no-files-found: error
 
-  game:
+  server_android:
+    name: server-android (arm64-v8a)
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      ANDROID_NDK_VERSION: 27.3.13750724
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           submodules: recursive
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake pkg-config \
-            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
-            libgl1-mesa-dev libxcursor-dev libxinerama-dev \
-            libwayland-dev libxkbcommon-dev
-          cmake -S raymob/app/src/main/cpp/deps/raylib -B /tmp/raylib-build -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
-          cmake --build /tmp/raylib-build --parallel
-          sudo cmake --install /tmp/raylib-build
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Configure and build game client
-        working-directory: nganu.game
+      - name: Install Android NDK and CMake
         run: |
-          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-ci --parallel
+          sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" "cmake;3.22.1"
 
-      - name: Upload game artifact
+      - name: Configure Android build
+        working-directory: nganu.mp
+        run: |
+          cmake -S . -B build-android \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=24
+
+      - name: Build Android server
+        working-directory: nganu.mp
+        run: |
+          cmake --build build-android --parallel
+
+      - name: Upload Android artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nganu-game-linux-x86_64
-          path: nganu.game/build-ci/nganu-game
-          if-no-files-found: error
-
-  editor:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake pkg-config \
-            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
-            libgl1-mesa-dev libxcursor-dev libxinerama-dev \
-            libwayland-dev libxkbcommon-dev
-          cmake -S raymob/app/src/main/cpp/deps/raylib -B /tmp/raylib-build -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
-          cmake --build /tmp/raylib-build --parallel
-          sudo cmake --install /tmp/raylib-build
-
-      - name: Configure and build editor
-        working-directory: nganu.editor
-        run: |
-          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-ci --parallel
-
-      - name: Upload editor artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nganu-editor-linux-x86_64
-          path: nganu.editor/build-ci/nganu-editor
-          if-no-files-found: error
+          name: nganu-server-android-arm64-v8a
+          path: |
+            nganu.mp/build-android/game-server
+            nganu.mp/bin/game-server
+          if-no-files-found: warn
