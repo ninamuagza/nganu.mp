@@ -1,4 +1,4 @@
-name: Linux Build Baseline
+name: Multi Platform Server Build
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   server:
-    name: server (x86_64)
+    name: server-linux (x86_64)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,7 +38,7 @@ jobs:
         working-directory: nganu.mp
         run: ./bin/game-server --test
 
-      - name: Upload server artifact
+      - name: Upload Linux server artifact
         uses: actions/upload-artifact@v4
         with:
           name: nganu-server-linux-x86_64
@@ -63,6 +63,11 @@ jobs:
           rm -rf nganu.mp/vendor/luajit-cmake
           git clone --depth=1 https://github.com/zhaozg/luajit-cmake.git nganu.mp/vendor/luajit-cmake
 
+      - name: Fetch LuaJIT source
+        run: |
+          rm -rf nganu.mp/vendor/LuaJIT
+          git clone --depth=1 https://github.com/LuaJIT/LuaJIT.git nganu.mp/vendor/LuaJIT
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
@@ -82,7 +87,8 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}/build/cmake/android.toolchain.cmake" \
             -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=24
+            -DANDROID_PLATFORM=24 \
+            -DLUAJIT_DIR="$GITHUB_WORKSPACE/nganu.mp/nganu.mp/vendor/LuaJIT"
 
       - name: Build Android server
         working-directory: nganu.mp
@@ -91,10 +97,10 @@ jobs:
 
       - name: Show build outputs
         run: |
-          find nganu.mp/build-android -maxdepth 4 \( -name "game-server" -o -name "*.so" \) -print || true
+          find nganu.mp/build-android -maxdepth 5 \( -name "game-server" -o -name "*.so" -o -name "*.a" \) -print || true
           find nganu.mp/bin -maxdepth 2 -type f -print || true
 
-      - name: Upload Android artifact
+      - name: Upload Android server artifact
         uses: actions/upload-artifact@v4
         with:
           name: nganu-server-android-arm64-v8a
@@ -102,72 +108,5 @@ jobs:
             nganu.mp/bin/game-server
             nganu.mp/build-android/**/game-server
             nganu.mp/build-android/**/*.so
+            nganu.mp/build-android/**/*.a
           if-no-files-found: warn
-
-  game:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake pkg-config \
-            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
-            libgl1-mesa-dev libxcursor-dev libxinerama-dev \
-            libwayland-dev libxkbcommon-dev
-          cmake -S raymob/app/src/main/cpp/deps/raylib -B /tmp/raylib-build -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
-          cmake --build /tmp/raylib-build --parallel
-          sudo cmake --install /tmp/raylib-build
-
-      - name: Configure and build game client
-        working-directory: nganu.game
-        run: |
-          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-ci --parallel
-
-      - name: Upload game artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nganu-game-linux-x86_64
-          path: nganu.game/build-ci/nganu-game
-          if-no-files-found: error
-
-  editor:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake pkg-config \
-            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
-            libgl1-mesa-dev libxcursor-dev libxinerama-dev \
-            libwayland-dev libxkbcommon-dev
-          cmake -S raymob/app/src/main/cpp/deps/raylib -B /tmp/raylib-build -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
-          cmake --build /tmp/raylib-build --parallel
-          sudo cmake --install /tmp/raylib-build
-
-      - name: Configure and build editor
-        working-directory: nganu.editor
-        run: |
-          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-ci --parallel
-
-      - name: Upload editor artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nganu-editor-linux-x86_64
-          path: nganu.editor/build-ci/nganu-editor
-          if-no-files-found: error
