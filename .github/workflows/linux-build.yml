@@ -78,7 +78,7 @@ jobs:
           ls "$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
           ls "$ANDROID_SDK_ROOT/cmake/${ANDROID_CMAKE_VERSION}/bin"
 
-      - name: Build LuaJIT for Android arm64
+      - name: Build LuaJIT static library for Android arm64
         working-directory: nganu.mp/vendor/LuaJIT/src
         run: |
           export NDK="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
@@ -87,8 +87,7 @@ jobs:
 
           make clean || true
 
-          make -j"$(nproc)" \
-            BUILDMODE=static \
+          make -j"$(nproc)" libluajit.a \
             HOST_CC="cc" \
             CROSS="" \
             STATIC_CC="${TOOLCHAIN}/clang --target=aarch64-linux-android${API}" \
@@ -103,6 +102,7 @@ jobs:
         run: |
           ls -la nganu.mp/vendor/LuaJIT/src
           test -f nganu.mp/vendor/LuaJIT/src/libluajit.a
+          file nganu.mp/vendor/LuaJIT/src/libluajit.a || true
 
       - name: Configure Android build
         working-directory: nganu.mp
