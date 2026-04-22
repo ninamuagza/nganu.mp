@@ -83,14 +83,21 @@ jobs:
         run: |
           export NDK="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
           export TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          export API="${ANDROID_API_LEVEL}"
+
           make clean || true
+
           make -j"$(nproc)" \
             HOST_CC="cc" \
-            CROSS="$TOOLCHAIN/aarch64-linux-android-" \
+            CROSS="" \
+            STATIC_CC="${TOOLCHAIN}/clang --target=aarch64-linux-android${API}" \
+            DYNAMIC_CC="true" \
+            TARGET_AR="${TOOLCHAIN}/llvm-ar rcus" \
+            TARGET_STRIP="${TOOLCHAIN}/llvm-strip" \
             TARGET_SYS=Linux \
             TARGET_FLAGS="--sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
-            TARGET_CFLAGS="--target=aarch64-linux-android${ANDROID_API_LEVEL} -fPIC" \
-            TARGET_LDFLAGS="--target=aarch64-linux-android${ANDROID_API_LEVEL}"
+            TARGET_CFLAGS="--target=aarch64-linux-android${API} -fPIC" \
+            TARGET_LDFLAGS="--target=aarch64-linux-android${API}"
 
       - name: Verify LuaJIT outputs
         run: |
