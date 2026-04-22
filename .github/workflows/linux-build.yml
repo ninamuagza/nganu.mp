@@ -52,16 +52,13 @@ jobs:
       contents: read
     env:
       ANDROID_NDK_VERSION: 27.3.13750724
+      ANDROID_CMAKE_VERSION: 3.22.1
+      ANDROID_API_LEVEL: 24
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           submodules: recursive
-
-      - name: Fetch luajit-cmake
-        run: |
-          rm -rf nganu.mp/vendor/luajit-cmake
-          git clone --depth=1 https://github.com/zhaozg/luajit-cmake.git nganu.mp/vendor/luajit-cmake
 
       - name: Fetch LuaJIT source
         run: |
@@ -73,32 +70,54 @@ jobs:
 
       - name: Install Android NDK and CMake
         run: |
-          sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" "cmake;3.22.1"
+          sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" "cmake;${ANDROID_CMAKE_VERSION}"
 
       - name: Show Android toolchain info
         run: |
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
           ls "$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
+          ls "$ANDROID_SDK_ROOT/cmake/${ANDROID_CMAKE_VERSION}/bin"
+
+      - name: Build LuaJIT for Android arm64
+        working-directory: nganu.mp/vendor/LuaJIT/src
+        run: |
+          export NDK="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
+          export TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          make clean || true
+          make -j"$(nproc)" \
+            HOST_CC="cc" \
+            CROSS="$TOOLCHAIN/aarch64-linux-android-" \
+            TARGET_SYS=Linux \
+            TARGET_FLAGS="--sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
+            TARGET_CFLAGS="--target=aarch64-linux-android${ANDROID_API_LEVEL} -fPIC" \
+            TARGET_LDFLAGS="--target=aarch64-linux-android${ANDROID_API_LEVEL}"
+
+      - name: Verify LuaJIT outputs
+        run: |
+          ls -la nganu.mp/vendor/LuaJIT/src
+          test -f nganu.mp/vendor/LuaJIT/src/libluajit.a
 
       - name: Configure Android build
         working-directory: nganu.mp
         run: |
-          cmake -S . -B build-android \
+          ANDROID_CMAKE="$ANDROID_SDK_ROOT/cmake/${ANDROID_CMAKE_VERSION}/bin/cmake"
+          "$ANDROID_CMAKE" -S . -B build-android \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}/build/cmake/android.toolchain.cmake" \
             -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=24 \
-            -DLUAJIT_DIR="$GITHUB_WORKSPACE/nganu.mp/nganu.mp/vendor/LuaJIT"
+            -DANDROID_PLATFORM=${ANDROID_API_LEVEL}
 
       - name: Build Android server
         working-directory: nganu.mp
         run: |
-          cmake --build build-android --parallel
+          ANDROID_CMAKE="$ANDROID_SDK_ROOT/cmake/${ANDROID_CMAKE_VERSION}/bin/cmake"
+          "$ANDROID_CMAKE" --build build-android --parallel
 
       - name: Show build outputs
         run: |
           find nganu.mp/build-android -maxdepth 5 \( -name "game-server" -o -name "*.so" -o -name "*.a" \) -print || true
           find nganu.mp/bin -maxdepth 2 -type f -print || true
+          file nganu.mp/bin/game-server || true
 
       - name: Upload Android server artifact
         uses: actions/upload-artifact@v4
