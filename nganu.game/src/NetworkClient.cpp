@@ -10,6 +10,21 @@ namespace {
 constexpr int kChannelCount = 2;
 constexpr const char* kDiscoveryProbe = "NGANU_DISCOVER_V1";
 constexpr const char* kDiscoveryReply = "NGANU_SERVER_V1";
+
+bool SendPacket(ENetPeer* peer, const void* data, size_t len, enet_uint32 flags) {
+    if (!peer || !data || len == 0) {
+        return false;
+    }
+    ENetPacket* packet = enet_packet_create(data, len, flags);
+    if (!packet) {
+        return false;
+    }
+    if (enet_peer_send(peer, 0, packet) != 0) {
+        enet_packet_destroy(packet);
+        return false;
+    }
+    return true;
+}
 }
 
 NetworkClient::NetworkClient() {
@@ -63,6 +78,11 @@ bool NetworkClient::Connect(const std::string& host, uint16_t port) {
 
 bool NetworkClient::BeginLocalDiscovery(uint16_t port) {
     if (!client_) return false;
+    if (port == 65535) {
+        statusText_ = "LAN discovery needs port below 65535";
+        PushEvent(NetworkEvent {NetworkEvent::Type::ConnectionFailed});
+        return false;
+    }
     Disconnect();
     StopDiscovery();
 
@@ -261,8 +281,7 @@ bool NetworkClient::SendPlayerPosition(float x, float y) {
     std::memcpy(pkt + 1, &x, sizeof(x));
     std::memcpy(pkt + 1 + sizeof(x), &y, sizeof(y));
 
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), 0);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), 0);
 }
 
 bool NetworkClient::SendChatMessage(const std::string& text) {
@@ -272,8 +291,7 @@ bool NetworkClient::SendChatMessage(const std::string& text) {
     pkt[0] = static_cast<uint8_t>(PacketOpcode::CHAT_MESSAGE);
     std::memcpy(pkt.data() + 1, text.data(), text.size());
 
-    ENetPacket* packet = enet_packet_create(pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendPlayerName(const std::string& name) {
@@ -284,8 +302,7 @@ bool NetworkClient::SendPlayerName(const std::string& name) {
     pkt[1] = static_cast<uint8_t>(PluginMessageType::PLAYER_NAME);
     std::memcpy(pkt.data() + 2, name.data(), name.size());
 
-    ENetPacket* packet = enet_packet_create(pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendObjectInteract(const std::string& objectId) {
@@ -295,8 +312,7 @@ bool NetworkClient::SendObjectInteract(const std::string& objectId) {
     pkt[0] = static_cast<uint8_t>(PacketOpcode::OBJECT_INTERACT);
     std::memcpy(pkt.data() + 1, objectId.data(), objectId.size());
 
-    ENetPacket* packet = enet_packet_create(pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendHeartbeat() {
@@ -306,8 +322,7 @@ bool NetworkClient::SendHeartbeat() {
     pkt[0] = static_cast<uint8_t>(PacketOpcode::PLUGIN_MESSAGE);
     pkt[1] = static_cast<uint8_t>(PluginMessageType::HEARTBEAT);
 
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), 0);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), 0);
 }
 
 bool NetworkClient::RequestUpdateManifest() {
@@ -318,8 +333,7 @@ bool NetworkClient::RequestUpdateManifest() {
     pkt[1] = static_cast<uint8_t>(PluginMessageType::UPDATE_PROBE);
     pkt[2] = static_cast<uint8_t>(Protocol::kProtocolVersion & 0xFF);
 
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::RequestAsset(const std::string& assetKey) {
@@ -330,8 +344,7 @@ bool NetworkClient::RequestAsset(const std::string& assetKey) {
     pkt[1] = static_cast<uint8_t>(PluginMessageType::ASSET_REQUEST);
     std::memcpy(pkt.data() + 2, assetKey.data(), assetKey.size());
 
-    ENetPacket* packet = enet_packet_create(pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt.data(), pkt.size(), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendInventoryOpen() {
@@ -340,8 +353,7 @@ bool NetworkClient::SendInventoryOpen() {
         static_cast<uint8_t>(PacketOpcode::INVENTORY),
         static_cast<uint8_t>(InventoryMsgType::CMSG_OPEN)
     };
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendInventoryClose() {
@@ -350,8 +362,7 @@ bool NetworkClient::SendInventoryClose() {
         static_cast<uint8_t>(PacketOpcode::INVENTORY),
         static_cast<uint8_t>(InventoryMsgType::CMSG_CLOSE)
     };
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendMoveItem(int fromSlot, int toSlot) {
@@ -362,8 +373,7 @@ bool NetworkClient::SendMoveItem(int fromSlot, int toSlot) {
         static_cast<uint8_t>(fromSlot),
         static_cast<uint8_t>(toSlot)
     };
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendUseItem(int slot) {
@@ -373,8 +383,7 @@ bool NetworkClient::SendUseItem(int slot) {
         static_cast<uint8_t>(InventoryMsgType::CMSG_USE_ITEM),
         static_cast<uint8_t>(slot)
     };
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::SendDropItem(int slot) {
@@ -384,8 +393,7 @@ bool NetworkClient::SendDropItem(int slot) {
         static_cast<uint8_t>(InventoryMsgType::CMSG_DROP_ITEM),
         static_cast<uint8_t>(slot)
     };
-    ENetPacket* packet = enet_packet_create(pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
-    return enet_peer_send(peer_, 0, packet) == 0;
+    return SendPacket(peer_, pkt, sizeof(pkt), ENET_PACKET_FLAG_RELIABLE);
 }
 
 bool NetworkClient::IsConnected() const {

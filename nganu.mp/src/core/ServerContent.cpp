@@ -71,6 +71,25 @@ bool isSafeRelativeAssetPath(const std::string& value) {
     return true;
 }
 
+bool isSafeManifestAssetKey(const std::string& value) {
+    if (value.empty() || value.size() > 128) {
+        return false;
+    }
+    if (value.find('\0') != std::string::npos || value.find('\\') != std::string::npos) {
+        return false;
+    }
+    for (unsigned char ch : value) {
+        if (std::isalnum(ch)) {
+            continue;
+        }
+        if (ch == '_' || ch == '-' || ch == '.' || ch == ':' || ch == '/') {
+            continue;
+        }
+        return false;
+    }
+    return true;
+}
+
 bool pathIsInsideRoot(const std::filesystem::path& root, const std::filesystem::path& candidate) {
     std::error_code ec;
     const std::filesystem::path relative = std::filesystem::relative(candidate, root, ec);
@@ -146,6 +165,18 @@ void addAssetKeysFromDirectory(Logger& logger,
         outKeys.insert(prefix + key);
     }
 }
+
+bool fileHasPngHeader(const std::filesystem::path& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        return false;
+    }
+    const unsigned char pngHeader[8] {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
+    unsigned char header[8] {};
+    in.read(reinterpret_cast<char*>(header), sizeof(header));
+    return in.gcount() == static_cast<std::streamsize>(sizeof(header)) &&
+           std::memcmp(header, pngHeader, sizeof(header)) == 0;
+}
 }
 
 void Server::rebuildAllowedAssetKeys() {
@@ -171,6 +202,83 @@ void Server::rebuildAllowedAssetKeys() {
             allowedAssetKeys_.insert("character_image:" + asset);
         }
     }
+}
+
+bool Server::validateContentAssets() {
+    bool ok = true;
+    const std::filesystem::path assetsRoot = mapDirectory_.parent_path();
+    std::vector<std::string> orderedAssetKeys(allowedAssetKeys_.begin(), allowedAssetKeys_.end());
+    std::sort(orderedAssetKeys.begin(), orderedAssetKeys.end());
+
+    auto validatePath = [&](const std::string& assetKey,
+                            const std::optional<std::filesystem::path>& maybePath,
+                            bool requirePng) {
+        if (!isSafeManifestAssetKey(assetKey)) {
+            logger_.error("Server", "Unsafe asset key in manifest: %s", assetKey.c_str());
+            ok = false;
+            return;
+        }
+        if (!maybePath.has_value()) {
+            logger_.error("Server", "Unsafe or unresolved asset path for key: %s", assetKey.c_str());
+            ok = false;
+            return;
+        }
+
+        std::error_code ec;
+        if (!std::filesystem::is_regular_file(*maybePath, ec)) {
+            logger_.error("Server", "Missing asset for key %s: %s", assetKey.c_str(), maybePath->string().c_str());
+            ok = false;
+            return;
+        }
+
+        const uintmax_t size = std::filesystem::file_size(*maybePath, ec);
+        if (ec || size == 0) {
+            logger_.error("Server", "Empty or unreadable asset for key %s: %s", assetKey.c_str(), maybePath->string().c_str());
+            ok = false;
+            return;
+        }
+
+        if (requirePng && (size <= 8 || !fileHasPngHeader(*maybePath))) {
+            logger_.error("Server", "Invalid PNG asset for key %s: %s", assetKey.c_str(), maybePath->string().c_str());
+            ok = false;
+        }
+    };
+
+    for (const std::string& assetKey : orderedAssetKeys) {
+        if (assetKey.rfind("map:", 0) == 0) {
+            const std::string mapId = assetKey.substr(4);
+            auto pathIt = mapPaths_.find(mapId);
+            if (pathIt == mapPaths_.end()) {
+                logger_.error("Server", "Missing map path for key: %s", assetKey.c_str());
+                ok = false;
+                continue;
+            }
+            validatePath(assetKey, std::optional<std::filesystem::path>(pathIt->second), false);
+        } else if (assetKey.rfind("map_image:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "map_images", assetKey.substr(10)), true);
+        } else if (assetKey.rfind("map_meta:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "map_images", assetKey.substr(9)), false);
+        } else if (assetKey.rfind("character_image:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "characters", assetKey.substr(16)), true);
+        } else if (assetKey.rfind("ui_image:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "ui", assetKey.substr(9)), true);
+        } else if (assetKey.rfind("ui_meta:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "ui", assetKey.substr(8)), false);
+        } else if (assetKey.rfind("data:", 0) == 0) {
+            validatePath(assetKey, resolveAssetPath(assetsRoot / "data", assetKey.substr(5)), false);
+        } else {
+            logger_.error("Server", "Unknown asset key in manifest: %s", assetKey.c_str());
+            ok = false;
+        }
+    }
+
+    if (!ok) {
+        logger_.error("Server", "Content asset validation failed; refusing to start with a broken manifest");
+        return false;
+    }
+
+    logger_.info("Server", "Validated %zu content asset(s)", orderedAssetKeys.size());
+    return true;
 }
 
 std::string Server::computeContentRevision() const {

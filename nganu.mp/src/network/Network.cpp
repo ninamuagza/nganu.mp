@@ -37,6 +37,12 @@ bool Network::init(uint16_t port, size_t maxClients) {
 
     logger_.info("Network", "Listening on port %u (max %zu clients)", (unsigned)port, maxClients);
     gamePort_ = port;
+    if (port == 65535) {
+        discoveryPort_ = 0;
+        logger_.warn("Network", "LAN discovery disabled because game port 65535 has no port+1");
+        return true;
+    }
+
     discoveryPort_ = static_cast<uint16_t>(port + 1);
     discoverySocket_ = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
     if (discoverySocket_ != ENET_SOCKET_NULL) {
@@ -130,7 +136,14 @@ void Network::sendPacket(void* peer, const void* data, size_t len, int channel, 
     if (!peer || !data || len == 0) return;
     const enet_uint32 flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
     ENetPacket* packet = enet_packet_create(data, len, flags);
-    enet_peer_send(static_cast<ENetPeer*>(peer), channel, packet);
+    if (!packet) {
+        logger_.warn("Network", "Failed to allocate packet (%zu bytes)", len);
+        return;
+    }
+    if (enet_peer_send(static_cast<ENetPeer*>(peer), channel, packet) != 0) {
+        logger_.warn("Network", "Failed to queue packet (%zu bytes)", len);
+        enet_packet_destroy(packet);
+    }
 }
 
 void Network::assignPlayer(ENetPeer* peer, int playerid) {

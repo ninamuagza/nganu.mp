@@ -28,6 +28,49 @@ bool HasPngHeader(const unsigned char* data, size_t size) {
     const unsigned char pngHeader[8] {0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'};
     return std::equal(pngHeader, pngHeader + 8, data);
 }
+
+std::filesystem::path SafeRelativeCachePath(const std::string& value) {
+    std::filesystem::path out;
+    std::string part;
+    auto flushPart = [&]() {
+        if (part.empty()) {
+            return;
+        }
+
+        std::string safe;
+        safe.reserve(part.size());
+        if (part == "." || part == "..") {
+            safe = "_";
+        } else {
+            for (unsigned char ch : part) {
+                if (std::isalnum(ch) || ch == '_' || ch == '-' || ch == '.') {
+                    safe.push_back(static_cast<char>(ch));
+                } else {
+                    safe.push_back('_');
+                }
+            }
+        }
+        if (safe.empty()) {
+            safe = "_";
+        }
+        out /= safe;
+        part.clear();
+    };
+
+    for (char ch : value) {
+        if (ch == '/' || ch == '\\') {
+            flushPart();
+        } else {
+            part.push_back(ch);
+        }
+    }
+    flushPart();
+
+    if (out.empty()) {
+        return std::filesystem::path("_");
+    }
+    return out;
+}
 }
 
 void Game::ApplyManifest(const std::string& rawManifest) {
@@ -73,60 +116,58 @@ void Game::ApplyManifest(const std::string& rawManifest) {
 }
 
 std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const {
+    const std::string marker = "\n---\n";
+    const size_t markerPos = rawBlob.find(marker);
+    if (markerPos == std::string::npos) {
+        return std::nullopt;
+    }
+
     AssetBlob blob;
-    std::istringstream stream(rawBlob);
+    std::istringstream stream(rawBlob.substr(0, markerPos));
     std::string line;
-    bool inContent = false;
     while (std::getline(stream, line)) {
-        if (!inContent) {
-            if (line == "---") {
-                inContent = true;
-                continue;
-            }
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
 
-            const size_t sep = line.find('=');
-            if (sep == std::string::npos) {
-                continue;
-            }
+        const size_t sep = line.find('=');
+        if (sep == std::string::npos) {
+            continue;
+        }
 
-            const std::string key = line.substr(0, sep);
-            const std::string value = line.substr(sep + 1);
-            if (key == "key") {
-                blob.key = value;
-            } else if (key == "kind") {
-                blob.kind = value;
-            } else if (key == "revision") {
-                blob.revision = value;
-            } else if (key == "encoding") {
-                blob.encoding = value;
-            } else if (key == "checksum") {
-                blob.checksum = value;
-            } else if (key == "content_size") {
-                try {
-                    blob.contentSize = static_cast<size_t>(std::stoull(value));
-                } catch (...) {
-                    return std::nullopt;
-                }
-            } else if (key == "chunk_index") {
-                try {
-                    blob.chunkIndex = static_cast<size_t>(std::stoull(value));
-                } catch (...) {
-                    return std::nullopt;
-                }
-            } else if (key == "chunk_total") {
-                try {
-                    blob.chunkTotal = static_cast<size_t>(std::stoull(value));
-                } catch (...) {
-                    return std::nullopt;
-                }
+        const std::string key = line.substr(0, sep);
+        const std::string value = line.substr(sep + 1);
+        if (key == "key") {
+            blob.key = value;
+        } else if (key == "kind") {
+            blob.kind = value;
+        } else if (key == "revision") {
+            blob.revision = value;
+        } else if (key == "encoding") {
+            blob.encoding = value;
+        } else if (key == "checksum") {
+            blob.checksum = value;
+        } else if (key == "content_size") {
+            try {
+                blob.contentSize = static_cast<size_t>(std::stoull(value));
+            } catch (...) {
+                return std::nullopt;
             }
-        } else {
-            if (!blob.content.empty()) {
-                blob.content.push_back('\n');
+        } else if (key == "chunk_index") {
+            try {
+                blob.chunkIndex = static_cast<size_t>(std::stoull(value));
+            } catch (...) {
+                return std::nullopt;
             }
-            blob.content += line;
+        } else if (key == "chunk_total") {
+            try {
+                blob.chunkTotal = static_cast<size_t>(std::stoull(value));
+            } catch (...) {
+                return std::nullopt;
+            }
         }
     }
+    blob.content = rawBlob.substr(markerPos + marker.size());
 
     if (blob.key.empty() || blob.kind.empty() || blob.checksum.empty() ||
         blob.chunkTotal == 0 || blob.chunkTotal > Protocol::kMaxAssetChunks || blob.chunkIndex >= blob.chunkTotal) {
@@ -134,6 +175,67 @@ std::optional<AssetBlob> Game::ParseAssetBlob(const std::string& rawBlob) const 
     }
 
     return blob;
+}
+
+bool Game::RequestAssetWithTracking(const std::string& assetKey, bool force) {
+    if (!network_.IsConnected() || assetKey.empty()) {
+        return false;
+    }
+
+    auto [requestIt, inserted] = pendingAssetRequests_.try_emplace(assetKey);
+    if (!inserted && !force) {
+        return true;
+    }
+
+    if (!network_.RequestAsset(assetKey)) {
+        if (inserted) {
+            pendingAssetRequests_.erase(requestIt);
+        }
+        return false;
+    }
+
+    requestIt->second.elapsed = 0.0f;
+    requestIt->second.attempts = std::max(1, requestIt->second.attempts + 1);
+    return true;
+}
+
+void Game::UpdatePendingAssetRequests(float dt) {
+    if (pendingAssetRequests_.empty()) {
+        return;
+    }
+
+    if (!network_.IsConnected()) {
+        pendingAssetRequests_.clear();
+        return;
+    }
+
+    std::vector<std::string> retryKeys;
+    retryKeys.reserve(pendingAssetRequests_.size());
+    for (auto& [assetKey, request] : pendingAssetRequests_) {
+        request.elapsed += dt;
+        if (request.elapsed >= 3.0f) {
+            retryKeys.push_back(assetKey);
+        }
+    }
+
+    for (const std::string& assetKey : retryKeys) {
+        auto requestIt = pendingAssetRequests_.find(assetKey);
+        if (requestIt == pendingAssetRequests_.end()) {
+            continue;
+        }
+        if (requestIt->second.attempts >= 4) {
+            pendingAssetRequests_.clear();
+            pendingAssetAssemblies_.clear();
+            BeginRetryWait("Asset download timed out: " + assetKey + ". Retrying in 10 seconds.");
+            return;
+        }
+        RequestAssetWithTracking(assetKey, true);
+        AddChatLine("[System] Retrying asset request: " + assetKey);
+    }
+}
+
+void Game::MarkAssetRequestComplete(const std::string& assetKey) {
+    pendingAssetRequests_.erase(assetKey);
 }
 
 std::optional<AssetBlob> Game::AccumulateAssetBlobChunk(const AssetBlob& chunk) {
@@ -245,7 +347,7 @@ std::filesystem::path Game::ImageCachePathForAsset(const std::string& assetKey, 
         filename = filename.substr(8);
         bucket = "ui";
     }
-    return CacheDirectory() / "assets" / bucket / (revision.empty() ? "unknown" : revision) / filename;
+    return CacheDirectory() / "assets" / bucket / (revision.empty() ? "unknown" : revision) / SafeRelativeCachePath(filename);
 }
 
 bool Game::SaveAssetToCache(const AssetBlob& asset) const {
@@ -371,7 +473,7 @@ void Game::BeginMapBootstrapForAsset(const std::string& assetKey, const std::str
         return;
     }
 
-    if (!network_.RequestAsset(assetKey)) {
+    if (!RequestAssetWithTracking(assetKey)) {
         BeginRetryWait("Map request failed. Retrying in 10 seconds.");
         return;
     }
@@ -427,7 +529,7 @@ void Game::EnsureReferencedImagesRequested() {
             addPending(assetKey);
         }
         if (network_.IsConnected() && !HasCachedImageAsset(assetKey, manifest_.revision)) {
-            network_.RequestAsset(assetKey);
+            RequestAssetWithTracking(assetKey);
         }
         const std::string metaKey = "map_meta:" + std::filesystem::path(file).stem().string() + ".atlas";
         const bool metaListed = std::find(manifest_.assets.begin(), manifest_.assets.end(), metaKey) != manifest_.assets.end();
@@ -435,7 +537,7 @@ void Game::EnsureReferencedImagesRequested() {
             addPending(metaKey);
         }
         if (metaListed && network_.IsConnected() && !HasCachedImageAsset(metaKey, manifest_.revision)) {
-            network_.RequestAsset(metaKey);
+            RequestAssetWithTracking(metaKey);
         }
     }
     for (const std::string& file : world_.referencedCharacterImageFiles()) {
@@ -444,7 +546,7 @@ void Game::EnsureReferencedImagesRequested() {
             addPending(assetKey);
         }
         if (network_.IsConnected() && !HasCachedImageAsset(assetKey, manifest_.revision)) {
-            network_.RequestAsset(assetKey);
+            RequestAssetWithTracking(assetKey);
         }
     }
 
@@ -475,6 +577,12 @@ void Game::RefreshMapAssetReadiness() {
 
     if (!mapReady_) {
         world_.ReloadAtlasMetadata();
+        if (!world_.PreloadReferencedTextures()) {
+            mapReady_ = false;
+            loginStatus_ = "Refreshing missing map textures...";
+            EnsureReferencedImagesRequested();
+            return;
+        }
         mapReady_ = true;
         loginStatus_ = "Server ready. Press Enter to log in.";
         AddChatLine("[System] Map textures ready");
@@ -507,7 +615,7 @@ void Game::EnsureUiDataAssetsRequested() {
             continue;
         }
 
-        network_.RequestAsset(assetKey);
+        RequestAssetWithTracking(assetKey);
     }
 }
 
@@ -525,7 +633,7 @@ void Game::EnsureUiThemeAssetsRequested() {
             LoadUiTextureFromCache(assetKey);
             continue;
         }
-        network_.RequestAsset(assetKey);
+        RequestAssetWithTracking(assetKey);
     }
 }
 

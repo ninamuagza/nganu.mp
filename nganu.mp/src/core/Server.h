@@ -115,6 +115,7 @@ private:
     void releasePlayerId(int playerid);
     bool loadMaps();
     void rebuildAllowedAssetKeys();
+    bool validateContentAssets();
     std::string computeContentRevision() const;
     PlayerPosition defaultSpawnPosition(int playerid, const std::string& mapId) const;
     bool teleportPlayerWithinMap(int playerid, PlayerPosition nextPosition, const std::string& reason);

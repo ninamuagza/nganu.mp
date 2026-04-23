@@ -155,11 +155,19 @@ bool Server::startup(const std::string& cfgPath) {
         return false;
     }
     rebuildAllowedAssetKeys();
+    if (!validateContentAssets()) {
+        return false;
+    }
     contentRevision_ = computeContentRevision();
     logger_.info("Server", "Loaded map %s (%s)", map_.mapId().c_str(), map_.worldName().c_str());
 
     /* 3. Initialise ENet */
-    uint16_t port = static_cast<uint16_t>(runtime_.getInt("port", 7777));
+    const int configuredPort = runtime_.getInt("port", 7777);
+    if (configuredPort < 1 || configuredPort > 65535) {
+        logger_.error("Server", "Invalid port %d; expected 1-65535", configuredPort);
+        return false;
+    }
+    uint16_t port = static_cast<uint16_t>(configuredPort);
     size_t maxClients = static_cast<size_t>(runtime_.getInt("maxclients", 100));
     if (!network_.init(port, maxClients)) {
         logger_.error("Server", "Failed to initialise network");

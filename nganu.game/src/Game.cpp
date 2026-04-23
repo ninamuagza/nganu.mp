@@ -897,6 +897,8 @@ void Game::BeginBootUpdateCheck() {
     pendingMapAssetKey_.clear();
     pendingMapId_.clear();
     pendingMapImageAssetKeys_.clear();
+    pendingAssetAssemblies_.clear();
+    pendingAssetRequests_.clear();
     hasPendingSpawnPosition_ = false;
     lastMapAssetSource_ = "none";
     lastAppliedMapAssetKey_.clear();
@@ -955,6 +957,8 @@ void Game::BeginRetryWait(const std::string& reason) {
     network_.Disconnect();
     bootstrapRequested_ = false;
     manifestWait_ = 0.0f;
+    pendingAssetAssemblies_.clear();
+    pendingAssetRequests_.clear();
     retryCountdown_ = 10.0f;
     retryReasonBase_ = reason;
     loginStatus_ = reason;
@@ -1230,6 +1234,7 @@ void Game::UpdateNetwork(float dt) {
     for (const NetworkEvent& event : network_.ConsumeEvents()) {
         HandleNetworkEvent(event);
     }
+    UpdatePendingAssetRequests(dt);
 
     if (network_.IsConnected() && (uiMode_ != UiMode::World || !mapReady_)) {
         keepAliveAccumulator_ += dt;
@@ -1311,6 +1316,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         pendingMapImageAssetKeys_.clear();
         hasPendingSpawnPosition_ = false;
         pendingAssetAssemblies_.clear();
+        pendingAssetRequests_.clear();
         inventory_.open = false;
         inventory_.revision = 0;
         inventoryReady_ = false;
@@ -1374,6 +1380,7 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
             }
             break;
         }
+        MarkAssetRequestComplete(blob->key);
         if (blob->kind == "image" && blob->key.rfind("ui_image:", 0) == 0) {
             LoadUiTextureFromCache(blob->key);
         }

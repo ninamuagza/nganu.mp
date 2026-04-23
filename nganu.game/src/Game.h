@@ -90,6 +90,11 @@ struct AssetBlobAssembly {
     size_t receivedCount = 0;
 };
 
+struct PendingAssetRequest {
+    float elapsed = 0.0f;
+    int attempts = 0;
+};
+
 class Game {
 public:
     Game();
@@ -169,6 +174,7 @@ private:
     bool inventoryReady_ = false;
     bool inventoryLayoutReady_ = false;
     std::unordered_map<std::string, AssetBlobAssembly> pendingAssetAssemblies_;
+    std::unordered_map<std::string, PendingAssetRequest> pendingAssetRequests_;
 
     void BeginBootUpdateCheck();
     void BeginRetryWait(const std::string& reason);
@@ -186,6 +192,9 @@ private:
     void ApplyManifest(const std::string& rawManifest);
     std::optional<AssetBlob> ParseAssetBlob(const std::string& rawBlob) const;
     std::optional<AssetBlob> AccumulateAssetBlobChunk(const AssetBlob& chunk);
+    bool RequestAssetWithTracking(const std::string& assetKey, bool force = false);
+    void UpdatePendingAssetRequests(float dt);
+    void MarkAssetRequestComplete(const std::string& assetKey);
     std::filesystem::path CacheDirectory() const;
     std::filesystem::path CachePathForAsset(const std::string& assetKey, const std::string& revision) const;
     std::filesystem::path ImageCachePathForAsset(const std::string& assetKey, const std::string& revision) const;
