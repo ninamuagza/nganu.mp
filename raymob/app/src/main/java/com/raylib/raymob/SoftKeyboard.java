@@ -27,7 +27,11 @@ package com.raylib.raymob;
 import android.view.inputmethod.InputMethodManager;
 import android.app.NativeActivity;
 import android.content.Context;
+import android.graphics.Rect;
+import android.os.Build;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowInsets;
 
 public class SoftKeyboard {
 
@@ -50,6 +54,33 @@ public class SoftKeyboard {
 
     public void hideKeyboard() {
         imm.hideSoftInputFromWindow(((NativeActivity)context).getWindow().getDecorView().getWindowToken(), 0);
+    }
+
+    public int getKeyboardHeight() {
+        View decorView = ((NativeActivity)context).getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsets insets = decorView.getRootWindowInsets();
+            if (insets == null || !insets.isVisible(WindowInsets.Type.ime())) {
+                return 0;
+            }
+            return Math.max(0, insets.getInsets(WindowInsets.Type.ime()).bottom);
+        }
+
+        Rect visibleFrame = new Rect();
+        decorView.getWindowVisibleDisplayFrame(visibleFrame);
+        int rootHeight = decorView.getRootView().getHeight();
+        int bottomInset = Math.max(0, rootHeight - visibleFrame.bottom);
+        int keyboardThreshold = Math.max(80, rootHeight / 10);
+        return bottomInset > keyboardThreshold ? bottomInset : 0;
+    }
+
+    public boolean isKeyboardVisible() {
+        View decorView = ((NativeActivity)context).getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsets insets = decorView.getRootWindowInsets();
+            return insets != null && insets.isVisible(WindowInsets.Type.ime());
+        }
+        return getKeyboardHeight() > 0;
     }
 
     public int getLastKeyCode() {

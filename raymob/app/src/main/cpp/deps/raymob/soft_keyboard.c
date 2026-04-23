@@ -67,6 +67,56 @@ void HideSoftKeyboard(void)
     }
 }
 
+int GetSoftKeyboardHeight(void)
+{
+    jobject context = GetNativeLoaderInstance();
+
+    if (context != NULL) {
+        JNIEnv* env = AttachCurrentThread();
+        jclass nativeLoaderClass = (*env)->GetObjectClass(env, context);
+
+        jfieldID softKeyboardField = (*env)->GetFieldID(env, nativeLoaderClass, "softKeyboard", "Lcom/raylib/raymob/SoftKeyboard;");
+        jobject softKeyboard = (*env)->GetObjectField(env, context, softKeyboardField);
+
+        if (softKeyboard != NULL) {
+            jclass softKeyboardClass = (*env)->GetObjectClass(env, softKeyboard);
+            jmethodID method = (*env)->GetMethodID(env, softKeyboardClass, "getKeyboardHeight", "()I");
+            int value = (*env)->CallIntMethod(env, softKeyboard, method);
+            DetachCurrentThread();
+            return value;
+        }
+
+        DetachCurrentThread();
+    }
+
+    return 0;
+}
+
+bool IsSoftKeyboardVisible(void)
+{
+    jobject context = GetNativeLoaderInstance();
+
+    if (context != NULL) {
+        JNIEnv* env = AttachCurrentThread();
+        jclass nativeLoaderClass = (*env)->GetObjectClass(env, context);
+
+        jfieldID softKeyboardField = (*env)->GetFieldID(env, nativeLoaderClass, "softKeyboard", "Lcom/raylib/raymob/SoftKeyboard;");
+        jobject softKeyboard = (*env)->GetObjectField(env, context, softKeyboardField);
+
+        if (softKeyboard != NULL) {
+            jclass softKeyboardClass = (*env)->GetObjectClass(env, softKeyboard);
+            jmethodID method = (*env)->GetMethodID(env, softKeyboardClass, "isKeyboardVisible", "()Z");
+            bool value = (*env)->CallBooleanMethod(env, softKeyboard, method);
+            DetachCurrentThread();
+            return value;
+        }
+
+        DetachCurrentThread();
+    }
+
+    return false;
+}
+
 int GetLastSoftKeyCode(void)
 {
     jobject context = GetNativeLoaderInstance();

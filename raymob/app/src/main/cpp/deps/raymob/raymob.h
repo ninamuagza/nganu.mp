@@ -206,6 +206,20 @@ void ShowSoftKeyboard(void);
 void HideSoftKeyboard(void);
 
 /**
+ * @brief Returns the current soft keyboard height in screen pixels.
+ *
+ * @return Height of the visible soft keyboard, or 0 when hidden/unknown.
+ */
+int GetSoftKeyboardHeight(void);
+
+/**
+ * @brief Returns whether Android reports the soft keyboard as visible.
+ *
+ * @return true if the keyboard is visible.
+ */
+bool IsSoftKeyboardVisible(void);
+
+/**
  * @brief Returns the code of the last key pressed on the soft keyboard.
  *
  * @return Code of the last key pressed on the soft keyboard.

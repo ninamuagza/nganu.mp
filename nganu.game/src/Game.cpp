@@ -121,11 +121,12 @@ struct LoginLayout {
 
 float LoginKeyboardOffsetY(float screenHeight, const Rectangle& card, const LoginHitRects& hitRects) {
 #if defined(PLATFORM_ANDROID)
-    if (!g_androidSoftKeyboardVisible) {
+    const int keyboardHeight = GetSoftKeyboardHeight();
+    if ((!g_androidSoftKeyboardVisible && !IsSoftKeyboardVisible()) || keyboardHeight <= 0) {
         return 0.0f;
     }
 
-    const float keyboardTop = screenHeight * 0.58f;
+    const float keyboardTop = std::max(0.0f, screenHeight - static_cast<float>(keyboardHeight));
     const float margin = std::clamp(screenHeight * 0.025f, 16.0f, 28.0f);
     const float formBottom = hitRects.buttonBox.y + hitRects.buttonBox.height;
     const float desiredOffset = std::min(0.0f, keyboardTop - margin - formBottom);
