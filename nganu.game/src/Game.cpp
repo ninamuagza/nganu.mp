@@ -26,6 +26,17 @@ Color OutlineColor() { return Color {231, 241, 236, 46}; }
 Color SoftCardColor() { return Color {24, 37, 42, 204}; }
 Font g_uiFont {};
 bool g_ownsUiFont = false;
+constexpr float kPlayerRadius = 10.0f;
+constexpr float kWalkSpeed = 110.0f;
+constexpr float kRunSpeed = 160.0f;
+constexpr float kCorrectionSnapDistance = 85.0f;
+constexpr float kCorrectionStrongDistance = 21.0f;
+constexpr float kCorrectionSoftDistance = 5.0f;
+constexpr float kInteractRadiusMin = 16.0f;
+constexpr float kInteractRadiusPad = 27.0f;
+constexpr float kInteractRangeMin = 37.0f;
+constexpr float kInteractRangeMax = 80.0f;
+constexpr float kGameplayCameraZoom = 1.35f;
 
 #if defined(PLATFORM_ANDROID)
 bool g_androidSoftKeyboardVisible = false;
@@ -779,9 +790,9 @@ std::string RetryStatusMessage(const std::string& reason, int secondsLeft) {
 Game::Game() {
     LoadGameUiFont();
     player_.name = "Fanorisky";
-    player_.position = Vector2 {160.0f, 160.0f};
+    player_.position = Vector2 {96.0f, 96.0f};
     player_.bodyColor = LocalColor();
-    player_.radius = 15.0f;
+    player_.radius = kPlayerRadius;
     loginName_ = player_.name;
 #if defined(PLATFORM_ANDROID)
     loginHost_ = "Auto LAN";
@@ -794,7 +805,7 @@ Game::Game() {
     camera_.offset = Vector2 {640.0f, 360.0f};
     camera_.target = player_.position;
     camera_.rotation = 0.0f;
-    camera_.zoom = 1.0f;
+    camera_.zoom = kGameplayCameraZoom;
     lastSentPosition_ = player_.position;
     localCorrectionRemaining_ = Vector2 {};
 
@@ -1183,7 +1194,7 @@ void Game::UpdatePlayer(float dt) {
 #endif
 
     const bool running = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
-    const float moveSpeed = running ? 240.0f : 165.0f;
+    const float moveSpeed = running ? kRunSpeed : kWalkSpeed;
     if (analogInput) {
         player_.velocity = ScaleVector(AndroidMovementDirection(input), moveSpeed * AndroidMovementAmount(input));
     } else {
@@ -1432,13 +1443,13 @@ void Game::HandleNetworkEvent(const NetworkEvent& event) {
         {
             const Vector2 authoritative {event.x, event.y};
             const float correctionDistance = DistanceBetween(player_.position, authoritative);
-            if (!hasAuthoritativePosition_ || correctionDistance > 128.0f) {
+            if (!hasAuthoritativePosition_ || correctionDistance > kCorrectionSnapDistance) {
                 player_.position = authoritative;
                 localCorrectionRemaining_ = Vector2 {};
-            } else if (correctionDistance > 32.0f) {
+            } else if (correctionDistance > kCorrectionStrongDistance) {
                 localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.35f;
                 localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.35f;
-            } else if (correctionDistance > 8.0f) {
+            } else if (correctionDistance > kCorrectionSoftDistance) {
                 localCorrectionRemaining_.x += (authoritative.x - player_.position.x) * 0.12f;
                 localCorrectionRemaining_.y += (authoritative.y - player_.position.y) * 0.12f;
             }
@@ -1883,7 +1894,7 @@ void Game::ApplyRemotePlayerState(int playerId, float x, float y) {
         remote.movementSamples.erase(remote.movementSamples.begin(), remote.movementSamples.end() - 8);
     }
     if (remote.avatar.radius <= 0.0f) {
-        remote.avatar.radius = 14.0f;
+        remote.avatar.radius = kPlayerRadius;
     }
     if (remote.avatar.bodyColor.a == 0) {
         remote.avatar.bodyColor = Color {
@@ -1907,7 +1918,7 @@ void Game::ApplyPlayerName(int playerId, const std::string& name) {
     RemoteAvatar& remote = remotePlayers_[playerId];
     remote.avatar.name = name;
     if (remote.avatar.radius <= 0.0f) {
-        remote.avatar.radius = 14.0f;
+        remote.avatar.radius = kPlayerRadius;
     }
 }
 
@@ -1929,11 +1940,13 @@ float Game::InteractionRangeForObject(const WorldObject& object) const {
     const std::optional<std::string> value = world_.objectProperty(object, "interact_radius");
     if (value.has_value()) {
         try {
-            return std::max(24.0f, std::stof(*value));
+            return std::max(kInteractRadiusMin, std::stof(*value));
         } catch (...) {
         }
     }
-    return std::clamp(std::max(object.bounds.width, object.bounds.height) * 0.5f + 40.0f, 56.0f, 120.0f);
+    return std::clamp(std::max(object.bounds.width, object.bounds.height) * 0.5f + kInteractRadiusPad,
+                      kInteractRangeMin,
+                      kInteractRangeMax);
 }
 
 std::string Game::InteractionPromptForObject(const WorldObject& object) const {
@@ -2130,8 +2143,9 @@ void Game::DrawBootScreen() const {
 
 void Game::DrawScene() const {
     Camera2D renderCamera = camera_;
-    const float tx = renderCamera.offset.x - renderCamera.target.x;
-    const float ty = renderCamera.offset.y - renderCamera.target.y;
+    const float zoom = std::fabs(renderCamera.zoom) > 0.0001f ? renderCamera.zoom : 1.0f;
+    const float tx = renderCamera.offset.x - (renderCamera.target.x * zoom);
+    const float ty = renderCamera.offset.y - (renderCamera.target.y * zoom);
     renderCamera.offset.x += std::round(tx) - tx;
     renderCamera.offset.y += std::round(ty) - ty;
     BeginMode2D(renderCamera);
@@ -2152,10 +2166,11 @@ void Game::DrawScene() const {
     world_.DrawGround(visibleArea);
     world_.DrawDecorations(visibleArea);
 
-    for (const WorldObject& object : world_.objects()) {
-        if (!CheckCollisionRecs(object.bounds, visibleArea)) {
-            continue;
-        }
+    std::vector<const WorldObject*> visibleObjects;
+    world_.CollectVisibleObjects(visibleArea, visibleObjects);
+
+    for (const WorldObject* visibleObject : visibleObjects) {
+        const WorldObject& object = *visibleObject;
         if ((object.kind == "prop" || object.kind == "portal") && world_.objectZLayer(object) <= 0) {
             world_.DrawObjectSprite(object);
             if (IsInteractableObject(object)) {
@@ -2188,21 +2203,17 @@ void Game::DrawScene() const {
         DrawAvatar(remote.avatar, false);
     }
 
-    for (const WorldObject& object : world_.objects()) {
+    for (const WorldObject* visibleObject : visibleObjects) {
+        const WorldObject& object = *visibleObject;
         if (object.kind != "npc") {
-            continue;
-        }
-        if (!CheckCollisionRecs(object.bounds, visibleArea)) {
             continue;
         }
         DrawNpc(object);
     }
     DrawAvatar(player_, true);
 
-    for (const WorldObject& object : world_.objects()) {
-        if (!CheckCollisionRecs(object.bounds, visibleArea)) {
-            continue;
-        }
+    for (const WorldObject* visibleObject : visibleObjects) {
+        const WorldObject& object = *visibleObject;
         if ((object.kind == "prop" || object.kind == "portal") && world_.objectZLayer(object) > 0) {
             world_.DrawObjectSprite(object);
             if (IsInteractableObject(object)) {

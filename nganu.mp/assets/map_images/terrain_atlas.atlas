@@ -1,0 +1,2 @@
+tile=288,352,96,96,collision:block,collider:14|14|68|68
+tile=576,384,64,64,collision:block,collider:1|8|57|56

@@ -115,7 +115,7 @@ void DrawRow(const Font& font, Rectangle row, const std::string& label, bool act
 }
 
 void DrawSectionTabs(const Font& font, Rectangle bounds, MapSection active) {
-    const char* labels[] = {"Tile", "Region", "Object"};
+    const char* labels[] = {"Tile", "Spawn", "Object"};
     const float tabWidth = (bounds.width - 12.0f) / 3.0f;
     for (int i = 0; i < 3; ++i) {
         Rectangle tab {bounds.x + (i * (tabWidth + 6.0f)), bounds.y, tabWidth, bounds.height};
@@ -131,7 +131,7 @@ void DrawFooter(const Font& font, Rectangle content, const std::string& mapFile,
     float y = footerTop;
     DrawLabel(font, "Map File", content.x, y, content.width);
     DrawValue(font, mapFile.empty() ? "(unsaved)" : mapFile, content.x, y, content.width, 16);
-    DrawTextWrapped(font, "Tab section | Ctrl+S save | Ctrl+N new", Rectangle {content.x, y, content.width, 34.0f}, FontSize(14), RAYWHITE, 2);
+    DrawTextWrapped(font, "Ctrl+Z undo | Ctrl+Y redo | Ctrl+S save", Rectangle {content.x, y, content.width, 34.0f}, FontSize(14), RAYWHITE, 2);
     y += 38.0f;
     DrawTextWrapped(font, "PgUp/PgDn map | F1 atlas | F2 map", Rectangle {content.x, y, content.width, 34.0f}, FontSize(14), RAYWHITE, 2);
     DrawTextClipped(font, status, Rectangle {content.x, content.y + content.height - 24.0f, content.width, 22.0f}, FontSize(16), Fade(RAYWHITE, 0.62f));
@@ -146,7 +146,6 @@ Color AccentSoft() { return Color {241, 191, 140, 255}; }
 Color InkColor() { return Color {20, 24, 26, 255}; }
 Color MapGridColor() { return Color {40, 51, 58, 70}; }
 Color BlockedColor() { return Color {184, 83, 67, 180}; }
-Color WaterColor() { return Color {64, 139, 196, 170}; }
 
 int FontSize(int px) {
     return std::max(10, static_cast<int>(std::round(static_cast<float>(px) * kUiFontScale)));
@@ -247,19 +246,29 @@ void DrawAtlasPanel(const Font& font, Rectangle bounds, const AtlasPanelState& s
     DrawTextWrapped(font, state.ref, Rectangle {refBox.x + 10.0f, refBox.y + 10.0f, refBox.width - 20.0f, refBox.height - 16.0f}, FontSize(16), AccentSoft(), 2);
     y += 82.0f;
 
+    DrawLabel(font, "Collision", content.x, y, content.width);
+    DrawValue(font, state.collision.empty() ? "pass" : state.collision, content.x, y, content.width, 18, AccentSoft());
+    DrawLabel(font, "Collider", content.x, y, content.width);
+    y += 32.0f;
+    DrawTextWrapped(font, "Drag the box on canvas or edit x y w h.", Rectangle {content.x, y, content.width, 32.0f}, FontSize(14), Fade(RAYWHITE, 0.72f), 2);
+    y += 36.0f;
+
     DrawLabel(font, "Controls", content.x, y, content.width);
     const char* controls[] = {
         "Tab domain | Q/E atlas",
         "Wheel zoom | RMB/MMB drag pan",
         "WASD pan | Arrows move select",
-        "Shift+Arrows resize | C copy",
-        "Switch to Map mode with F2"
+        "Shift+drag or double-click drag select",
+        "Ctrl+Z undo | Ctrl+Y redo",
+        "J pass | K block | T trunk | Del clear",
+        "Click collider fields then Enter",
+        "Drag collider edges/corners"
     };
     for (const char* line : controls) {
         if (y > content.y + content.height - 56.0f) {
             break;
         }
-        DrawTextWrapped(font, line, Rectangle {content.x, y, content.width, 22.0f}, FontSize(15), line == controls[4] ? AccentSoft() : RAYWHITE, 1);
+        DrawTextWrapped(font, line, Rectangle {content.x, y, content.width, 22.0f}, FontSize(15), line == controls[7] ? AccentSoft() : RAYWHITE, 1);
         y += 22.0f;
     }
 
@@ -285,8 +294,8 @@ void DrawMapPanel(const Font& font, Rectangle bounds, const MapPanelState& state
     std::vector<std::pair<std::string, bool>> rows;
     if (state.section == MapSection::Tile) {
         rows = {{"Paint", state.tool == MapTool::Paint}, {"Erase", state.tool == MapTool::Erase}};
-    } else if (state.section == MapSection::Region) {
-        rows = {{"Blocked", state.tool == MapTool::Blocked}, {"Water", state.tool == MapTool::Water}, {"Spawn", state.tool == MapTool::Spawn}};
+    } else if (state.section == MapSection::Spawn) {
+        rows = {{"Set Spawn", state.tool == MapTool::Spawn}};
     } else {
         rows = {
             {"Prop", state.objectKind == "prop"},
@@ -310,8 +319,15 @@ void DrawMapPanel(const Font& font, Rectangle bounds, const MapPanelState& state
     if (state.section == MapSection::Tile) {
         DrawLabel(font, "Layers", content.x, y, content.width);
         for (int i = 0; i < static_cast<int>(state.layers.size()) && y + 24.0f <= body.y + body.height; ++i) {
-            DrawRow(font, Rectangle {content.x, y, content.width, 22.0f}, state.layers[static_cast<size_t>(i)], i == state.activeLayer);
+            const Rectangle row {content.x, y, content.width, 22.0f};
+            DrawRow(font, row, state.layers[static_cast<size_t>(i)], i == state.activeLayer);
+            DrawTextClipped(font, "^", Rectangle {row.x + row.width - 42.0f, row.y + 4.0f, 18.0f, 16.0f}, FontSize(14), i > 0 ? AccentSoft() : Fade(RAYWHITE, 0.24f));
+            DrawTextClipped(font, "v", Rectangle {row.x + row.width - 20.0f, row.y + 4.0f, 18.0f, 16.0f}, FontSize(14), i + 1 < static_cast<int>(state.layers.size()) ? AccentSoft() : Fade(RAYWHITE, 0.24f));
             y += 26.0f;
+        }
+        if (y + 24.0f <= body.y + body.height) {
+            DrawRow(font, Rectangle {content.x, y + 4.0f, content.width, 22.0f}, "+ Add layer", false);
+            y += 32.0f;
         }
         y += 8.0f;
         if (y + 92.0f <= body.y + body.height) {
@@ -322,17 +338,29 @@ void DrawMapPanel(const Font& font, Rectangle bounds, const MapPanelState& state
                 Rectangle {brush.x + 10.0f, brush.y + 10.0f, brush.width - 20.0f, brush.height - 16.0f},
                 FontSize(16), AccentSoft(), 2);
             y += 78.0f;
-            DrawTextWrapped(font, "Paint memakai atlas brush aktif.", Rectangle {content.x, y, content.width, 34.0f}, FontSize(14), Fade(RAYWHITE, 0.72f), 2);
+            DrawTextWrapped(font, "L add | Del remove | Ctrl+Up/Down reorder.", Rectangle {content.x, y, content.width, 34.0f}, FontSize(14), Fade(RAYWHITE, 0.72f), 2);
         }
-    } else if (state.section == MapSection::Region) {
-        DrawLabel(font, "Region Tools", content.x, y, content.width);
-        DrawValue(font, "Blocked cells: " + std::to_string(state.blockedCount), content.x, y, content.width, 16);
-        DrawValue(font, "Water cells: " + std::to_string(state.waterCount), content.x, y, content.width, 16);
+    } else if (state.section == MapSection::Spawn) {
+        DrawLabel(font, "Collision Audit", content.x, y, content.width);
+        DrawValue(font, "Tile collision: " + std::to_string(state.tileCollisionCount), content.x, y, content.width, 16);
+        DrawValue(font, "Object collision: " + std::to_string(state.objectCollisionCount), content.x, y, content.width, 16);
         DrawValue(font, "Spawn: " + state.spawn, content.x, y, content.width, 16);
-        DrawTextWrapped(font, "Use B/V/G and click on map.", Rectangle {content.x, y, content.width, 34.0f}, FontSize(15), AccentSoft(), 2);
+        DrawTextWrapped(font, "Collision comes from atlas metadata or object properties.", Rectangle {content.x, y, content.width, 42.0f}, FontSize(15), AccentSoft(), 2);
     } else {
         DrawLabel(font, "Object Kind", content.x, y, content.width);
         DrawValue(font, state.objectKind, content.x, y, content.width, 18, AccentSoft());
+        DrawTextWrapped(font, "Selected: J pass | K block | T trunk | drag collider on canvas", Rectangle {content.x, y, content.width, 44.0f}, FontSize(14), Fade(RAYWHITE, 0.72f), 2);
+        y += 48.0f;
+        if (!state.selectedCollision.empty() && y + 42.0f <= body.y + body.height) {
+            DrawValue(font, "Collision: " + state.selectedCollision, content.x, y, content.width, 15, AccentSoft());
+            if (!state.selectedCollider.empty()) {
+                DrawValue(font, "Collider: " + state.selectedCollider, content.x, y, content.width, 15, Fade(RAYWHITE, 0.76f));
+            }
+            DrawLabel(font, "Collider", content.x, y, content.width);
+            y += 32.0f;
+            DrawTextWrapped(font, "Click x y w h then Enter.", Rectangle {content.x, y, content.width, 30.0f}, FontSize(14), Fade(RAYWHITE, 0.72f), 2);
+            y += 34.0f;
+        }
         DrawLabel(font, "Brush", content.x, y, content.width);
         DrawTextWrapped(font, state.brushRef.empty() ? "(pick in Atlas mode)" : state.brushRef,
             Rectangle {content.x, y, content.width, 48.0f}, FontSize(16), AccentSoft(), 2);

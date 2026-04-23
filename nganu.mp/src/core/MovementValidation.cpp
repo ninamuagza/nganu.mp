@@ -18,11 +18,11 @@ MovementValidationResult ValidateMovement(const Server::PlayerPosition& previous
     const float dy = nextPosition.y - previousPosition.y;
     result.distance = std::sqrt((dx * dx) + (dy * dy));
     /* Maximum accepted movement speed in pixels/second. */
-    constexpr float kMaxMoveSpeed = 260.0f;
+    constexpr float kMaxMoveSpeed = 175.0f;
     /* Additional movement tolerance in pixels for latency jitter. */
-    constexpr float kMoveSlack = 42.0f;
+    constexpr float kMoveSlack = 28.0f;
     const bool speedValid = result.distance <= (kMaxMoveSpeed * result.dtSeconds) + kMoveSlack;
-    result.walkable = map.isWalkable(nextPosition.x, nextPosition.y, 15.0f);
+    result.walkable = map.isWalkable(nextPosition.x, nextPosition.y, 10.0f);
     result.accepted = speedValid && result.walkable;
     return result;
 }

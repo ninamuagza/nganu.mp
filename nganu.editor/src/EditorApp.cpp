@@ -7,11 +7,14 @@
 #include <cctype>
 #include <cmath>
 #include <fstream>
+#include <iterator>
 #include <sstream>
 #include <map>
 #include <set>
 
 namespace {
+
+constexpr size_t kUndoHistoryLimit = 80;
 
 bool HasPngExtension(const std::filesystem::path& path) {
     std::string ext = path.extension().string();
@@ -137,6 +140,255 @@ void SetPropertyValue(PropertyCollection& properties, const std::string& key, co
     }
     properties.push_back({key, value});
 }
+
+template <typename PropertyCollection>
+void RemovePropertyValue(PropertyCollection& properties, const std::string& key) {
+    properties.erase(std::remove_if(properties.begin(), properties.end(), [&](const auto& property) {
+        return property.key == key;
+    }), properties.end());
+}
+
+std::string ToLower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+    return value;
+}
+
+bool CollisionBlocksMovement(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "block" ||
+           lowered == "solid" ||
+           lowered == "wall";
+}
+
+bool CollisionDisablesMovementBlock(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "none" ||
+           lowered == "pass" ||
+           lowered == "passable" ||
+           lowered == "false" ||
+           lowered == "off";
+}
+
+bool ParseLocalRect(const std::string& value, Rectangle& out) {
+    const std::vector<std::string> parts = Nganu::MapFormat::SplitEscaped(value, '|');
+    if (parts.size() != 4) {
+        return false;
+    }
+    return Nganu::MapFormat::ParseFloatStrict(parts[0], out.x) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[1], out.y) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[2], out.width) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[3], out.height) &&
+           out.width > 0.0f &&
+           out.height > 0.0f;
+}
+
+std::string FormatRect(Rectangle rect) {
+    std::ostringstream out;
+    out << static_cast<int>(std::round(rect.x)) << "|"
+        << static_cast<int>(std::round(rect.y)) << "|"
+        << static_cast<int>(std::round(rect.width)) << "|"
+        << static_cast<int>(std::round(rect.height));
+    return out.str();
+}
+
+Rectangle TrunkColliderFor(Rectangle source) {
+    const float width = std::max(4.0f, source.width * 0.34f);
+    const float height = std::max(4.0f, source.height * 0.28f);
+    return Rectangle {
+        std::max(0.0f, (source.width - width) * 0.5f),
+        std::max(0.0f, source.height - height),
+        width,
+        height
+    };
+}
+
+Rectangle ClampLocalRect(Rectangle rect, float maxWidth, float maxHeight) {
+    maxWidth = std::max(1.0f, maxWidth);
+    maxHeight = std::max(1.0f, maxHeight);
+    rect.width = std::clamp(rect.width, 1.0f, maxWidth);
+    rect.height = std::clamp(rect.height, 1.0f, maxHeight);
+    rect.x = std::clamp(rect.x, 0.0f, std::max(0.0f, maxWidth - rect.width));
+    rect.y = std::clamp(rect.y, 0.0f, std::max(0.0f, maxHeight - rect.height));
+    return rect;
+}
+
+template <typename LayerCollection>
+std::string UniqueLayerName(const LayerCollection& layers) {
+    for (int suffix = static_cast<int>(layers.size()) + 1; suffix < 1000; ++suffix) {
+        const std::string name = suffix == 1 ? "base" : "layer_" + std::to_string(suffix);
+        const bool exists = std::any_of(layers.begin(), layers.end(), [&](const auto& layer) {
+            return layer.name == name;
+        });
+        if (!exists) {
+            return name;
+        }
+    }
+    return "layer_new";
+}
+
+struct ColliderInputRects {
+    Rectangle x {};
+    Rectangle y {};
+    Rectangle width {};
+    Rectangle height {};
+};
+
+float AtlasColliderInputRowY(Rectangle bounds) {
+    Rectangle content {bounds.x + 18.0f, bounds.y + 18.0f, bounds.width - 36.0f, bounds.height - 36.0f};
+    float y = content.y;
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(28) + 10);
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(18) + 10);
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(18) + 10);
+    const float previewHeight = std::clamp(bounds.height * 0.23f, 120.0f, 170.0f);
+    y = (y + 8.0f) + previewHeight + 18.0f;
+    y += 22.0f;
+    y += 82.0f;
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(18) + 10);
+    y += 22.0f;
+    return y;
+}
+
+float ObjectColliderInputRowY(Rectangle bounds, int selectedObject, bool hasSelectedCollider) {
+    Rectangle content {bounds.x + 18.0f, bounds.y + 18.0f, bounds.width - 36.0f, bounds.height - 36.0f};
+    float y = content.y;
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(27) + 10);
+    y += static_cast<float>(EditorUi::FontSize(17) + 10);
+    y += static_cast<float>(EditorUi::FontSize(17) + 10);
+    y += 22.0f;
+    y += 40.0f;
+    y += 22.0f;
+    y += 5.0f * 28.0f;
+    y += 8.0f;
+    y += 22.0f;
+    y += static_cast<float>(EditorUi::FontSize(18) + 10);
+    y += 48.0f;
+    if (selectedObject >= 0) {
+        y += static_cast<float>(EditorUi::FontSize(15) + 10);
+        if (hasSelectedCollider) {
+            y += static_cast<float>(EditorUi::FontSize(15) + 10);
+        }
+    }
+    y += 22.0f;
+    return y;
+}
+
+ColliderInputRects BuildColliderInputRects(Rectangle bounds, float rowY) {
+    const float left = bounds.x + 18.0f;
+    const float width = bounds.width - 36.0f;
+    const float gap = 6.0f;
+    const float fieldWidth = (width - gap * 3.0f) / 4.0f;
+    return ColliderInputRects {
+        Rectangle {left, rowY, fieldWidth, 24.0f},
+        Rectangle {left + (fieldWidth + gap), rowY, fieldWidth, 24.0f},
+        Rectangle {left + (fieldWidth + gap) * 2.0f, rowY, fieldWidth, 24.0f},
+        Rectangle {left + (fieldWidth + gap) * 3.0f, rowY, fieldWidth, 24.0f}
+    };
+}
+
+std::string FormatNumber(float value) {
+    return std::to_string(static_cast<int>(std::round(value)));
+}
+
+void DrawColliderInputField(const Font& font, Rectangle bounds, const char* label, const std::string& value, bool active) {
+    DrawRectangleRounded(bounds, 0.18f, 6, active ? Fade(EditorUi::AccentColor(), 0.30f) : Fade(WHITE, 0.08f));
+    DrawRectangleLinesEx(bounds, active ? 2.0f : 1.0f, active ? EditorUi::AccentSoft() : Fade(RAYWHITE, 0.22f));
+    EditorUi::DrawTextClipped(font, std::string(label) + ":" + value,
+        Rectangle {bounds.x + 6.0f, bounds.y + 5.0f, bounds.width - 12.0f, bounds.height - 8.0f},
+        EditorUi::FontSize(14), RAYWHITE);
+}
+
+void DrawColliderHandles(Rectangle rect, Color color) {
+    constexpr float handle = 6.0f;
+    const Vector2 points[] {
+        Vector2 {rect.x, rect.y},
+        Vector2 {rect.x + rect.width * 0.5f, rect.y},
+        Vector2 {rect.x + rect.width, rect.y},
+        Vector2 {rect.x, rect.y + rect.height * 0.5f},
+        Vector2 {rect.x + rect.width, rect.y + rect.height * 0.5f},
+        Vector2 {rect.x, rect.y + rect.height},
+        Vector2 {rect.x + rect.width * 0.5f, rect.y + rect.height},
+        Vector2 {rect.x + rect.width, rect.y + rect.height}
+    };
+    for (const Vector2 point : points) {
+        const Rectangle handleRect {point.x - handle * 0.5f, point.y - handle * 0.5f, handle, handle};
+        DrawRectangleRec(handleRect, color);
+        DrawRectangleLinesEx(handleRect, 1.0f, Fade(BLACK, 0.42f));
+    }
+}
+
+int HitColliderDragModeCode(Vector2 point, Rectangle rect) {
+    const float handle = 8.0f;
+    const Rectangle expanded {rect.x - handle, rect.y - handle, rect.width + handle * 2.0f, rect.height + handle * 2.0f};
+    if (!CheckCollisionPointRec(point, expanded)) {
+        return 0;
+    }
+
+    const bool left = std::fabs(point.x - rect.x) <= handle;
+    const bool right = std::fabs(point.x - (rect.x + rect.width)) <= handle;
+    const bool top = std::fabs(point.y - rect.y) <= handle;
+    const bool bottom = std::fabs(point.y - (rect.y + rect.height)) <= handle;
+    if (left && top) return 6;
+    if (right && top) return 7;
+    if (left && bottom) return 8;
+    if (right && bottom) return 9;
+    if (left) return 2;
+    if (right) return 3;
+    if (top) return 4;
+    if (bottom) return 5;
+    return CheckCollisionPointRec(point, rect) ? 1 : 0;
+}
+
+Rectangle ApplyColliderDrag(Rectangle start, int mode, Vector2 delta) {
+    float left = start.x;
+    float top = start.y;
+    float right = start.x + start.width;
+    float bottom = start.y + start.height;
+
+    if (mode == 1) {
+        left += delta.x;
+        right += delta.x;
+        top += delta.y;
+        bottom += delta.y;
+    } else {
+        if (mode == 2 || mode == 6 || mode == 8) left += delta.x;
+        if (mode == 3 || mode == 7 || mode == 9) right += delta.x;
+        if (mode == 4 || mode == 6 || mode == 7) top += delta.y;
+        if (mode == 5 || mode == 8 || mode == 9) bottom += delta.y;
+    }
+
+    if (right - left < 1.0f) {
+        if (mode == 2 || mode == 6 || mode == 8) left = right - 1.0f;
+        else right = left + 1.0f;
+    }
+    if (bottom - top < 1.0f) {
+        if (mode == 4 || mode == 6 || mode == 7) top = bottom - 1.0f;
+        else bottom = top + 1.0f;
+    }
+
+    return Rectangle {left, top, right - left, bottom - top};
+}
+
+bool AtlasTileFromScreen(Vector2 mouse, Rectangle drawRect, int gridWidth, int gridHeight, int textureWidth, int textureHeight, int& outX, int& outY) {
+    if (drawRect.width <= 0.0f || drawRect.height <= 0.0f || gridWidth <= 0 || gridHeight <= 0 || textureWidth <= 0 || textureHeight <= 0) {
+        return false;
+    }
+
+    const float localX = ((mouse.x - drawRect.x) / drawRect.width) * static_cast<float>(textureWidth);
+    const float localY = ((mouse.y - drawRect.y) / drawRect.height) * static_cast<float>(textureHeight);
+    const int maxCols = std::max(1, textureWidth / gridWidth);
+    const int maxRows = std::max(1, textureHeight / gridHeight);
+    outX = std::clamp(static_cast<int>(std::floor(localX / static_cast<float>(gridWidth))), 0, maxCols - 1);
+    outY = std::clamp(static_cast<int>(std::floor(localY / static_cast<float>(gridHeight))), 0, maxRows - 1);
+    return true;
+}
+
 }
 
 namespace Ui = EditorUi;
@@ -192,6 +444,8 @@ void EditorApp::ScanAssets() {
     UnloadAssets();
     mapAssets_.clear();
     characterAssets_.clear();
+    atlasMetadata_.clear();
+    loadedAtlasMetadata_.clear();
 
     const auto scanDir = [](const std::filesystem::path& root, const std::string& domain, std::vector<AtlasAsset>& out) {
         if (!std::filesystem::exists(root)) {
@@ -214,6 +468,9 @@ void EditorApp::ScanAssets() {
 
     scanDir(mapAssetRoot_, "map", mapAssets_);
     scanDir(characterAssetRoot_, "character", characterAssets_);
+    for (const AtlasAsset& asset : mapAssets_) {
+        LoadAtlasMetadataForAsset(asset);
+    }
     if (ActiveAssets().empty() && activeDomain_ == Domain::Map && !characterAssets_.empty()) {
         activeDomain_ = Domain::Character;
     }
@@ -263,14 +520,56 @@ const EditorApp::AtlasAsset* EditorApp::CurrentAsset() const {
     return &assets[activeIndex_];
 }
 
-void EditorApp::EnsureCurrentTextureLoaded() {
-    AtlasAsset* asset = CurrentAsset();
-    if (!asset || asset->loaded) {
+void EditorApp::EnsureAssetTextureLoaded(AtlasAsset& asset) {
+    if (asset.loaded) {
         return;
     }
-    asset->texture = LoadTexture(asset->path.string().c_str());
-    asset->loaded = asset->texture.id > 0;
+    asset.texture = LoadTexture(asset.path.string().c_str());
+    asset.loaded = asset.texture.id > 0;
+    if (asset.loaded) {
+        SetTextureFilter(asset.texture, TEXTURE_FILTER_POINT);
+        SetTextureWrap(asset.texture, TEXTURE_WRAP_CLAMP);
+        LoadAtlasMetadataForAsset(asset);
+    }
+}
+
+void EditorApp::EnsureCurrentTextureLoaded() {
+    AtlasAsset* asset = CurrentAsset();
+    if (!asset) {
+        return;
+    }
+    EnsureAssetTextureLoaded(*asset);
     ClampSelectionToTexture();
+}
+
+void EditorApp::EnsureMapRenderTexturesLoaded() {
+    if (mode_ != EditorMode::Map) {
+        return;
+    }
+
+    auto ensureRef = [&](const std::string& assetRef) {
+        const AtlasRef ref = ParseAtlasRef(assetRef);
+        if (!ref.valid) {
+            return;
+        }
+        std::vector<AtlasAsset>& pool = ref.domain == "character" ? characterAssets_ : mapAssets_;
+        for (AtlasAsset& asset : pool) {
+            if (asset.filename == ref.file) {
+                EnsureAssetTextureLoaded(asset);
+                return;
+            }
+        }
+    };
+
+    for (const MapLayerDef& layer : mapLayers_) {
+        ensureRef(layer.asset);
+    }
+    for (const MapStamp& stamp : mapStamps_) {
+        ensureRef(stamp.asset);
+    }
+    for (const MapObject& object : mapObjects_) {
+        ensureRef(PropertyValue(object.properties, "sprite"));
+    }
 }
 
 void EditorApp::UnloadAssets() {
@@ -285,6 +584,675 @@ void EditorApp::UnloadAssets() {
     };
     unload(mapAssets_);
     unload(characterAssets_);
+}
+
+void EditorApp::LoadAtlasMetadataForAsset(const AtlasAsset& asset) {
+    if (asset.domain != "map" || loadedAtlasMetadata_[asset.filename]) {
+        return;
+    }
+    loadedAtlasMetadata_[asset.filename] = true;
+
+    const std::filesystem::path metaPath = asset.path.parent_path() / (asset.path.stem().string() + ".atlas");
+    if (!std::filesystem::exists(metaPath)) {
+        return;
+    }
+
+    std::ifstream in(metaPath);
+    if (!in.is_open()) {
+        return;
+    }
+
+    const std::string text((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    const auto parsedMetadata = Nganu::MapFormat::ParseAtlasMetadata(text, asset.filename);
+    for (const auto& [key, source] : parsedMetadata) {
+        AtlasTileMeta meta;
+        meta.collision = source.collision;
+        meta.tag = source.tag;
+        meta.hasCollider = source.hasCollider;
+        meta.collider = Rectangle {source.collider.x, source.collider.y, source.collider.width, source.collider.height};
+        atlasMetadata_[key] = std::move(meta);
+    }
+}
+
+bool EditorApp::SaveAtlasMetadataForAsset(const AtlasAsset& asset) const {
+    if (asset.domain != "map") {
+        return false;
+    }
+
+    const std::string prefix = asset.filename + "@";
+    std::vector<std::pair<std::string, AtlasTileMeta>> entries;
+    for (const auto& [key, meta] : atlasMetadata_) {
+        if (key.rfind(prefix, 0) != 0) {
+            continue;
+        }
+        if (meta.collision.empty() && meta.tag.empty() && !meta.hasCollider) {
+            continue;
+        }
+        entries.push_back({key, meta});
+    }
+
+    const std::filesystem::path metaPath = asset.path.parent_path() / (asset.path.stem().string() + ".atlas");
+    if (entries.empty()) {
+        std::error_code ec;
+        std::filesystem::remove(metaPath, ec);
+        return !ec;
+    }
+
+    std::sort(entries.begin(), entries.end(), [](const auto& a, const auto& b) {
+        const std::vector<std::string> left = Nganu::MapFormat::SplitEscaped(a.first, '@');
+        const std::vector<std::string> right = Nganu::MapFormat::SplitEscaped(b.first, '@');
+        if (left.size() != 5 || right.size() != 5) {
+            return a.first < b.first;
+        }
+        int leftX = 0;
+        int leftY = 0;
+        int rightX = 0;
+        int rightY = 0;
+        Nganu::MapFormat::ParseIntStrict(left[1], leftX);
+        Nganu::MapFormat::ParseIntStrict(left[2], leftY);
+        Nganu::MapFormat::ParseIntStrict(right[1], rightX);
+        Nganu::MapFormat::ParseIntStrict(right[2], rightY);
+        return leftY == rightY ? leftX < rightX : leftY < rightY;
+    });
+
+    std::ofstream out(metaPath, std::ios::binary);
+    if (!out.is_open()) {
+        return false;
+    }
+
+    for (const auto& [key, meta] : entries) {
+        const std::vector<std::string> parts = Nganu::MapFormat::SplitEscaped(key, '@');
+        if (parts.size() != 5) {
+            continue;
+        }
+        out << "tile=" << parts[1] << "," << parts[2] << "," << parts[3] << "," << parts[4];
+        if (!meta.collision.empty()) {
+            out << ",collision:" << Nganu::MapFormat::EscapeValue(meta.collision);
+        }
+        if (!meta.tag.empty()) {
+            out << ",tag:" << Nganu::MapFormat::EscapeValue(meta.tag);
+        }
+        if (meta.hasCollider) {
+            out << ",collider:" << FormatRect(meta.collider);
+        }
+        out << "\n";
+    }
+
+    return out.good();
+}
+
+void EditorApp::SaveAllAtlasMetadata() const {
+    for (const AtlasAsset& asset : mapAssets_) {
+        SaveAtlasMetadataForAsset(asset);
+    }
+}
+
+EditorApp::EditorSnapshot EditorApp::CaptureSnapshot() const {
+    EditorSnapshot snapshot;
+    snapshot.mode = mode_;
+    snapshot.activeDomain = activeDomain_;
+    snapshot.activeIndex = activeIndex_;
+    snapshot.gridWidth = gridWidth_;
+    snapshot.gridHeight = gridHeight_;
+    snapshot.selectionCols = selectionCols_;
+    snapshot.selectionRows = selectionRows_;
+    snapshot.selectionX = selectionX_;
+    snapshot.selectionY = selectionY_;
+    snapshot.activeMapFileIndex = activeMapFileIndex_;
+    snapshot.currentMapFile = currentMapFile_;
+    snapshot.mapId = mapId_;
+    snapshot.worldName = worldName_;
+    snapshot.mapTileSize = mapTileSize_;
+    snapshot.mapWidth = mapWidth_;
+    snapshot.mapHeight = mapHeight_;
+    snapshot.mapSpawn = mapSpawn_;
+    snapshot.mapProperties = mapProperties_;
+    snapshot.mapLayers = mapLayers_;
+    snapshot.mapStamps = mapStamps_;
+    snapshot.mapObjects = mapObjects_;
+    snapshot.activeMapLayerIndex = activeMapLayerIndex_;
+    snapshot.mapTool = mapTool_;
+    snapshot.activeMapSection = activeMapSection_;
+    snapshot.selectedMapObjectIndex = selectedMapObjectIndex_;
+    snapshot.objectPlacementKind = objectPlacementKind_;
+    snapshot.atlasMetadata = atlasMetadata_;
+    return snapshot;
+}
+
+void EditorApp::RestoreSnapshot(const EditorSnapshot& snapshot) {
+    restoringSnapshot_ = true;
+    mode_ = snapshot.mode;
+    activeDomain_ = snapshot.activeDomain;
+    activeIndex_ = snapshot.activeIndex;
+    gridWidth_ = snapshot.gridWidth;
+    gridHeight_ = snapshot.gridHeight;
+    selectionCols_ = snapshot.selectionCols;
+    selectionRows_ = snapshot.selectionRows;
+    selectionX_ = snapshot.selectionX;
+    selectionY_ = snapshot.selectionY;
+    activeMapFileIndex_ = snapshot.activeMapFileIndex;
+    currentMapFile_ = snapshot.currentMapFile;
+    mapId_ = snapshot.mapId;
+    worldName_ = snapshot.worldName;
+    mapTileSize_ = snapshot.mapTileSize;
+    mapWidth_ = snapshot.mapWidth;
+    mapHeight_ = snapshot.mapHeight;
+    mapSpawn_ = snapshot.mapSpawn;
+    mapProperties_ = snapshot.mapProperties;
+    mapLayers_ = snapshot.mapLayers;
+    mapStamps_ = snapshot.mapStamps;
+    mapObjects_ = snapshot.mapObjects;
+    activeMapLayerIndex_ = snapshot.activeMapLayerIndex;
+    mapTool_ = snapshot.mapTool;
+    activeMapSection_ = snapshot.activeMapSection;
+    selectedMapObjectIndex_ = snapshot.selectedMapObjectIndex;
+    objectPlacementKind_ = snapshot.objectPlacementKind;
+    atlasMetadata_ = snapshot.atlasMetadata;
+    colliderEditTarget_ = ColliderEditTarget::None;
+    colliderEditBuffer_.clear();
+    atlasColliderDragMode_ = ColliderDragMode::None;
+    objectColliderDragMode_ = ColliderDragMode::None;
+    atlasColliderDirtyDuringDrag_ = false;
+    atlasSelectionDragging_ = false;
+
+    activeIndex_ = std::clamp(activeIndex_, 0, std::max(0, static_cast<int>(ActiveAssets().size()) - 1));
+    activeMapFileIndex_ = std::clamp(activeMapFileIndex_, 0, std::max(0, static_cast<int>(mapFiles_.size()) - 1));
+    activeMapLayerIndex_ = std::clamp(activeMapLayerIndex_, 0, std::max(0, static_cast<int>(mapLayers_.size()) - 1));
+    if (selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        selectedMapObjectIndex_ = -1;
+    }
+    ClampSelectionToTexture();
+    EnsureCurrentTextureLoaded();
+    EnsureMapRenderTexturesLoaded();
+    SaveAllAtlasMetadata();
+    restoringSnapshot_ = false;
+}
+
+void EditorApp::PushUndoSnapshot() {
+    if (restoringSnapshot_) {
+        return;
+    }
+    undoStack_.push_back(CaptureSnapshot());
+    if (undoStack_.size() > kUndoHistoryLimit) {
+        undoStack_.erase(undoStack_.begin());
+    }
+    redoStack_.clear();
+}
+
+void EditorApp::Undo() {
+    if (undoStack_.empty()) {
+        statusText_ = "Nothing to undo.";
+        return;
+    }
+    redoStack_.push_back(CaptureSnapshot());
+    const EditorSnapshot snapshot = undoStack_.back();
+    undoStack_.pop_back();
+    RestoreSnapshot(snapshot);
+    statusText_ = "Undo.";
+}
+
+void EditorApp::Redo() {
+    if (redoStack_.empty()) {
+        statusText_ = "Nothing to redo.";
+        return;
+    }
+    undoStack_.push_back(CaptureSnapshot());
+    if (undoStack_.size() > kUndoHistoryLimit) {
+        undoStack_.erase(undoStack_.begin());
+    }
+    const EditorSnapshot snapshot = redoStack_.back();
+    redoStack_.pop_back();
+    RestoreSnapshot(snapshot);
+    statusText_ = "Redo.";
+}
+
+void EditorApp::HandleUndoRedoInput() {
+    if (colliderEditTarget_ != ColliderEditTarget::None) {
+        return;
+    }
+    const bool ctrlMode = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+    const bool shiftMode = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    if (!ctrlMode) {
+        return;
+    }
+    if (IsKeyPressed(KEY_Z)) {
+        if (shiftMode) {
+            Redo();
+        } else {
+            Undo();
+        }
+    } else if (IsKeyPressed(KEY_Y)) {
+        Redo();
+    }
+}
+
+std::string EditorApp::CurrentAtlasMetaKey() const {
+    const AtlasAsset* asset = CurrentAsset();
+    if (!asset || asset->domain != "map") {
+        return {};
+    }
+    const Rectangle selection = SelectionRectPixels();
+    return Nganu::MapFormat::AtlasMetaKey(asset->filename,
+                                          static_cast<int>(selection.x),
+                                          static_cast<int>(selection.y),
+                                          static_cast<int>(selection.width),
+                                          static_cast<int>(selection.height));
+}
+
+const EditorApp::AtlasTileMeta* EditorApp::CurrentAtlasMeta() const {
+    const std::string key = CurrentAtlasMetaKey();
+    if (key.empty()) {
+        return nullptr;
+    }
+    auto it = atlasMetadata_.find(key);
+    if (it == atlasMetadata_.end()) {
+        return nullptr;
+    }
+    return &it->second;
+}
+
+const EditorApp::AtlasTileMeta* EditorApp::MetaForAtlasRef(const std::string& assetRef) const {
+    const AtlasRef ref = ParseAtlasRef(assetRef);
+    if (!ref.valid || ref.domain != "map") {
+        return nullptr;
+    }
+    const std::string key = Nganu::MapFormat::AtlasMetaKey(ref.file,
+                                                           static_cast<int>(ref.source.x),
+                                                           static_cast<int>(ref.source.y),
+                                                           static_cast<int>(ref.source.width),
+                                                           static_cast<int>(ref.source.height));
+    auto it = atlasMetadata_.find(key);
+    if (it == atlasMetadata_.end()) {
+        return nullptr;
+    }
+    return &it->second;
+}
+
+void EditorApp::SetCurrentAtlasCollision(const std::string& collision) {
+    AtlasAsset* asset = CurrentAsset();
+    const std::string key = CurrentAtlasMetaKey();
+    if (!asset || asset->domain != "map" || key.empty()) {
+        statusText_ = "Collision metadata only applies to map atlases.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    AtlasTileMeta& meta = atlasMetadata_[key];
+    meta.collision = ToLower(collision);
+    meta.tag.clear();
+    if (CollisionBlocksMovement(meta.collision) && !meta.hasCollider) {
+        const Rectangle source = SelectionRectPixels();
+        meta.hasCollider = true;
+        meta.collider = Rectangle {0.0f, 0.0f, source.width, source.height};
+    } else if (CollisionDisablesMovementBlock(meta.collision)) {
+        meta.hasCollider = false;
+        meta.collider = Rectangle {};
+    }
+    if (SaveAtlasMetadataForAsset(*asset)) {
+        statusText_ = "Atlas collision set to " + meta.collision + ".";
+    } else {
+        statusText_ = "Failed to save atlas metadata.";
+    }
+}
+
+void EditorApp::SetCurrentAtlasTrunkCollider() {
+    AtlasAsset* asset = CurrentAsset();
+    const std::string key = CurrentAtlasMetaKey();
+    if (!asset || asset->domain != "map" || key.empty()) {
+        statusText_ = "Trunk collider only applies to map atlases.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    AtlasTileMeta& meta = atlasMetadata_[key];
+    meta.collision = "block";
+    meta.hasCollider = true;
+    meta.collider = TrunkColliderFor(SelectionRectPixels());
+    if (SaveAtlasMetadataForAsset(*asset)) {
+        statusText_ = "Atlas trunk collider saved.";
+    } else {
+        statusText_ = "Failed to save atlas metadata.";
+    }
+}
+
+void EditorApp::AdjustCurrentAtlasCollider(int moveX, int moveY, int growWidth, int growHeight) {
+    AtlasAsset* asset = CurrentAsset();
+    const std::string key = CurrentAtlasMetaKey();
+    if (!asset || asset->domain != "map" || key.empty()) {
+        statusText_ = "Collider edit only applies to map atlases.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    const Rectangle source = SelectionRectPixels();
+    AtlasTileMeta& meta = atlasMetadata_[key];
+    meta.collision = "block";
+    if (!meta.hasCollider) {
+        meta.collider = Rectangle {0.0f, 0.0f, source.width, source.height};
+        meta.hasCollider = true;
+    }
+    meta.collider.x += static_cast<float>(moveX);
+    meta.collider.y += static_cast<float>(moveY);
+    meta.collider.width += static_cast<float>(growWidth);
+    meta.collider.height += static_cast<float>(growHeight);
+    meta.collider = ClampLocalRect(meta.collider, source.width, source.height);
+
+    if (SaveAtlasMetadataForAsset(*asset)) {
+        statusText_ = "Atlas collider " + FormatRect(meta.collider) + ".";
+    } else {
+        statusText_ = "Failed to save atlas metadata.";
+    }
+}
+
+Rectangle EditorApp::CurrentAtlasColliderOrDefault() const {
+    const Rectangle source = SelectionRectPixels();
+    Rectangle collider {0.0f, 0.0f, source.width, source.height};
+    if (const AtlasTileMeta* meta = CurrentAtlasMeta()) {
+        if (meta->hasCollider) {
+            collider = meta->collider;
+        }
+    }
+    return ClampLocalRect(collider, source.width, source.height);
+}
+
+void EditorApp::SetCurrentAtlasColliderRect(Rectangle rect, bool saveNow) {
+    AtlasAsset* asset = CurrentAsset();
+    const std::string key = CurrentAtlasMetaKey();
+    if (!asset || asset->domain != "map" || key.empty()) {
+        return;
+    }
+
+    const Rectangle source = SelectionRectPixels();
+    AtlasTileMeta& meta = atlasMetadata_[key];
+    meta.collision = "block";
+    meta.hasCollider = true;
+    meta.collider = ClampLocalRect(rect, source.width, source.height);
+    statusText_ = "Atlas collider " + FormatRect(meta.collider) + ".";
+    if (saveNow && !SaveAtlasMetadataForAsset(*asset)) {
+        statusText_ = "Failed to save atlas metadata.";
+    }
+}
+
+void EditorApp::ClearCurrentAtlasCollision() {
+    AtlasAsset* asset = CurrentAsset();
+    const std::string key = CurrentAtlasMetaKey();
+    if (!asset || asset->domain != "map" || key.empty()) {
+        statusText_ = "Collision metadata only applies to map atlases.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    atlasMetadata_.erase(key);
+    if (SaveAtlasMetadataForAsset(*asset)) {
+        statusText_ = "Atlas collision cleared.";
+    } else {
+        statusText_ = "Failed to save atlas metadata.";
+    }
+}
+
+void EditorApp::SetSelectedObjectCollision(const std::string& collision) {
+    if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        statusText_ = "Select an object first.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    if (CollisionDisablesMovementBlock(collision)) {
+        SetPropertyValue(object.properties, "collision", "none");
+        RemovePropertyValue(object.properties, "collider");
+        statusText_ = "Object collision cleared for " + object.id + ".";
+        return;
+    }
+
+    SetPropertyValue(object.properties, "collision", ToLower(collision));
+    statusText_ = "Object collision set to " + ToLower(collision) + " for " + object.id + ".";
+}
+
+void EditorApp::SetSelectedObjectTrunkCollider() {
+    if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        statusText_ = "Select an object first.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    SetPropertyValue(object.properties, "collision", "block");
+    const Rectangle localBounds {0.0f, 0.0f, static_cast<float>(object.width), static_cast<float>(object.height)};
+    SetPropertyValue(object.properties, "collider", FormatRect(TrunkColliderFor(localBounds)));
+    statusText_ = "Object trunk collider set for " + object.id + ".";
+}
+
+void EditorApp::AdjustSelectedObjectCollider(int moveX, int moveY, int growWidth, int growHeight) {
+    if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        statusText_ = "Select an object first.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    Rectangle collider {0.0f, 0.0f, static_cast<float>(std::max(1, object.width)), static_cast<float>(std::max(1, object.height))};
+    const std::string current = PropertyValue(object.properties, "collider");
+    if (!current.empty()) {
+        Rectangle parsed {};
+        if (ParseLocalRect(current, parsed)) {
+            collider = parsed;
+        }
+    }
+
+    collider.x += static_cast<float>(moveX);
+    collider.y += static_cast<float>(moveY);
+    collider.width += static_cast<float>(growWidth);
+    collider.height += static_cast<float>(growHeight);
+    collider = ClampLocalRect(collider, static_cast<float>(std::max(1, object.width)), static_cast<float>(std::max(1, object.height)));
+
+    SetPropertyValue(object.properties, "collision", "block");
+    SetPropertyValue(object.properties, "collider", FormatRect(collider));
+    statusText_ = "Object collider " + object.id + " " + FormatRect(collider) + ".";
+}
+
+Rectangle EditorApp::SelectedObjectColliderOrDefault() const {
+    if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        return Rectangle {};
+    }
+    const MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    Rectangle collider {0.0f, 0.0f, static_cast<float>(std::max(1, object.width)), static_cast<float>(std::max(1, object.height))};
+    const std::string current = PropertyValue(object.properties, "collider");
+    if (!current.empty()) {
+        Rectangle parsed {};
+        if (ParseLocalRect(current, parsed)) {
+            collider = parsed;
+        }
+    } else {
+        const std::string sprite = PropertyValue(object.properties, "sprite");
+        const AtlasTileMeta* spriteMeta = MetaForAtlasRef(sprite);
+        if (spriteMeta != nullptr && spriteMeta->hasCollider) {
+            const AtlasRef spriteRef = ParseAtlasRef(sprite);
+            const float sourceWidth = spriteRef.valid ? std::max(1.0f, spriteRef.source.width) : static_cast<float>(std::max(1, object.width));
+            const float sourceHeight = spriteRef.valid ? std::max(1.0f, spriteRef.source.height) : static_cast<float>(std::max(1, object.height));
+            collider = Rectangle {
+                (spriteMeta->collider.x / sourceWidth) * static_cast<float>(std::max(1, object.width)),
+                (spriteMeta->collider.y / sourceHeight) * static_cast<float>(std::max(1, object.height)),
+                (spriteMeta->collider.width / sourceWidth) * static_cast<float>(std::max(1, object.width)),
+                (spriteMeta->collider.height / sourceHeight) * static_cast<float>(std::max(1, object.height))
+            };
+        }
+    }
+    return ClampLocalRect(collider, static_cast<float>(std::max(1, object.width)), static_cast<float>(std::max(1, object.height)));
+}
+
+void EditorApp::SetSelectedObjectColliderRect(Rectangle rect) {
+    if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        return;
+    }
+    MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    rect = ClampLocalRect(rect, static_cast<float>(std::max(1, object.width)), static_cast<float>(std::max(1, object.height)));
+    SetPropertyValue(object.properties, "collision", "block");
+    SetPropertyValue(object.properties, "collider", FormatRect(rect));
+    statusText_ = "Object collider " + object.id + " " + FormatRect(rect) + ".";
+}
+
+void EditorApp::BeginColliderTextEdit(ColliderEditTarget target) {
+    Rectangle rect {};
+    switch (target) {
+        case ColliderEditTarget::AtlasX:
+        case ColliderEditTarget::AtlasY:
+        case ColliderEditTarget::AtlasWidth:
+        case ColliderEditTarget::AtlasHeight:
+            rect = CurrentAtlasColliderOrDefault();
+            break;
+        case ColliderEditTarget::ObjectX:
+        case ColliderEditTarget::ObjectY:
+        case ColliderEditTarget::ObjectWidth:
+        case ColliderEditTarget::ObjectHeight:
+            if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+                return;
+            }
+            rect = SelectedObjectColliderOrDefault();
+            break;
+        case ColliderEditTarget::None:
+            return;
+    }
+
+    colliderEditTarget_ = target;
+    switch (target) {
+        case ColliderEditTarget::AtlasX:
+        case ColliderEditTarget::ObjectX:
+            colliderEditBuffer_ = FormatNumber(rect.x);
+            break;
+        case ColliderEditTarget::AtlasY:
+        case ColliderEditTarget::ObjectY:
+            colliderEditBuffer_ = FormatNumber(rect.y);
+            break;
+        case ColliderEditTarget::AtlasWidth:
+        case ColliderEditTarget::ObjectWidth:
+            colliderEditBuffer_ = FormatNumber(rect.width);
+            break;
+        case ColliderEditTarget::AtlasHeight:
+        case ColliderEditTarget::ObjectHeight:
+            colliderEditBuffer_ = FormatNumber(rect.height);
+            break;
+        case ColliderEditTarget::None:
+            break;
+    }
+}
+
+void EditorApp::CommitColliderTextEdit() {
+    if (colliderEditTarget_ == ColliderEditTarget::None) {
+        return;
+    }
+
+    float value = 0.0f;
+    if (!Nganu::MapFormat::ParseFloatStrict(colliderEditBuffer_, value)) {
+        statusText_ = "Invalid collider value.";
+        return;
+    }
+
+    const ColliderEditTarget target = colliderEditTarget_;
+    Rectangle rect {};
+    switch (target) {
+        case ColliderEditTarget::AtlasX:
+        case ColliderEditTarget::AtlasY:
+        case ColliderEditTarget::AtlasWidth:
+        case ColliderEditTarget::AtlasHeight:
+            rect = CurrentAtlasColliderOrDefault();
+            if (target == ColliderEditTarget::AtlasX) rect.x = value;
+            else if (target == ColliderEditTarget::AtlasY) rect.y = value;
+            else if (target == ColliderEditTarget::AtlasWidth) rect.width = value;
+            else rect.height = value;
+            PushUndoSnapshot();
+            SetCurrentAtlasColliderRect(rect, true);
+            break;
+        case ColliderEditTarget::ObjectX:
+        case ColliderEditTarget::ObjectY:
+        case ColliderEditTarget::ObjectWidth:
+        case ColliderEditTarget::ObjectHeight:
+            rect = SelectedObjectColliderOrDefault();
+            if (target == ColliderEditTarget::ObjectX) rect.x = value;
+            else if (target == ColliderEditTarget::ObjectY) rect.y = value;
+            else if (target == ColliderEditTarget::ObjectWidth) rect.width = value;
+            else rect.height = value;
+            PushUndoSnapshot();
+            SetSelectedObjectColliderRect(rect);
+            break;
+        case ColliderEditTarget::None:
+            break;
+    }
+
+    colliderEditTarget_ = ColliderEditTarget::None;
+    colliderEditBuffer_.clear();
+}
+
+void EditorApp::CancelColliderTextEdit() {
+    colliderEditTarget_ = ColliderEditTarget::None;
+    colliderEditBuffer_.clear();
+}
+
+void EditorApp::HandleColliderTextInput() {
+    if (colliderEditTarget_ == ColliderEditTarget::None) {
+        return;
+    }
+
+    int ch = GetCharPressed();
+    while (ch > 0) {
+        if ((ch >= '0' && ch <= '9') || ch == '-' || ch == '.') {
+            colliderEditBuffer_.push_back(static_cast<char>(ch));
+        }
+        ch = GetCharPressed();
+    }
+
+    if (IsKeyPressed(KEY_BACKSPACE) && !colliderEditBuffer_.empty()) {
+        colliderEditBuffer_.pop_back();
+    }
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+        CommitColliderTextEdit();
+    } else if (IsKeyPressed(KEY_ESCAPE)) {
+        CancelColliderTextEdit();
+    }
+}
+
+void EditorApp::AddMapLayer() {
+    const std::string name = UniqueLayerName(mapLayers_);
+    PushUndoSnapshot();
+    mapLayers_.push_back(MapLayerDef {name, "tilemap", "", "#FFFFFFFF", 1.0f});
+    activeMapLayerIndex_ = static_cast<int>(mapLayers_.size()) - 1;
+    statusText_ = "Added layer " + name + ".";
+}
+
+void EditorApp::RemoveActiveMapLayer() {
+    if (mapLayers_.size() <= 1 ||
+        activeMapLayerIndex_ < 0 ||
+        activeMapLayerIndex_ >= static_cast<int>(mapLayers_.size())) {
+        statusText_ = "Cannot remove the last layer.";
+        return;
+    }
+
+    PushUndoSnapshot();
+    const std::string removedName = mapLayers_[static_cast<size_t>(activeMapLayerIndex_)].name;
+    mapLayers_.erase(mapLayers_.begin() + activeMapLayerIndex_);
+    mapStamps_.erase(std::remove_if(mapStamps_.begin(), mapStamps_.end(), [&](const MapStamp& stamp) {
+        return stamp.layer == removedName;
+    }), mapStamps_.end());
+    activeMapLayerIndex_ = std::clamp(activeMapLayerIndex_, 0, static_cast<int>(mapLayers_.size()) - 1);
+    statusText_ = "Removed layer " + removedName + ".";
+}
+
+void EditorApp::MoveActiveMapLayer(int delta) {
+    if (delta == 0 ||
+        activeMapLayerIndex_ < 0 ||
+        activeMapLayerIndex_ >= static_cast<int>(mapLayers_.size())) {
+        return;
+    }
+
+    const int target = activeMapLayerIndex_ + delta;
+    if (target < 0 || target >= static_cast<int>(mapLayers_.size())) {
+        return;
+    }
+
+    PushUndoSnapshot();
+    std::swap(mapLayers_[static_cast<size_t>(activeMapLayerIndex_)], mapLayers_[static_cast<size_t>(target)]);
+    activeMapLayerIndex_ = target;
+    statusText_ = "Layer order updated.";
 }
 
 void EditorApp::ChangeDomain() {
@@ -315,7 +1283,7 @@ void EditorApp::NewMapDocument() {
     currentMapFile_.clear();
     mapId_ = "new_map";
     worldName_ = "New Region";
-    mapTileSize_ = 48;
+    mapTileSize_ = 32;
     mapWidth_ = 24;
     mapHeight_ = 18;
     mapSpawn_ = Vector2 {static_cast<float>(mapTileSize_ * 2), static_cast<float>(mapTileSize_ * 2)};
@@ -323,13 +1291,9 @@ void EditorApp::NewMapDocument() {
     mapProperties_.push_back({"music", "prototype_day"});
     mapProperties_.push_back({"climate", "temperate"});
     mapLayers_.clear();
-    mapLayers_.push_back({"ground", "image", "", "#FFFFFFFF", 1.0f});
-    mapLayers_.push_back({"road", "image", "", "#FFFFFFFF", 1.0f});
-    mapLayers_.push_back({"detail", "image", "", "#FFFFFFFF", 1.0f});
+    mapLayers_.push_back({"base", "tilemap", "", "#FFFFFFFF", 1.0f});
     mapStamps_.clear();
     mapObjects_.clear();
-    blockedAreas_.clear();
-    waterAreas_.clear();
     activeMapLayerIndex_ = 0;
     mapTool_ = MapTool::Paint;
     activeMapSection_ = MapSection::Tile;
@@ -388,28 +1352,13 @@ bool EditorApp::LoadMapFile(const std::filesystem::path& path) {
         }
         mapObjects_.push_back(std::move(object));
     }
-    for (const Nganu::MapFormat::Rect& source : document.blockedAreas) {
-        blockedAreas_.push_back(MapRect {
-            static_cast<int>(std::round(source.x)),
-            static_cast<int>(std::round(source.y)),
-            static_cast<int>(std::round(source.width)),
-            static_cast<int>(std::round(source.height))
-        });
-    }
-    for (const Nganu::MapFormat::Rect& source : document.waterAreas) {
-        waterAreas_.push_back(MapRect {
-            static_cast<int>(std::round(source.x)),
-            static_cast<int>(std::round(source.y)),
-            static_cast<int>(std::round(source.width)),
-            static_cast<int>(std::round(source.height))
-        });
-    }
-
     if (mapLayers_.empty()) {
         mapLayers_.push_back({"ground", "image", "map:terrain_atlas.png@0@0@32@32", "#FFFFFFFF", 1.0f});
     }
     activeMapLayerIndex_ = std::clamp(activeMapLayerIndex_, 0, std::max(0, static_cast<int>(mapLayers_.size()) - 1));
     statusText_ = "Loaded map " + path.filename().string();
+    undoStack_.clear();
+    redoStack_.clear();
     return true;
 }
 
@@ -435,7 +1384,8 @@ bool EditorApp::SaveCurrentMap() const {
             out << "property=" << Nganu::MapFormat::EscapeValue(property.key) << "," << Nganu::MapFormat::EscapeValue(property.value) << "\n";
         }
         for (const MapLayerDef& layer : mapLayers_) {
-            out << "layer=" << Nganu::MapFormat::EscapeValue(layer.name) << ",tilemap";
+            const std::string kind = layer.kind.empty() ? "tilemap" : layer.kind;
+            out << "layer=" << Nganu::MapFormat::EscapeValue(layer.name) << "," << Nganu::MapFormat::EscapeValue(kind);
             if (!layer.asset.empty()) {
                 out << ",asset:" << Nganu::MapFormat::EscapeValue(layer.asset);
             }
@@ -510,12 +1460,6 @@ bool EditorApp::SaveCurrentMap() const {
                     << Nganu::MapFormat::EscapeValue(property.value) << "\n";
             }
         }
-        for (const MapRect& rect : blockedAreas_) {
-            out << "area=block," << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
-        }
-        for (const MapRect& rect : waterAreas_) {
-            out << "area=water," << rect.x << "," << rect.y << "," << rect.width << "," << rect.height << "\n";
-        }
         return out.good();
     } catch (...) {
         return false;
@@ -570,6 +1514,12 @@ std::vector<EditorApp::BrushStamp> EditorApp::CurrentBrushPattern() const {
     const Rectangle selection = SelectionRectPixels();
     const int cols = std::max(1, selectionCols_);
     const int rows = std::max(1, selectionRows_);
+    const std::string fullSelectionRef = BuildAtlasRef();
+    if ((cols > 1 || rows > 1) && MetaForAtlasRef(fullSelectionRef) != nullptr) {
+        pattern.push_back(BrushStamp {0, 0, fullSelectionRef});
+        return pattern;
+    }
+
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < cols; ++x) {
             std::ostringstream ref;
@@ -595,6 +1545,9 @@ void EditorApp::HandleKeyboardInput(float dt) {
         activeDomain_ = Domain::Map;
         statusText_ = "Map mode.";
     }
+    if (colliderEditTarget_ != ColliderEditTarget::None) {
+        return;
+    }
     if (mode_ != EditorMode::Atlas) {
         return;
     }
@@ -607,6 +1560,10 @@ void EditorApp::HandleKeyboardInput(float dt) {
         pan_ = Vector2 {0.0f, 0.0f};
     }
     if (IsKeyPressed(KEY_C)) CopyCurrentRef();
+    if (IsKeyPressed(KEY_J)) SetCurrentAtlasCollision("none");
+    if (IsKeyPressed(KEY_K)) SetCurrentAtlasCollision("block");
+    if (IsKeyPressed(KEY_T)) SetCurrentAtlasTrunkCollider();
+    if (IsKeyPressed(KEY_DELETE) || IsKeyPressed(KEY_BACKSPACE)) ClearCurrentAtlasCollision();
     if (IsKeyPressed(KEY_ONE)) { gridWidth_ = 16; gridHeight_ = 16; }
     if (IsKeyPressed(KEY_TWO)) { gridWidth_ = 24; gridHeight_ = 24; }
     if (IsKeyPressed(KEY_THREE)) { gridWidth_ = 32; gridHeight_ = 32; }
@@ -621,29 +1578,235 @@ void EditorApp::HandleKeyboardInput(float dt) {
     if (IsKeyDown(KEY_W)) pan_.y += panStep;
     if (IsKeyDown(KEY_S)) pan_.y -= panStep;
 
-    const bool resizeMode = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
-    if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), leftRepeatTimer_, dt)) {
-        if (resizeMode) selectionCols_ = std::max(1, selectionCols_ - 1);
-        else selectionX_ = std::max(0, selectionX_ - 1);
-    }
-    if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), rightRepeatTimer_, dt)) {
-        if (resizeMode) selectionCols_ += 1;
-        else selectionX_ += 1;
-    }
-    if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), upRepeatTimer_, dt)) {
-        if (resizeMode) selectionRows_ = std::max(1, selectionRows_ - 1);
-        else selectionY_ = std::max(0, selectionY_ - 1);
-    }
-    if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), downRepeatTimer_, dt)) {
-        if (resizeMode) selectionRows_ += 1;
-        else selectionY_ += 1;
+    const bool shiftMode = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    const bool moveColliderMode = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
+    const bool resizeColliderMode = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+    const int colliderStep = shiftMode ? 4 : 1;
+    if (moveColliderMode || resizeColliderMode) {
+        if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), leftRepeatTimer_, dt)) {
+            if (moveColliderMode) AdjustCurrentAtlasCollider(-colliderStep, 0, 0, 0);
+            else AdjustCurrentAtlasCollider(0, 0, -colliderStep, 0);
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), rightRepeatTimer_, dt)) {
+            if (moveColliderMode) AdjustCurrentAtlasCollider(colliderStep, 0, 0, 0);
+            else AdjustCurrentAtlasCollider(0, 0, colliderStep, 0);
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), upRepeatTimer_, dt)) {
+            if (moveColliderMode) AdjustCurrentAtlasCollider(0, -colliderStep, 0, 0);
+            else AdjustCurrentAtlasCollider(0, 0, 0, -colliderStep);
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), downRepeatTimer_, dt)) {
+            if (moveColliderMode) AdjustCurrentAtlasCollider(0, colliderStep, 0, 0);
+            else AdjustCurrentAtlasCollider(0, 0, 0, colliderStep);
+        }
+    } else {
+        if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), leftRepeatTimer_, dt)) {
+            selectionX_ = std::max(0, selectionX_ - 1);
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), rightRepeatTimer_, dt)) {
+            selectionX_ += 1;
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), upRepeatTimer_, dt)) {
+            selectionY_ = std::max(0, selectionY_ - 1);
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), downRepeatTimer_, dt)) {
+            selectionY_ += 1;
+        }
     }
 
     ClampSelectionToTexture();
 }
 
-void EditorApp::HandleMouseInput(const Rectangle& canvasBounds) {
+bool EditorApp::HandleAtlasColliderPanelInput(const Rectangle& panelBounds) {
+    if (mode_ != EditorMode::Atlas || activeDomain_ != Domain::Map || !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        return false;
+    }
+    const AtlasAsset* asset = CurrentAsset();
+    if (!asset || !asset->loaded) {
+        return false;
+    }
+
+    const ColliderInputRects rects = BuildColliderInputRects(panelBounds, AtlasColliderInputRowY(panelBounds));
+    const Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, rects.x)) {
+        BeginColliderTextEdit(ColliderEditTarget::AtlasX);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.y)) {
+        BeginColliderTextEdit(ColliderEditTarget::AtlasY);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.width)) {
+        BeginColliderTextEdit(ColliderEditTarget::AtlasWidth);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.height)) {
+        BeginColliderTextEdit(ColliderEditTarget::AtlasHeight);
+        return true;
+    }
+    return false;
+}
+
+bool EditorApp::HandleObjectColliderPanelInput(const Rectangle& panelBounds) {
+    if (mode_ != EditorMode::Map ||
+        activeMapSection_ != MapSection::Object ||
+        selectedMapObjectIndex_ < 0 ||
+        selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size()) ||
+        !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        return false;
+    }
+
+    const std::string collider = PropertyValue(mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)].properties, "collider");
+    const ColliderInputRects rects = BuildColliderInputRects(panelBounds, ObjectColliderInputRowY(panelBounds, selectedMapObjectIndex_, !collider.empty()));
+    const Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, rects.x)) {
+        BeginColliderTextEdit(ColliderEditTarget::ObjectX);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.y)) {
+        BeginColliderTextEdit(ColliderEditTarget::ObjectY);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.width)) {
+        BeginColliderTextEdit(ColliderEditTarget::ObjectWidth);
+        return true;
+    }
+    if (CheckCollisionPointRec(mouse, rects.height)) {
+        BeginColliderTextEdit(ColliderEditTarget::ObjectHeight);
+        return true;
+    }
+    return false;
+}
+
+bool EditorApp::HandleAtlasColliderMouseInput(const Rectangle& canvasBounds) {
+    if (mode_ != EditorMode::Atlas || activeDomain_ != Domain::Map) {
+        return false;
+    }
+
+    AtlasAsset* asset = CurrentAsset();
+    if (!asset || !asset->loaded) {
+        atlasColliderDragMode_ = ColliderDragMode::None;
+        atlasColliderDirtyDuringDrag_ = false;
+        return false;
+    }
+
+    if (atlasColliderDragMode_ != ColliderDragMode::None) {
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            const Vector2 delta {
+                (GetMousePosition().x - colliderDragStartMouse_.x) / zoom_,
+                (GetMousePosition().y - colliderDragStartMouse_.y) / zoom_
+            };
+            const Rectangle rect = ApplyColliderDrag(colliderDragStartRect_, static_cast<int>(atlasColliderDragMode_), delta);
+            SetCurrentAtlasColliderRect(rect, false);
+            atlasColliderDirtyDuringDrag_ = true;
+            return true;
+        }
+
+        if (atlasColliderDirtyDuringDrag_) {
+            SaveAtlasMetadataForAsset(*asset);
+        }
+        atlasColliderDragMode_ = ColliderDragMode::None;
+        atlasColliderDirtyDuringDrag_ = false;
+        return true;
+    }
+
+    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+        return false;
+    }
+
+    const AtlasTileMeta* meta = CurrentAtlasMeta();
+    if (!meta || !meta->hasCollider || !IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || !CheckCollisionPointRec(GetMousePosition(), canvasBounds)) {
+        return false;
+    }
+
+    const Rectangle selection = SelectionRectPixels();
+    const Rectangle sourceDraw {
+        canvasBounds.x + 18.0f + pan_.x,
+        canvasBounds.y + 18.0f + pan_.y,
+        static_cast<float>(asset->texture.width) * zoom_,
+        static_cast<float>(asset->texture.height) * zoom_
+    };
+    const Rectangle collider = CurrentAtlasColliderOrDefault();
+    const Rectangle screenCollider {
+        sourceDraw.x + (selection.x + collider.x) * zoom_,
+        sourceDraw.y + (selection.y + collider.y) * zoom_,
+        collider.width * zoom_,
+        collider.height * zoom_
+    };
+    const int mode = HitColliderDragModeCode(GetMousePosition(), screenCollider);
+    if (mode == 0) {
+        return false;
+    }
+
+    PushUndoSnapshot();
+    atlasColliderDragMode_ = static_cast<ColliderDragMode>(mode);
+    colliderDragStartMouse_ = GetMousePosition();
+    colliderDragStartRect_ = collider;
+    atlasColliderDirtyDuringDrag_ = false;
+    return true;
+}
+
+bool EditorApp::HandleSelectedObjectColliderMouseInput(const Rectangle& canvasBounds) {
+    if (mode_ != EditorMode::Map ||
+        activeMapSection_ != MapSection::Object ||
+        selectedMapObjectIndex_ < 0 ||
+        selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        objectColliderDragMode_ = ColliderDragMode::None;
+        return false;
+    }
+
+    if (objectColliderDragMode_ != ColliderDragMode::None) {
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            const Vector2 delta {
+                (GetMousePosition().x - colliderDragStartMouse_.x) / mapZoom_,
+                (GetMousePosition().y - colliderDragStartMouse_.y) / mapZoom_
+            };
+            SetSelectedObjectColliderRect(ApplyColliderDrag(colliderDragStartRect_, static_cast<int>(objectColliderDragMode_), delta));
+            return true;
+        }
+
+        objectColliderDragMode_ = ColliderDragMode::None;
+        return true;
+    }
+
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || !CheckCollisionPointRec(GetMousePosition(), canvasBounds)) {
+        return false;
+    }
+
+    const Rectangle canvas = MapCanvasRect(canvasBounds);
+    const MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    const Rectangle collider = SelectedObjectColliderOrDefault();
+    const Rectangle screenCollider {
+        canvas.x + (object.x + collider.x) * mapZoom_,
+        canvas.y + (object.y + collider.y) * mapZoom_,
+        collider.width * mapZoom_,
+        collider.height * mapZoom_
+    };
+    const int mode = HitColliderDragModeCode(GetMousePosition(), screenCollider);
+    if (mode == 0) {
+        return false;
+    }
+
+    PushUndoSnapshot();
+    objectColliderDragMode_ = static_cast<ColliderDragMode>(mode);
+    colliderDragStartMouse_ = GetMousePosition();
+    colliderDragStartRect_ = collider;
+    return true;
+}
+
+void EditorApp::HandleMouseInput(const Rectangle& canvasBounds, const Rectangle& sideBounds) {
     if (mode_ != EditorMode::Atlas) {
+        return;
+    }
+
+    if (atlasColliderDragMode_ != ColliderDragMode::None && HandleAtlasColliderMouseInput(canvasBounds)) {
+        return;
+    }
+
+    if (CheckCollisionPointRec(GetMousePosition(), sideBounds)) {
+        if (HandleAtlasColliderPanelInput(sideBounds)) {
+            return;
+        }
         return;
     }
 
@@ -661,6 +1824,7 @@ void EditorApp::HandleMouseInput(const Rectangle& canvasBounds) {
         IsMouseButtonDown(MOUSE_BUTTON_MIDDLE) ||
         (IsKeyDown(KEY_SPACE) && IsMouseButtonDown(MOUSE_BUTTON_LEFT));
     if (CheckCollisionPointRec(GetMousePosition(), canvasBounds) && panDragHeld) {
+        atlasSelectionDragging_ = false;
         const Vector2 delta = GetMouseDelta();
         pan_.x += delta.x;
         pan_.y += delta.y;
@@ -669,9 +1833,7 @@ void EditorApp::HandleMouseInput(const Rectangle& canvasBounds) {
         panning_ = false;
     }
 
-    const bool leftPick = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !IsKeyDown(KEY_SPACE) &&
-        !IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
-    if (!CheckCollisionPointRec(GetMousePosition(), canvasBounds) || !leftPick) {
+    if (HandleAtlasColliderMouseInput(canvasBounds)) {
         return;
     }
 
@@ -679,14 +1841,63 @@ void EditorApp::HandleMouseInput(const Rectangle& canvasBounds) {
     const float drawHeight = static_cast<float>(asset->texture.height) * zoom_;
     const Rectangle drawRect {canvasBounds.x + 18.0f + pan_.x, canvasBounds.y + 18.0f + pan_.y, drawWidth, drawHeight};
     const Vector2 mouse = GetMousePosition();
+
+    if (atlasSelectionDragging_) {
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            int dragX = 0;
+            int dragY = 0;
+            if (AtlasTileFromScreen(mouse, drawRect, gridWidth_, gridHeight_, asset->texture.width, asset->texture.height, dragX, dragY)) {
+                selectionX_ = std::min(atlasSelectionAnchorX_, dragX);
+                selectionY_ = std::min(atlasSelectionAnchorY_, dragY);
+                const int cols = dragX >= atlasSelectionAnchorX_ ? dragX - atlasSelectionAnchorX_ : atlasSelectionAnchorX_ - dragX;
+                const int rows = dragY >= atlasSelectionAnchorY_ ? dragY - atlasSelectionAnchorY_ : atlasSelectionAnchorY_ - dragY;
+                selectionCols_ = cols + 1;
+                selectionRows_ = rows + 1;
+                ClampSelectionToTexture();
+            }
+            return;
+        }
+        atlasSelectionDragging_ = false;
+        return;
+    }
+
+    const bool leftPick = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !IsKeyDown(KEY_SPACE) &&
+        !IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
+    if (!CheckCollisionPointRec(GetMousePosition(), canvasBounds) || !leftPick) {
+        return;
+    }
+
     if (!CheckCollisionPointRec(mouse, drawRect)) {
         return;
     }
 
-    const float localX = (mouse.x - drawRect.x) / zoom_;
-    const float localY = (mouse.y - drawRect.y) / zoom_;
-    selectionX_ = std::max(0, static_cast<int>(std::floor(localX / static_cast<float>(gridWidth_))));
-    selectionY_ = std::max(0, static_cast<int>(std::floor(localY / static_cast<float>(gridHeight_))));
+    int tileX = 0;
+    int tileY = 0;
+    if (!AtlasTileFromScreen(mouse, drawRect, gridWidth_, gridHeight_, asset->texture.width, asset->texture.height, tileX, tileY)) {
+        return;
+    }
+
+    const double now = GetTime();
+    const bool doubleClick = (now - lastAtlasClickTime_) <= 0.35 &&
+        tileX == lastAtlasClickTileX_ &&
+        tileY == lastAtlasClickTileY_;
+    const bool resizeWithMouse = doubleClick || IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    lastAtlasClickTime_ = now;
+    lastAtlasClickTileX_ = tileX;
+    lastAtlasClickTileY_ = tileY;
+
+    selectionX_ = tileX;
+    selectionY_ = tileY;
+    selectionCols_ = 1;
+    selectionRows_ = 1;
+    if (resizeWithMouse) {
+        atlasSelectionDragging_ = true;
+        atlasSelectionAnchorX_ = tileX;
+        atlasSelectionAnchorY_ = tileY;
+        statusText_ = "Drag cursor to resize atlas selection.";
+    } else {
+        statusText_ = "Atlas tile selected.";
+    }
     ClampSelectionToTexture();
 }
 
@@ -760,30 +1971,6 @@ void EditorApp::EraseMapTile(int tileX, int tileY) {
     }), mapStamps_.end());
 }
 
-bool EditorApp::HasMapRect(const std::vector<MapRect>& areas, int tileX, int tileY) const {
-    const int px = tileX * mapTileSize_;
-    const int py = tileY * mapTileSize_;
-    for (const MapRect& rect : areas) {
-        if (px >= rect.x && py >= rect.y && px < rect.x + rect.width && py < rect.y + rect.height) {
-            return true;
-        }
-    }
-    return false;
-}
-
-void EditorApp::ToggleMapRect(std::vector<MapRect>& areas, int tileX, int tileY) {
-    const int px = tileX * mapTileSize_;
-    const int py = tileY * mapTileSize_;
-    for (size_t i = 0; i < areas.size(); ++i) {
-        const MapRect& rect = areas[i];
-        if (rect.x == px && rect.y == py && rect.width == mapTileSize_ && rect.height == mapTileSize_) {
-            areas.erase(areas.begin() + static_cast<std::ptrdiff_t>(i));
-            return;
-        }
-    }
-    areas.push_back({px, py, mapTileSize_, mapTileSize_});
-}
-
 int EditorApp::ObjectIndexAtPixel(int px, int py) const {
     for (int i = static_cast<int>(mapObjects_.size()) - 1; i >= 0; --i) {
         const MapObject& object = mapObjects_[static_cast<size_t>(i)];
@@ -802,16 +1989,26 @@ void EditorApp::PlaceOrSelectObject(int px, int py) {
         return;
     }
 
+    PushUndoSnapshot();
     MapObject object;
     object.kind = objectPlacementKind_;
     object.id = objectPlacementKind_ + "_" + std::to_string(static_cast<int>(mapObjects_.size()) + 1);
-    object.x = (px / mapTileSize_) * mapTileSize_;
-    object.y = (py / mapTileSize_) * mapTileSize_;
+    const int tileX = (px / mapTileSize_) * mapTileSize_;
+    const int tileY = (py / mapTileSize_) * mapTileSize_;
+    object.x = tileX;
+    object.y = tileY;
     object.width = mapTileSize_;
     object.height = mapTileSize_;
     const std::string brush = CurrentBrushRef();
     if (!brush.empty()) {
         SetPropertyValue(object.properties, "sprite", brush);
+        const AtlasRef ref = ParseAtlasRef(brush);
+        if (ref.valid) {
+            object.width = std::max(1, static_cast<int>(std::round(ref.source.width)));
+            object.height = std::max(1, static_cast<int>(std::round(ref.source.height)));
+            object.x = tileX + ((mapTileSize_ - object.width) / 2);
+            object.y = tileY + mapTileSize_ - object.height;
+        }
     }
     if (object.kind == "portal") {
         SetPropertyValue(object.properties, "title", "Portal");
@@ -821,11 +2018,15 @@ void EditorApp::PlaceOrSelectObject(int px, int py) {
         SetPropertyValue(object.properties, "title", "NPC");
         SetPropertyValue(object.properties, "name", "Guide");
     } else if (object.kind == "region") {
+        object.x = tileX;
+        object.y = tileY;
         object.width = mapTileSize_ * 8;
         object.height = mapTileSize_ * 6;
         SetPropertyValue(object.properties, "title", "Region");
         SetPropertyValue(object.properties, "climate", "temperate");
     } else if (object.kind == "trigger") {
+        object.x = tileX;
+        object.y = tileY;
         object.width = mapTileSize_ * 2;
         object.height = mapTileSize_ * 2;
         SetPropertyValue(object.properties, "title", "Trigger");
@@ -841,6 +2042,7 @@ void EditorApp::DeleteSelectedObject() {
     if (selectedMapObjectIndex_ < 0 || selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
         return;
     }
+    PushUndoSnapshot();
     const std::string removedId = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)].id;
     mapObjects_.erase(mapObjects_.begin() + selectedMapObjectIndex_);
     selectedMapObjectIndex_ = -1;
@@ -851,9 +2053,13 @@ void EditorApp::HandleMapKeyboardInput(float dt) {
     if (mode_ != EditorMode::Map) {
         return;
     }
+    if (colliderEditTarget_ != ColliderEditTarget::None) {
+        return;
+    }
 
     const float panStep = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL) ? 20.0f : 10.0f;
     if (IsKeyPressed(KEY_N) && (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL))) {
+        PushUndoSnapshot();
         NewMapDocument();
         statusText_ = "New map document.";
     }
@@ -868,8 +2074,8 @@ void EditorApp::HandleMapKeyboardInput(float dt) {
     if (IsKeyPressed(KEY_PAGE_UP)) StepMapFile(-1);
     if (IsKeyPressed(KEY_PAGE_DOWN)) StepMapFile(1);
     if (IsKeyPressed(KEY_TAB)) {
-        if (activeMapSection_ == MapSection::Tile) activeMapSection_ = MapSection::Region;
-        else if (activeMapSection_ == MapSection::Region) activeMapSection_ = MapSection::Object;
+        if (activeMapSection_ == MapSection::Tile) activeMapSection_ = MapSection::Spawn;
+        else if (activeMapSection_ == MapSection::Spawn) activeMapSection_ = MapSection::Object;
         else activeMapSection_ = MapSection::Tile;
     }
     if (IsKeyPressed(KEY_ONE)) activeMapLayerIndex_ = std::min(0, std::max(0, static_cast<int>(mapLayers_.size()) - 1));
@@ -878,16 +2084,24 @@ void EditorApp::HandleMapKeyboardInput(float dt) {
     if (IsKeyPressed(KEY_FOUR)) activeMapLayerIndex_ = std::clamp(3, 0, std::max(0, static_cast<int>(mapLayers_.size()) - 1));
     if (IsKeyPressed(KEY_P)) { mapTool_ = MapTool::Paint; activeMapSection_ = MapSection::Tile; }
     if (IsKeyPressed(KEY_X)) { mapTool_ = MapTool::Erase; activeMapSection_ = MapSection::Tile; }
-    if (IsKeyPressed(KEY_B)) { mapTool_ = MapTool::Blocked; activeMapSection_ = MapSection::Region; }
-    if (IsKeyPressed(KEY_V)) { mapTool_ = MapTool::Water; activeMapSection_ = MapSection::Region; }
-    if (IsKeyPressed(KEY_G)) { mapTool_ = MapTool::Spawn; activeMapSection_ = MapSection::Region; }
+    if (IsKeyPressed(KEY_G)) { mapTool_ = MapTool::Spawn; activeMapSection_ = MapSection::Spawn; }
     if (IsKeyPressed(KEY_O)) { mapTool_ = MapTool::Object; activeMapSection_ = MapSection::Object; }
     if (IsKeyPressed(KEY_NINE)) objectPlacementKind_ = "npc";
     if (IsKeyPressed(KEY_ZERO)) objectPlacementKind_ = "portal";
     if (IsKeyPressed(KEY_EIGHT)) objectPlacementKind_ = "trigger";
     if (IsKeyPressed(KEY_SEVEN)) objectPlacementKind_ = "prop";
     if (IsKeyPressed(KEY_SIX)) objectPlacementKind_ = "region";
-    if (IsKeyPressed(KEY_DELETE) || IsKeyPressed(KEY_BACKSPACE)) DeleteSelectedObject();
+    if (activeMapSection_ == MapSection::Tile) {
+        if (IsKeyPressed(KEY_L)) AddMapLayer();
+        if (IsKeyPressed(KEY_DELETE) || IsKeyPressed(KEY_BACKSPACE)) RemoveActiveMapLayer();
+    } else if (activeMapSection_ == MapSection::Object && (IsKeyPressed(KEY_DELETE) || IsKeyPressed(KEY_BACKSPACE))) {
+        DeleteSelectedObject();
+    }
+    if (activeMapSection_ == MapSection::Object) {
+        if (IsKeyPressed(KEY_J)) SetSelectedObjectCollision("none");
+        if (IsKeyPressed(KEY_K)) SetSelectedObjectCollision("block");
+        if (IsKeyPressed(KEY_T)) SetSelectedObjectTrunkCollider();
+    }
     if (IsKeyPressed(KEY_R)) {
         mapZoom_ = 1.5f;
         mapPan_ = Vector2 {0.0f, 0.0f};
@@ -897,14 +2111,57 @@ void EditorApp::HandleMapKeyboardInput(float dt) {
     if (IsKeyDown(KEY_W)) mapPan_.y += panStep;
     if (IsKeyDown(KEY_S) && !(IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL))) mapPan_.y -= panStep;
 
-    if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), mapLeftRepeatTimer_, dt)) mapPan_.x += panStep;
-    if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), mapRightRepeatTimer_, dt)) mapPan_.x -= panStep;
-    if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), mapUpRepeatTimer_, dt)) mapPan_.y += panStep;
-    if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), mapDownRepeatTimer_, dt)) mapPan_.y -= panStep;
+    bool consumedArrow = false;
+    const bool ctrlMode = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+    const bool altMode = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
+    const bool shiftMode = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    const int editStep = shiftMode ? 4 : 1;
+    if (activeMapSection_ == MapSection::Tile && ctrlMode) {
+        if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), mapUpRepeatTimer_, dt)) {
+            MoveActiveMapLayer(-1);
+            consumedArrow = true;
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), mapDownRepeatTimer_, dt)) {
+            MoveActiveMapLayer(1);
+            consumedArrow = true;
+        }
+    } else if (activeMapSection_ == MapSection::Object && (ctrlMode || altMode)) {
+        if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), mapLeftRepeatTimer_, dt)) {
+            if (altMode) AdjustSelectedObjectCollider(-editStep, 0, 0, 0);
+            else AdjustSelectedObjectCollider(0, 0, -editStep, 0);
+            consumedArrow = true;
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), mapRightRepeatTimer_, dt)) {
+            if (altMode) AdjustSelectedObjectCollider(editStep, 0, 0, 0);
+            else AdjustSelectedObjectCollider(0, 0, editStep, 0);
+            consumedArrow = true;
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), mapUpRepeatTimer_, dt)) {
+            if (altMode) AdjustSelectedObjectCollider(0, -editStep, 0, 0);
+            else AdjustSelectedObjectCollider(0, 0, 0, -editStep);
+            consumedArrow = true;
+        }
+        if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), mapDownRepeatTimer_, dt)) {
+            if (altMode) AdjustSelectedObjectCollider(0, editStep, 0, 0);
+            else AdjustSelectedObjectCollider(0, 0, 0, editStep);
+            consumedArrow = true;
+        }
+    }
+
+    if (!consumedArrow) {
+        if (ConsumeRepeat(IsKeyPressed(KEY_LEFT), IsKeyDown(KEY_LEFT), mapLeftRepeatTimer_, dt)) mapPan_.x += panStep;
+        if (ConsumeRepeat(IsKeyPressed(KEY_RIGHT), IsKeyDown(KEY_RIGHT), mapRightRepeatTimer_, dt)) mapPan_.x -= panStep;
+        if (ConsumeRepeat(IsKeyPressed(KEY_UP), IsKeyDown(KEY_UP), mapUpRepeatTimer_, dt)) mapPan_.y += panStep;
+        if (ConsumeRepeat(IsKeyPressed(KEY_DOWN), IsKeyDown(KEY_DOWN), mapDownRepeatTimer_, dt)) mapPan_.y -= panStep;
+    }
 }
 
-void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds) {
+void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds, const Rectangle& sideBounds) {
     if (mode_ != EditorMode::Map) {
+        return;
+    }
+
+    if (objectColliderDragMode_ != ColliderDragMode::None && HandleSelectedObjectColliderMouseInput(canvasBounds)) {
         return;
     }
 
@@ -927,54 +2184,76 @@ void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds) {
         mapPanning_ = false;
     }
 
-    int tileX = 0;
-    int tileY = 0;
-    int px = 0;
-    int py = 0;
-    if (!ScreenToMapTile(GetMousePosition(), canvasBounds, tileX, tileY)) {
+    const bool mouseInSidePanel = CheckCollisionPointRec(GetMousePosition(), sideBounds);
+    if (!mouseInSidePanel && HandleSelectedObjectColliderMouseInput(canvasBounds)) {
         return;
     }
-    ScreenToMapPixel(GetMousePosition(), canvasBounds, px, py);
 
-    const Rectangle sideBounds {static_cast<float>(GetScreenWidth()) - 336.0f, 76.0f, 318.0f, static_cast<float>(GetScreenHeight()) - 94.0f};
-    if (CheckCollisionPointRec(GetMousePosition(), sideBounds)) {
+    int tileX = 0;
+    int tileY = 0;
+    if (!ScreenToMapTile(GetMousePosition(), canvasBounds, tileX, tileY) && !mouseInSidePanel) {
+        return;
+    }
+
+    if (mouseInSidePanel) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            if (HandleObjectColliderPanelInput(sideBounds)) {
+                return;
+            }
+
             const float left = sideBounds.x + 18.0f;
             const float width = sideBounds.width - 36.0f;
             const float tabWidth = (width - 12.0f) / 3.0f;
-            const float tabY = sideBounds.y + 148.0f;
+            float layoutY = sideBounds.y + 18.0f;
+            layoutY += 22.0f;
+            layoutY += static_cast<float>(Ui::FontSize(27) + 10);
+            layoutY += static_cast<float>(Ui::FontSize(17) + 10);
+            layoutY += static_cast<float>(Ui::FontSize(17) + 10);
+            layoutY += 22.0f;
+            const float tabY = layoutY;
 
             for (int i = 0; i < 3; ++i) {
                 const Rectangle tab {left + (i * (tabWidth + 6.0f)), tabY, tabWidth, 28.0f};
                 if (CheckCollisionPointRec(GetMousePosition(), tab)) {
                     activeMapSection_ = static_cast<MapSection>(i);
                     if (activeMapSection_ == MapSection::Tile && mapTool_ != MapTool::Paint && mapTool_ != MapTool::Erase) mapTool_ = MapTool::Paint;
-                    if (activeMapSection_ == MapSection::Region && mapTool_ != MapTool::Blocked && mapTool_ != MapTool::Water && mapTool_ != MapTool::Spawn) mapTool_ = MapTool::Blocked;
+                    if (activeMapSection_ == MapSection::Spawn) mapTool_ = MapTool::Spawn;
                     if (activeMapSection_ == MapSection::Object) mapTool_ = MapTool::Object;
                     return;
                 }
             }
 
-            float y = tabY + 62.0f;
+            float y = tabY + 40.0f + 22.0f;
             const Rectangle toolA {left, y, width, 24.0f};
             const Rectangle toolB {left, y + 28.0f, width, 24.0f};
             const Rectangle toolC {left, y + 56.0f, width, 24.0f};
             if (activeMapSection_ == MapSection::Tile) {
                 if (CheckCollisionPointRec(GetMousePosition(), toolA)) { mapTool_ = MapTool::Paint; return; }
                 if (CheckCollisionPointRec(GetMousePosition(), toolB)) { mapTool_ = MapTool::Erase; return; }
-                y += 64.0f;
-                y += 24.0f;
+                y += 56.0f;
+                y += 8.0f;
+                y += 22.0f;
                 for (int i = 0; i < static_cast<int>(mapLayers_.size()); ++i) {
                     const Rectangle row {left, y + (i * 26.0f), width, 22.0f};
                     if (CheckCollisionPointRec(GetMousePosition(), row)) {
                         activeMapLayerIndex_ = i;
+                        const Rectangle upButton {row.x + row.width - 44.0f, row.y, 20.0f, row.height};
+                        const Rectangle downButton {row.x + row.width - 22.0f, row.y, 20.0f, row.height};
+                        if (CheckCollisionPointRec(GetMousePosition(), upButton)) {
+                            MoveActiveMapLayer(-1);
+                        } else if (CheckCollisionPointRec(GetMousePosition(), downButton)) {
+                            MoveActiveMapLayer(1);
+                        }
                         return;
                     }
                 }
-            } else if (activeMapSection_ == MapSection::Region) {
-                if (CheckCollisionPointRec(GetMousePosition(), toolA)) { mapTool_ = MapTool::Blocked; return; }
-                if (CheckCollisionPointRec(GetMousePosition(), toolB)) { mapTool_ = MapTool::Water; return; }
-                if (CheckCollisionPointRec(GetMousePosition(), toolC)) { mapTool_ = MapTool::Spawn; return; }
+                const Rectangle addLayerRow {left, y + (static_cast<int>(mapLayers_.size()) * 26.0f) + 4.0f, width, 22.0f};
+                if (CheckCollisionPointRec(GetMousePosition(), addLayerRow)) {
+                    AddMapLayer();
+                    return;
+                }
+            } else if (activeMapSection_ == MapSection::Spawn) {
+                if (CheckCollisionPointRec(GetMousePosition(), toolA)) { mapTool_ = MapTool::Spawn; return; }
             } else if (activeMapSection_ == MapSection::Object) {
                 if (CheckCollisionPointRec(GetMousePosition(), toolA)) { mapTool_ = MapTool::Object; objectPlacementKind_ = "prop"; return; }
                 if (CheckCollisionPointRec(GetMousePosition(), toolB)) { mapTool_ = MapTool::Object; objectPlacementKind_ = "npc"; return; }
@@ -983,9 +2262,24 @@ void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds) {
                 if (CheckCollisionPointRec(GetMousePosition(), toolD)) { mapTool_ = MapTool::Object; objectPlacementKind_ = "trigger"; return; }
                 const Rectangle toolE {left, y + 112.0f, width, 24.0f};
                 if (CheckCollisionPointRec(GetMousePosition(), toolE)) { mapTool_ = MapTool::Object; objectPlacementKind_ = "region"; return; }
-                y += 144.0f;
-                y += 28.0f;
-                y += 24.0f;
+                y += 140.0f;
+                y += 8.0f;
+                y += 22.0f;
+                y += static_cast<float>(Ui::FontSize(18) + 10);
+                y += 48.0f;
+                if (selectedMapObjectIndex_ >= 0 && selectedMapObjectIndex_ < static_cast<int>(mapObjects_.size())) {
+                    y += static_cast<float>(Ui::FontSize(15) + 10);
+                    const std::string collider = PropertyValue(mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)].properties, "collider");
+                    if (!collider.empty()) {
+                        y += static_cast<float>(Ui::FontSize(15) + 10);
+                    }
+                    y += 22.0f;
+                    y += 32.0f;
+                    y += 34.0f;
+                }
+                y += 22.0f;
+                y += 54.0f;
+                y += 22.0f;
                 for (int i = 0; i < static_cast<int>(mapObjects_.size()) && i < 8; ++i) {
                     const Rectangle row {left, y + (i * 24.0f), width, 20.0f};
                     if (CheckCollisionPointRec(GetMousePosition(), row)) {
@@ -998,15 +2292,28 @@ void EditorApp::HandleMapMouseInput(const Rectangle& canvasBounds) {
         return;
     }
 
+    int px = 0;
+    int py = 0;
+    if (!ScreenToMapPixel(GetMousePosition(), canvasBounds, px, py)) {
+        return;
+    }
+
     if (!IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         return;
     }
 
-    if (mapTool_ == MapTool::Paint) PaintMapTile(tileX, tileY);
-    else if (mapTool_ == MapTool::Erase) EraseMapTile(tileX, tileY);
-    else if (mapTool_ == MapTool::Blocked && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ToggleMapRect(blockedAreas_, tileX, tileY);
-    else if (mapTool_ == MapTool::Water && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ToggleMapRect(waterAreas_, tileX, tileY);
-    else if (mapTool_ == MapTool::Spawn && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (mapTool_ == MapTool::Paint) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            PushUndoSnapshot();
+        }
+        PaintMapTile(tileX, tileY);
+    } else if (mapTool_ == MapTool::Erase) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            PushUndoSnapshot();
+        }
+        EraseMapTile(tileX, tileY);
+    } else if (mapTool_ == MapTool::Spawn && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        PushUndoSnapshot();
         mapSpawn_ = Vector2 {(tileX * mapTileSize_) + mapTileSize_ * 0.5f, (tileY * mapTileSize_) + mapTileSize_ * 0.5f};
     } else if (mapTool_ == MapTool::Object && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         PlaceOrSelectObject(px, py);
@@ -1066,12 +2373,15 @@ void EditorApp::CopyCurrentRef() {
 
 void EditorApp::Update(float dt) {
     EnsureCurrentTextureLoaded();
+    EnsureMapRenderTexturesLoaded();
+    HandleColliderTextInput();
+    HandleUndoRedoInput();
     HandleKeyboardInput(dt);
     HandleMapKeyboardInput(dt);
 
     const Ui::Layout layout = Ui::BuildLayout(GetScreenWidth(), GetScreenHeight());
-    HandleMouseInput(layout.canvas);
-    HandleMapMouseInput(layout.canvas);
+    HandleMouseInput(layout.canvas, layout.sidePanel);
+    HandleMapMouseInput(layout.canvas, layout.sidePanel);
 }
 
 void EditorApp::DrawAtlasCanvas(Rectangle bounds) const {
@@ -1102,7 +2412,24 @@ void EditorApp::DrawAtlasCanvas(Rectangle bounds) const {
     }
     const Rectangle selection = SelectionRectPixels();
     const Rectangle highlight {drawRect.x + selection.x * zoom_, drawRect.y + selection.y * zoom_, selection.width * zoom_, selection.height * zoom_};
-    DrawRectangleRec(highlight, Fade(Ui::AccentColor(), 0.22f));
+    if (const AtlasTileMeta* meta = CurrentAtlasMeta()) {
+        const bool blocksMovement = CollisionBlocksMovement(meta->collision);
+        const Color collisionColor = blocksMovement ? Ui::BlockedColor() : Ui::AccentColor();
+        DrawRectangleRec(highlight, Fade(collisionColor, blocksMovement ? 0.34f : 0.16f));
+        if (meta->hasCollider) {
+            const Rectangle collider {
+                highlight.x + meta->collider.x * zoom_,
+                highlight.y + meta->collider.y * zoom_,
+                meta->collider.width * zoom_,
+                meta->collider.height * zoom_
+            };
+            DrawRectangleRec(collider, Fade(collisionColor, 0.55f));
+            DrawRectangleLinesEx(collider, 2.0f, collisionColor);
+            DrawColliderHandles(collider, collisionColor);
+        }
+    } else {
+        DrawRectangleRec(highlight, Fade(Ui::AccentColor(), 0.22f));
+    }
     DrawRectangleLinesEx(highlight, 3.0f, Ui::AccentColor());
     EndScissorMode();
 }
@@ -1117,6 +2444,14 @@ void EditorApp::DrawSidePanel(Rectangle bounds) const {
     state.atlasName = asset ? asset->filename : "";
     state.grid = gridText.str();
     state.ref = BuildAtlasRef();
+    if (const AtlasTileMeta* meta = CurrentAtlasMeta()) {
+        state.collision = meta->collision.empty() ? "pass" : meta->collision;
+        if (meta->hasCollider) {
+            state.collider = FormatRect(meta->collider);
+        }
+    } else {
+        state.collision = "pass";
+    }
     state.status = statusText_;
     state.hasSelection = asset && asset->loaded;
     if (state.hasSelection) {
@@ -1124,6 +2459,35 @@ void EditorApp::DrawSidePanel(Rectangle bounds) const {
         state.source = SelectionRectPixels();
     }
     Ui::DrawAtlasPanel(uiFont_, bounds, state);
+    DrawAtlasColliderInputs(bounds);
+}
+
+void EditorApp::DrawAtlasColliderInputs(Rectangle bounds) const {
+    const AtlasAsset* asset = CurrentAsset();
+    if (mode_ != EditorMode::Atlas || activeDomain_ != Domain::Map || !asset || !asset->loaded) {
+        return;
+    }
+
+    const Rectangle rect = CurrentAtlasColliderOrDefault();
+    const ColliderInputRects fields = BuildColliderInputRects(bounds, AtlasColliderInputRowY(bounds));
+    const bool atlasTarget =
+        colliderEditTarget_ == ColliderEditTarget::AtlasX ||
+        colliderEditTarget_ == ColliderEditTarget::AtlasY ||
+        colliderEditTarget_ == ColliderEditTarget::AtlasWidth ||
+        colliderEditTarget_ == ColliderEditTarget::AtlasHeight;
+
+    DrawColliderInputField(uiFont_, fields.x, "x",
+        colliderEditTarget_ == ColliderEditTarget::AtlasX ? colliderEditBuffer_ : FormatNumber(rect.x),
+        atlasTarget && colliderEditTarget_ == ColliderEditTarget::AtlasX);
+    DrawColliderInputField(uiFont_, fields.y, "y",
+        colliderEditTarget_ == ColliderEditTarget::AtlasY ? colliderEditBuffer_ : FormatNumber(rect.y),
+        atlasTarget && colliderEditTarget_ == ColliderEditTarget::AtlasY);
+    DrawColliderInputField(uiFont_, fields.width, "w",
+        colliderEditTarget_ == ColliderEditTarget::AtlasWidth ? colliderEditBuffer_ : FormatNumber(rect.width),
+        atlasTarget && colliderEditTarget_ == ColliderEditTarget::AtlasWidth);
+    DrawColliderInputField(uiFont_, fields.height, "h",
+        colliderEditTarget_ == ColliderEditTarget::AtlasHeight ? colliderEditBuffer_ : FormatNumber(rect.height),
+        atlasTarget && colliderEditTarget_ == ColliderEditTarget::AtlasHeight);
 }
 
 void EditorApp::DrawMapCanvas(Rectangle bounds) const {
@@ -1133,6 +2497,18 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
     const Rectangle canvas = MapCanvasRect(bounds);
     BeginScissorMode(static_cast<int>(bounds.x), static_cast<int>(bounds.y), static_cast<int>(bounds.width), static_cast<int>(bounds.height));
     DrawRectangleRec(canvas, Color {221, 228, 216, 255});
+
+    auto stampDrawRect = [&](const MapStamp& stamp) {
+        const AtlasRef ref = ParseAtlasRef(stamp.asset);
+        const float sourceWidth = ref.valid ? std::max(1.0f, ref.source.width) : static_cast<float>(mapTileSize_);
+        const float sourceHeight = ref.valid ? std::max(1.0f, ref.source.height) : static_cast<float>(mapTileSize_);
+        return Rectangle {
+            canvas.x + ((stamp.x * mapTileSize_) + ((static_cast<float>(mapTileSize_) - sourceWidth) * 0.5f)) * mapZoom_,
+            canvas.y + (((stamp.y + 1) * mapTileSize_) - sourceHeight) * mapZoom_,
+            sourceWidth * mapZoom_,
+            sourceHeight * mapZoom_
+        };
+    };
 
     for (const MapLayerDef& layer : mapLayers_) {
         if (layer.kind == "image" && !layer.asset.empty()) {
@@ -1172,12 +2548,7 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
                 }
             }
             if (!atlasAsset) continue;
-            const Rectangle dest {
-                canvas.x + (stamp.x * mapTileSize_ * mapZoom_),
-                canvas.y + (stamp.y * mapTileSize_ * mapZoom_),
-                mapTileSize_ * mapZoom_,
-                mapTileSize_ * mapZoom_
-            };
+            const Rectangle dest = stampDrawRect(stamp);
             DrawTexturePro(atlasAsset->texture, ref.source, dest, Vector2 {}, 0.0f, WHITE);
         }
     }
@@ -1191,13 +2562,27 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
         DrawLineEx(Vector2 {canvas.x, drawY}, Vector2 {canvas.x + canvas.width, drawY}, 1.0f, Ui::MapGridColor());
     }
 
-    for (const MapRect& rect : blockedAreas_) {
-        Rectangle drawRect {canvas.x + rect.x * mapZoom_, canvas.y + rect.y * mapZoom_, rect.width * mapZoom_, rect.height * mapZoom_};
-        DrawRectangleRec(drawRect, Ui::BlockedColor());
-    }
-    for (const MapRect& rect : waterAreas_) {
-        Rectangle drawRect {canvas.x + rect.x * mapZoom_, canvas.y + rect.y * mapZoom_, rect.width * mapZoom_, rect.height * mapZoom_};
-        DrawRectangleRec(drawRect, Ui::WaterColor());
+    for (const MapStamp& stamp : mapStamps_) {
+        const AtlasTileMeta* meta = MetaForAtlasRef(stamp.asset);
+        if (!meta || !CollisionBlocksMovement(meta->collision)) {
+            continue;
+        }
+
+        Rectangle drawRect = stampDrawRect(stamp);
+        if (meta->hasCollider) {
+            const AtlasRef ref = ParseAtlasRef(stamp.asset);
+            const float sourceWidth = ref.valid ? std::max(1.0f, ref.source.width) : static_cast<float>(mapTileSize_);
+            const float sourceHeight = ref.valid ? std::max(1.0f, ref.source.height) : static_cast<float>(mapTileSize_);
+            drawRect = Rectangle {
+                drawRect.x + (meta->collider.x / sourceWidth) * drawRect.width,
+                drawRect.y + (meta->collider.y / sourceHeight) * drawRect.height,
+                (meta->collider.width / sourceWidth) * drawRect.width,
+                (meta->collider.height / sourceHeight) * drawRect.height
+            };
+        }
+        const Color color = Ui::BlockedColor();
+        DrawRectangleRec(drawRect, Fade(color, 0.42f));
+        DrawRectangleLinesEx(drawRect, 1.5f, Fade(color, 0.9f));
     }
 
     for (int i = 0; i < static_cast<int>(mapObjects_.size()); ++i) {
@@ -1231,6 +2616,51 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
         }
         DrawRectangleLinesEx(drawRect, i == selectedMapObjectIndex_ ? 3.0f : 2.0f,
             i == selectedMapObjectIndex_ ? Ui::AccentColor() : Fade(Ui::InkColor(), 0.65f));
+
+        const std::string collision = PropertyValue(object.properties, "collision");
+        const AtlasTileMeta* spriteMeta = MetaForAtlasRef(sprite);
+        const bool hasExplicitCollision = !collision.empty();
+        const bool blocksMovement = hasExplicitCollision
+            ? !CollisionDisablesMovementBlock(collision) && CollisionBlocksMovement(collision)
+            : (spriteMeta != nullptr && CollisionBlocksMovement(spriteMeta->collision));
+        const bool selectedObject = i == selectedMapObjectIndex_ && activeMapSection_ == MapSection::Object;
+        if (blocksMovement || selectedObject) {
+            Rectangle colliderRect = drawRect;
+            Rectangle localCollider {};
+            const std::string collider = PropertyValue(object.properties, "collider");
+            const std::string hitbox = PropertyValue(object.properties, "hitbox");
+            if (!collider.empty() && ParseLocalRect(collider, localCollider)) {
+                colliderRect = Rectangle {
+                    canvas.x + (object.x + localCollider.x) * mapZoom_,
+                    canvas.y + (object.y + localCollider.y) * mapZoom_,
+                    localCollider.width * mapZoom_,
+                    localCollider.height * mapZoom_
+                };
+            } else if (!hitbox.empty() && ParseLocalRect(hitbox, localCollider)) {
+                colliderRect = Rectangle {
+                    canvas.x + (object.x + localCollider.x) * mapZoom_,
+                    canvas.y + (object.y + localCollider.y) * mapZoom_,
+                    localCollider.width * mapZoom_,
+                    localCollider.height * mapZoom_
+                };
+            } else if (spriteMeta != nullptr && spriteMeta->hasCollider) {
+                const AtlasRef spriteRef = ParseAtlasRef(sprite);
+                const float sourceWidth = spriteRef.valid ? std::max(1.0f, spriteRef.source.width) : static_cast<float>(std::max(1, object.width));
+                const float sourceHeight = spriteRef.valid ? std::max(1.0f, spriteRef.source.height) : static_cast<float>(std::max(1, object.height));
+                colliderRect = Rectangle {
+                    drawRect.x + (spriteMeta->collider.x / sourceWidth) * drawRect.width,
+                    drawRect.y + (spriteMeta->collider.y / sourceHeight) * drawRect.height,
+                    (spriteMeta->collider.width / sourceWidth) * drawRect.width,
+                    (spriteMeta->collider.height / sourceHeight) * drawRect.height
+                };
+            }
+            const Color color = blocksMovement ? Ui::BlockedColor() : Ui::AccentColor();
+            DrawRectangleRec(colliderRect, Fade(color, blocksMovement ? 0.42f : 0.24f));
+            DrawRectangleLinesEx(colliderRect, 2.0f, Fade(color, 0.95f));
+            if (selectedObject) {
+                DrawColliderHandles(colliderRect, Fade(color, 0.96f));
+            }
+        }
     }
 
     const Rectangle spawnRect {
@@ -1246,30 +2676,66 @@ void EditorApp::DrawMapCanvas(Rectangle bounds) const {
     if (ScreenToMapTile(GetMousePosition(), bounds, hoverTileX, hoverTileY)) {
         int hoverCols = 1;
         int hoverRows = 1;
+        Rectangle hover {
+            canvas.x + (hoverTileX * mapTileSize_ * mapZoom_),
+            canvas.y + (hoverTileY * mapTileSize_ * mapZoom_),
+            mapTileSize_ * mapZoom_,
+            mapTileSize_ * mapZoom_
+        };
         if (mapTool_ == MapTool::Paint) {
-            hoverCols = std::max(1, selectionCols_);
-            hoverRows = std::max(1, selectionRows_);
+            const std::vector<BrushStamp> brush = CurrentBrushPattern();
+            if (brush.size() == 1) {
+                const AtlasRef ref = ParseAtlasRef(brush.front().asset);
+                if (ref.valid && (ref.source.width > static_cast<float>(mapTileSize_) || ref.source.height > static_cast<float>(mapTileSize_))) {
+                    const float width = std::max(1.0f, ref.source.width);
+                    const float height = std::max(1.0f, ref.source.height);
+                    hover.x = canvas.x + ((hoverTileX * mapTileSize_) + ((mapTileSize_ - width) * 0.5f)) * mapZoom_;
+                    hover.y = canvas.y + (((hoverTileY + 1) * mapTileSize_) - height) * mapZoom_;
+                    hover.width = width * mapZoom_;
+                    hover.height = height * mapZoom_;
+                } else {
+                    hover.width = mapTileSize_ * mapZoom_;
+                    hover.height = mapTileSize_ * mapZoom_;
+                }
+            } else {
+                hoverCols = std::max(1, selectionCols_);
+                hoverRows = std::max(1, selectionRows_);
+                hover.width = hoverCols * mapTileSize_ * mapZoom_;
+                hover.height = hoverRows * mapTileSize_ * mapZoom_;
+            }
         } else if (mapTool_ == MapTool::Object) {
             hoverCols = 1;
             hoverRows = 1;
             if (objectPlacementKind_ == "trigger") {
                 hoverCols = 2;
                 hoverRows = 2;
+                hover.width = hoverCols * mapTileSize_ * mapZoom_;
+                hover.height = hoverRows * mapTileSize_ * mapZoom_;
             } else if (objectPlacementKind_ == "region") {
                 hoverCols = 8;
                 hoverRows = 6;
+                hover.width = hoverCols * mapTileSize_ * mapZoom_;
+                hover.height = hoverRows * mapTileSize_ * mapZoom_;
+            } else {
+                const AtlasRef ref = ParseAtlasRef(CurrentBrushRef());
+                if (ref.valid) {
+                    const float width = std::max(1.0f, ref.source.width);
+                    const float height = std::max(1.0f, ref.source.height);
+                    hover.x = canvas.x + ((hoverTileX * mapTileSize_) + ((mapTileSize_ - width) * 0.5f)) * mapZoom_;
+                    hover.y = canvas.y + (((hoverTileY + 1) * mapTileSize_) - height) * mapZoom_;
+                    hover.width = width * mapZoom_;
+                    hover.height = height * mapZoom_;
+                }
             }
         }
 
-        hoverCols = std::min(hoverCols, std::max(1, mapWidth_ - hoverTileX));
-        hoverRows = std::min(hoverRows, std::max(1, mapHeight_ - hoverTileY));
-
-        const Rectangle hover {
-            canvas.x + (hoverTileX * mapTileSize_ * mapZoom_),
-            canvas.y + (hoverTileY * mapTileSize_ * mapZoom_),
-            hoverCols * mapTileSize_ * mapZoom_,
-            hoverRows * mapTileSize_ * mapZoom_
-        };
+        if ((mapTool_ != MapTool::Object || objectPlacementKind_ == "trigger" || objectPlacementKind_ == "region") &&
+            !(mapTool_ == MapTool::Paint && CurrentBrushPattern().size() == 1)) {
+            hoverCols = std::min(hoverCols, std::max(1, mapWidth_ - hoverTileX));
+            hoverRows = std::min(hoverRows, std::max(1, mapHeight_ - hoverTileY));
+            hover.width = hoverCols * mapTileSize_ * mapZoom_;
+            hover.height = hoverRows * mapTileSize_ * mapZoom_;
+        }
         DrawRectangleRec(hover, Fade(Ui::AccentColor(), 0.14f));
         DrawRectangleLinesEx(hover, 2.0f, Fade(Ui::AccentColor(), 0.9f));
     }
@@ -1288,12 +2754,38 @@ void EditorApp::DrawMapSidePanel(Rectangle bounds) const {
     state.section = static_cast<Ui::MapSection>(activeMapSection_);
     state.tool = static_cast<Ui::MapTool>(mapTool_);
     state.activeLayer = activeMapLayerIndex_;
+    state.layerCount = static_cast<int>(mapLayers_.size());
     state.brushRef = CurrentBrushRef();
-    state.blockedCount = static_cast<int>(blockedAreas_.size());
-    state.waterCount = static_cast<int>(waterAreas_.size());
+    state.tileCollisionCount = 0;
+    for (const MapStamp& stamp : mapStamps_) {
+        const AtlasTileMeta* meta = MetaForAtlasRef(stamp.asset);
+        if (meta != nullptr && CollisionBlocksMovement(meta->collision)) {
+            ++state.tileCollisionCount;
+        }
+    }
+    state.objectCollisionCount = 0;
+    for (const MapObject& object : mapObjects_) {
+        const std::string collision = PropertyValue(object.properties, "collision");
+        const std::string sprite = PropertyValue(object.properties, "sprite");
+        const AtlasTileMeta* meta = MetaForAtlasRef(sprite);
+        const bool blocksMovement = !collision.empty()
+            ? !CollisionDisablesMovementBlock(collision) && CollisionBlocksMovement(collision)
+            : (meta != nullptr && CollisionBlocksMovement(meta->collision));
+        if (blocksMovement) {
+            ++state.objectCollisionCount;
+        }
+    }
     state.spawn = std::to_string(static_cast<int>(mapSpawn_.x)) + "," + std::to_string(static_cast<int>(mapSpawn_.y));
     state.objectKind = objectPlacementKind_;
     state.selectedObject = selectedMapObjectIndex_;
+    if (selectedMapObjectIndex_ >= 0 && selectedMapObjectIndex_ < static_cast<int>(mapObjects_.size())) {
+        const MapObject& selected = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+        state.selectedCollision = PropertyValue(selected.properties, "collision");
+        if (state.selectedCollision.empty()) {
+            state.selectedCollision = "sprite/pass";
+        }
+        state.selectedCollider = PropertyValue(selected.properties, "collider");
+    }
     state.mapFile = currentMapFile_.empty() ? "(unsaved)" : currentMapFile_.filename().string();
     state.status = statusText_;
 
@@ -1308,6 +2800,39 @@ void EditorApp::DrawMapSidePanel(Rectangle bounds) const {
     }
 
     Ui::DrawMapPanel(uiFont_, bounds, state);
+    DrawObjectColliderInputs(bounds);
+}
+
+void EditorApp::DrawObjectColliderInputs(Rectangle bounds) const {
+    if (mode_ != EditorMode::Map ||
+        activeMapSection_ != MapSection::Object ||
+        selectedMapObjectIndex_ < 0 ||
+        selectedMapObjectIndex_ >= static_cast<int>(mapObjects_.size())) {
+        return;
+    }
+
+    const MapObject& object = mapObjects_[static_cast<size_t>(selectedMapObjectIndex_)];
+    const Rectangle rect = SelectedObjectColliderOrDefault();
+    const std::string collider = PropertyValue(object.properties, "collider");
+    const ColliderInputRects fields = BuildColliderInputRects(bounds, ObjectColliderInputRowY(bounds, selectedMapObjectIndex_, !collider.empty()));
+    const bool objectTarget =
+        colliderEditTarget_ == ColliderEditTarget::ObjectX ||
+        colliderEditTarget_ == ColliderEditTarget::ObjectY ||
+        colliderEditTarget_ == ColliderEditTarget::ObjectWidth ||
+        colliderEditTarget_ == ColliderEditTarget::ObjectHeight;
+
+    DrawColliderInputField(uiFont_, fields.x, "x",
+        colliderEditTarget_ == ColliderEditTarget::ObjectX ? colliderEditBuffer_ : FormatNumber(rect.x),
+        objectTarget && colliderEditTarget_ == ColliderEditTarget::ObjectX);
+    DrawColliderInputField(uiFont_, fields.y, "y",
+        colliderEditTarget_ == ColliderEditTarget::ObjectY ? colliderEditBuffer_ : FormatNumber(rect.y),
+        objectTarget && colliderEditTarget_ == ColliderEditTarget::ObjectY);
+    DrawColliderInputField(uiFont_, fields.width, "w",
+        colliderEditTarget_ == ColliderEditTarget::ObjectWidth ? colliderEditBuffer_ : FormatNumber(rect.width),
+        objectTarget && colliderEditTarget_ == ColliderEditTarget::ObjectWidth);
+    DrawColliderInputField(uiFont_, fields.height, "h",
+        colliderEditTarget_ == ColliderEditTarget::ObjectHeight ? colliderEditBuffer_ : FormatNumber(rect.height),
+        objectTarget && colliderEditTarget_ == ColliderEditTarget::ObjectHeight);
 }
 
 void EditorApp::Draw() const {

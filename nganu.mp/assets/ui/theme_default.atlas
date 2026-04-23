@@ -1,1 +1,1 @@
-tile=0,160,32,32,collision:block,tag:water
+tile=0,160,32,32,collision:block

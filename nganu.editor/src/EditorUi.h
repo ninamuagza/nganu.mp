@@ -14,17 +14,15 @@ enum class Mode {
 
 enum class MapSection {
     Tile = 0,
-    Region = 1,
+    Spawn = 1,
     Object = 2
 };
 
 enum class MapTool {
     Paint = 0,
     Erase = 1,
-    Blocked = 2,
-    Water = 3,
-    Spawn = 4,
-    Object = 5
+    Spawn = 2,
+    Object = 3
 };
 
 struct Layout {
@@ -38,6 +36,8 @@ struct AtlasPanelState {
     std::string atlasName;
     std::string grid;
     std::string ref;
+    std::string collision;
+    std::string collider;
     std::string status;
     bool hasSelection = false;
     Texture2D texture {};
@@ -52,13 +52,16 @@ struct MapPanelState {
     MapTool tool = MapTool::Paint;
     std::vector<std::string> layers;
     int activeLayer = 0;
+    int layerCount = 0;
     std::string brushRef;
-    int blockedCount = 0;
-    int waterCount = 0;
+    int tileCollisionCount = 0;
+    int objectCollisionCount = 0;
     std::string spawn;
     std::string objectKind;
     std::vector<std::string> objects;
     int selectedObject = -1;
+    std::string selectedCollision;
+    std::string selectedCollider;
     std::string mapFile;
     std::string status;
 };
@@ -70,7 +73,6 @@ Color AccentSoft();
 Color InkColor();
 Color MapGridColor();
 Color BlockedColor();
-Color WaterColor();
 
 int FontSize(int px);
 Layout BuildLayout(int screenWidth, int screenHeight);

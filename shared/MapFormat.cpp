@@ -1,6 +1,7 @@
 #include "MapFormat.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <sstream>
 #include <unordered_map>
@@ -64,6 +65,46 @@ bool AppendTile(Document& document, const std::string& layer, int x, int y, cons
     }
     document.stamps.push_back(Stamp {layer, x, y, asset});
     return true;
+}
+
+std::string ToLower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+    return value;
+}
+
+bool ParseLocalRect(const std::string& value, Rect& out) {
+    const std::vector<std::string> parts = SplitEscaped(value, '|');
+    if (parts.size() != 4) {
+        return false;
+    }
+    return ParseFloatStrict(parts[0], out.x) &&
+           ParseFloatStrict(parts[1], out.y) &&
+           ParseFloatStrict(parts[2], out.width) &&
+           ParseFloatStrict(parts[3], out.height) &&
+           out.width > 0.0f &&
+           out.height > 0.0f;
+}
+
+bool CollisionBlocksMovement(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "block" ||
+           lowered == "solid" ||
+           lowered == "wall";
+}
+
+bool CollisionDisablesMovementBlock(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "none" ||
+           lowered == "pass" ||
+           lowered == "passable" ||
+           lowered == "false" ||
+           lowered == "off";
+}
+
+bool IsSupportedCollisionValue(const std::string& collision) {
+    return CollisionBlocksMovement(collision) || CollisionDisablesMovementBlock(collision);
 }
 
 }
@@ -413,27 +454,10 @@ ParseResult ParseDocument(const std::string& text) {
                     return Fail(lineNumber, "invalid entity sprite");
                 }
                 propValue = *resolved;
+            } else if (parts[1] == "collision" && !IsSupportedCollisionValue(propValue)) {
+                return Fail(lineNumber, "invalid entity collision");
             }
             document.objects[objectIt->second].properties[parts[1]] = propValue;
-        } else if (key == "area") {
-            const std::vector<std::string> parts = SplitEscaped(value, ',');
-            if (parts.size() != 5) {
-                return Fail(lineNumber, "invalid area");
-            }
-            Rect rect;
-            if (!ParseFloatStrict(parts[1], rect.x) ||
-                !ParseFloatStrict(parts[2], rect.y) ||
-                !ParseFloatStrict(parts[3], rect.width) ||
-                !ParseFloatStrict(parts[4], rect.height)) {
-                return Fail(lineNumber, "invalid area bounds");
-            }
-            if (parts[0] == "block") {
-                document.blockedAreas.push_back(rect);
-            } else if (parts[0] == "water") {
-                document.waterAreas.push_back(rect);
-            } else {
-                return Fail(lineNumber, "unsupported area kind");
-            }
         } else {
             return Fail(lineNumber, "unsupported map v2 key: " + key);
         }
@@ -512,6 +536,63 @@ AssetDomain AssetDomainForRef(const std::string& ref, AssetDomain fallbackDomain
 
 std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h) {
     return file + "@" + std::to_string(x) + "@" + std::to_string(y) + "@" + std::to_string(w) + "@" + std::to_string(h);
+}
+
+std::unordered_map<std::string, AtlasTileMeta> ParseAtlasMetadata(const std::string& text, const std::string& fileName) {
+    std::unordered_map<std::string, AtlasTileMeta> metadata;
+    std::istringstream stream(text);
+    std::string line;
+    while (std::getline(stream, line)) {
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+
+        const size_t sep = line.find('=');
+        if (sep == std::string::npos || line.substr(0, sep) != "tile") {
+            continue;
+        }
+
+        const std::vector<std::string> parts = SplitEscaped(line.substr(sep + 1), ',');
+        if (parts.size() < 4) {
+            continue;
+        }
+
+        int x = 0;
+        int y = 0;
+        int w = 0;
+        int h = 0;
+        if (!ParseIntStrict(parts[0], x) ||
+            !ParseIntStrict(parts[1], y) ||
+            !ParseIntStrict(parts[2], w) ||
+            !ParseIntStrict(parts[3], h) ||
+            w <= 0 ||
+            h <= 0) {
+            continue;
+        }
+
+        AtlasTileMeta meta;
+        for (size_t i = 4; i < parts.size(); ++i) {
+            const auto prop = SplitPropertyAssignment(parts[i], ':');
+            if (!prop.has_value()) {
+                continue;
+            }
+            if (prop->first == "collision") {
+                meta.collision = ToLower(prop->second);
+                meta.blocksMovement = CollisionBlocksMovement(meta.collision);
+            } else if (prop->first == "tag") {
+                meta.tag = prop->second;
+            } else if (prop->first == "collider" || prop->first == "hitbox") {
+                Rect collider;
+                if (ParseLocalRect(prop->second, collider)) {
+                    meta.collider = collider;
+                    meta.hasCollider = true;
+                }
+            }
+        }
+
+        metadata[AtlasMetaKey(fileName, x, y, w, h)] = std::move(meta);
+    }
+    return metadata;
 }
 
 void AddUniqueAssetRef(std::vector<std::string>& refs, const std::string& file) {

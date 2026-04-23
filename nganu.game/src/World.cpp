@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
@@ -14,18 +15,17 @@
 
 namespace {
 Color GrassColor() { return Color {84, 148, 92, 255}; }
-Color GrassShade() { return Color {67, 123, 77, 255}; }
 Color PathColor() { return Color {182, 157, 110, 255}; }
-Color WaterColor() { return Color {59, 120, 168, 255}; }
-Color WaterEdgeColor() { return Color {94, 163, 209, 255}; }
-Color CanopyColor() { return Color {64, 114, 71, 255}; }
-Color CanopyShade() { return Color {88, 146, 95, 255}; }
 
 #if defined(PLATFORM_ANDROID)
 constexpr bool kFastMobileRender = true;
 #else
 constexpr bool kFastMobileRender = false;
 #endif
+
+// GLES drivers can leave 1-pixel cracks between independently rasterized tile quads.
+constexpr float kTileSeamOverlap = 0.5f;
+constexpr int kSpatialChunkTiles = 16;
 
 struct AtlasRef {
     AssetDomain domain = AssetDomain::Map;
@@ -110,10 +110,9 @@ AtlasRef ParseAtlasRef(const std::string& asset) {
     return ref;
 }
 
-bool HasStampsOnLayer(const std::vector<WorldStamp>& stamps, const std::string& layerName) {
-    return std::any_of(stamps.begin(), stamps.end(), [&](const WorldStamp& stamp) {
-        return stamp.layer == layerName;
-    });
+std::uint64_t SpatialBucketKey(int chunkX, int chunkY) {
+    return (static_cast<std::uint64_t>(static_cast<std::uint32_t>(chunkX)) << 32) |
+           static_cast<std::uint32_t>(chunkY);
 }
 
 bool LayerHasUsableImage(const WorldLayer& layer) {
@@ -185,9 +184,19 @@ Texture2D* EnsureTextureLoaded(std::unordered_map<std::string, Texture2D>& textu
         return nullptr;
     }
     SetTextureFilter(texture, TEXTURE_FILTER_POINT);
+    SetTextureWrap(texture, TEXTURE_WRAP_CLAMP);
 
     textureIt = textures.emplace(cacheKey, texture).first;
     return &textureIt->second;
+}
+
+Rectangle AddTileSeamOverlap(Rectangle dest) {
+    if (dest.width <= 0.0f || dest.height <= 0.0f) {
+        return dest;
+    }
+    dest.width += kTileSeamOverlap;
+    dest.height += kTileSeamOverlap;
+    return dest;
 }
 
 void DrawTiledTexture(const Texture2D& texture, const Rectangle& source, const Rectangle& area, Color tint) {
@@ -199,7 +208,7 @@ void DrawTiledTexture(const Texture2D& texture, const Rectangle& source, const R
             if (!CheckCollisionRecs(dest, area)) {
                 continue;
             }
-            DrawTexturePro(texture, source, dest, Vector2 {}, 0.0f, tint);
+            DrawTexturePro(texture, source, AddTileSeamOverlap(dest), Vector2 {}, 0.0f, tint);
         }
     }
 }
@@ -219,6 +228,87 @@ bool HasArea(Rectangle rect) {
     return rect.width > 0.0f && rect.height > 0.0f;
 }
 
+std::string ToLower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+    return value;
+}
+
+bool CollisionBlocksMovement(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "block" ||
+           lowered == "solid" ||
+           lowered == "wall";
+}
+
+bool CollisionDisablesMovementBlock(const std::string& collision) {
+    const std::string lowered = ToLower(collision);
+    return lowered == "none" ||
+           lowered == "pass" ||
+           lowered == "passable" ||
+           lowered == "false" ||
+           lowered == "off";
+}
+
+std::optional<std::string> PropertyValue(const std::unordered_map<std::string, std::string>& properties, const std::string& key) {
+    auto it = properties.find(key);
+    if (it == properties.end()) {
+        return std::nullopt;
+    }
+    return it->second;
+}
+
+bool ParseLocalRect(const std::string& value, Rectangle& out) {
+    const std::vector<std::string> parts = Nganu::MapFormat::SplitEscaped(value, '|');
+    if (parts.size() != 4) {
+        return false;
+    }
+    return Nganu::MapFormat::ParseFloatStrict(parts[0], out.x) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[1], out.y) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[2], out.width) &&
+           Nganu::MapFormat::ParseFloatStrict(parts[3], out.height) &&
+           out.width > 0.0f &&
+           out.height > 0.0f;
+}
+
+std::optional<Rectangle> PropertyCollider(const WorldObject& object) {
+    const std::optional<std::string> collider = PropertyValue(object.properties, "collider");
+    const std::optional<std::string> hitbox = PropertyValue(object.properties, "hitbox");
+    const std::string* value = collider.has_value() ? &*collider : (hitbox.has_value() ? &*hitbox : nullptr);
+    if (value == nullptr) {
+        return std::nullopt;
+    }
+
+    Rectangle rect {};
+    if (!ParseLocalRect(*value, rect)) {
+        return std::nullopt;
+    }
+    return rect;
+}
+
+bool DrawSpriteRefInternal(std::unordered_map<std::string, Texture2D>& textures,
+                           const std::filesystem::path& mapAssetRoot,
+                           const std::filesystem::path& characterAssetRoot,
+                           const std::string& spriteRef,
+                           Rectangle dest,
+                           Vector2 origin,
+                           float rotation,
+                           Color tint,
+                           bool addTileSeamOverlap) {
+    const AtlasRef ref = ParseAtlasRef(spriteRef);
+    if (!ref.valid) {
+        return false;
+    }
+    Texture2D* texture = EnsureTextureLoaded(textures, ref, mapAssetRoot, characterAssetRoot);
+    if (!texture) {
+        return false;
+    }
+    const Rectangle drawDest = addTileSeamOverlap ? AddTileSeamOverlap(dest) : dest;
+    DrawTexturePro(*texture, ref.source, drawDest, origin, rotation, tint);
+    return true;
+}
+
 }
 
 World::World() {
@@ -231,20 +321,19 @@ World::~World() {
 
 void World::LoadDefaults() {
     UnloadTextures();
-    tileSize_ = 48;
+    tileSize_ = 32;
     width_ = 16;
     height_ = 12;
     mapId_.clear();
     worldName_.clear();
-    spawnPoint_ = Vector2 {160.0f, 160.0f};
+    spawnPoint_ = Vector2 {96.0f, 96.0f};
     properties_.clear();
     layers_.clear();
     stamps_.clear();
     objects_.clear();
 
-    blockedAreas_.clear();
-    waterAreas_.clear();
     atlasTileMeta_.clear();
+    RebuildSpatialIndex();
 }
 
 bool World::LoadFromMapAsset(const std::string& rawAsset) {
@@ -258,8 +347,6 @@ bool World::LoadFromMapAsset(const std::string& rawAsset) {
     std::vector<WorldLayer> nextLayers;
     std::vector<WorldStamp> nextStamps;
     std::vector<WorldObject> nextObjects;
-    std::vector<Rectangle> nextBlocked;
-    std::vector<Rectangle> nextWater;
 
     nextProperties = document.properties;
     nextLayers.reserve(document.layers.size());
@@ -285,15 +372,6 @@ bool World::LoadFromMapAsset(const std::string& rawAsset) {
     for (const Nganu::MapFormat::Stamp& source : document.stamps) {
         nextStamps.push_back(WorldStamp {source.layer, source.x, source.y, source.asset});
     }
-    nextBlocked.reserve(document.blockedAreas.size());
-    for (const Nganu::MapFormat::Rect& source : document.blockedAreas) {
-        nextBlocked.push_back(Rectangle {source.x, source.y, source.width, source.height});
-    }
-    nextWater.reserve(document.waterAreas.size());
-    for (const Nganu::MapFormat::Rect& source : document.waterAreas) {
-        nextWater.push_back(Rectangle {source.x, source.y, source.width, source.height});
-    }
-
     UnloadTextures();
     tileSize_ = document.tileSize;
     width_ = document.width;
@@ -305,10 +383,208 @@ bool World::LoadFromMapAsset(const std::string& rawAsset) {
     layers_ = std::move(nextLayers);
     stamps_ = std::move(nextStamps);
     objects_ = std::move(nextObjects);
-    blockedAreas_ = std::move(nextBlocked);
-    waterAreas_ = std::move(nextWater);
+    RebuildSpatialIndex();
     ReloadAtlasMetadata();
     return true;
+}
+
+void World::RebuildSpatialIndex() {
+    stampBuckets_.clear();
+    objectBuckets_.clear();
+    hasRoadStamps_ = false;
+    stampQueryMarks_.assign(stamps_.size(), 0);
+    stampQueryToken_ = 1;
+    objectQueryMarks_.assign(objects_.size(), 0);
+    objectQueryToken_ = 1;
+
+    const float chunkWorldSize = static_cast<float>(std::max(1, tileSize_) * kSpatialChunkTiles);
+    for (size_t i = 0; i < stamps_.size(); ++i) {
+        const WorldStamp& stamp = stamps_[i];
+        hasRoadStamps_ = hasRoadStamps_ || stamp.layer == "road";
+        const Rectangle bounds = stampBounds(stamp);
+        if (!HasArea(bounds)) {
+            continue;
+        }
+
+        const int minChunkX = static_cast<int>(std::floor(bounds.x / chunkWorldSize));
+        const int minChunkY = static_cast<int>(std::floor(bounds.y / chunkWorldSize));
+        const int maxChunkX = static_cast<int>(std::floor((bounds.x + bounds.width) / chunkWorldSize));
+        const int maxChunkY = static_cast<int>(std::floor((bounds.y + bounds.height) / chunkWorldSize));
+        for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
+            for (int chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX) {
+                stampBuckets_[SpatialBucketKey(chunkX, chunkY)].push_back(i);
+            }
+        }
+    }
+
+    for (size_t i = 0; i < objects_.size(); ++i) {
+        const Rectangle bounds = objects_[i].bounds;
+        if (!HasArea(bounds)) {
+            continue;
+        }
+        const int minChunkX = static_cast<int>(std::floor(bounds.x / chunkWorldSize));
+        const int minChunkY = static_cast<int>(std::floor(bounds.y / chunkWorldSize));
+        const int maxChunkX = static_cast<int>(std::floor((bounds.x + bounds.width) / chunkWorldSize));
+        const int maxChunkY = static_cast<int>(std::floor((bounds.y + bounds.height) / chunkWorldSize));
+        for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
+            for (int chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX) {
+                objectBuckets_[SpatialBucketKey(chunkX, chunkY)].push_back(i);
+            }
+        }
+    }
+}
+
+void World::CollectVisibleStampIndices(Rectangle visibleArea, std::vector<size_t>& out) const {
+    out.clear();
+    if (stampBuckets_.empty() || tileSize_ <= 0 || !HasArea(visibleArea)) {
+        return;
+    }
+    if (stampQueryMarks_.size() != stamps_.size()) {
+        stampQueryMarks_.assign(stamps_.size(), 0);
+        stampQueryToken_ = 1;
+    }
+    ++stampQueryToken_;
+    if (stampQueryToken_ == 0) {
+        std::fill(stampQueryMarks_.begin(), stampQueryMarks_.end(), 0);
+        stampQueryToken_ = 1;
+    }
+
+    const float chunkWorldSize = static_cast<float>(tileSize_ * kSpatialChunkTiles);
+    const int minChunkX = static_cast<int>(std::floor(visibleArea.x / chunkWorldSize));
+    const int minChunkY = static_cast<int>(std::floor(visibleArea.y / chunkWorldSize));
+    const int maxChunkX = static_cast<int>(std::floor((visibleArea.x + visibleArea.width) / chunkWorldSize));
+    const int maxChunkY = static_cast<int>(std::floor((visibleArea.y + visibleArea.height) / chunkWorldSize));
+
+    for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX) {
+            auto it = stampBuckets_.find(SpatialBucketKey(chunkX, chunkY));
+            if (it == stampBuckets_.end()) {
+                continue;
+            }
+            for (size_t stampIndex : it->second) {
+                if (stampIndex >= stamps_.size() || stampQueryMarks_[stampIndex] == stampQueryToken_) {
+                    continue;
+                }
+                stampQueryMarks_[stampIndex] = stampQueryToken_;
+                if (CheckCollisionRecs(stampBounds(stamps_[stampIndex]), visibleArea)) {
+                    out.push_back(stampIndex);
+                }
+            }
+        }
+    }
+}
+
+void World::CollectVisibleObjects(Rectangle visibleArea, std::vector<const WorldObject*>& out) const {
+    out.clear();
+    if (objectBuckets_.empty() || tileSize_ <= 0 || !HasArea(visibleArea)) {
+        return;
+    }
+    if (objectQueryMarks_.size() != objects_.size()) {
+        objectQueryMarks_.assign(objects_.size(), 0);
+        objectQueryToken_ = 1;
+    }
+    ++objectQueryToken_;
+    if (objectQueryToken_ == 0) {
+        std::fill(objectQueryMarks_.begin(), objectQueryMarks_.end(), 0);
+        objectQueryToken_ = 1;
+    }
+
+    const float chunkWorldSize = static_cast<float>(tileSize_ * kSpatialChunkTiles);
+    const int minChunkX = static_cast<int>(std::floor(visibleArea.x / chunkWorldSize));
+    const int minChunkY = static_cast<int>(std::floor(visibleArea.y / chunkWorldSize));
+    const int maxChunkX = static_cast<int>(std::floor((visibleArea.x + visibleArea.width) / chunkWorldSize));
+    const int maxChunkY = static_cast<int>(std::floor((visibleArea.y + visibleArea.height) / chunkWorldSize));
+
+    for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX) {
+            auto it = objectBuckets_.find(SpatialBucketKey(chunkX, chunkY));
+            if (it == objectBuckets_.end()) {
+                continue;
+            }
+            for (size_t objectIndex : it->second) {
+                if (objectIndex >= objects_.size() || objectQueryMarks_[objectIndex] == objectQueryToken_) {
+                    continue;
+                }
+                objectQueryMarks_[objectIndex] = objectQueryToken_;
+                const WorldObject& object = objects_[objectIndex];
+                if (CheckCollisionRecs(object.bounds, visibleArea)) {
+                    out.push_back(&object);
+                }
+            }
+        }
+    }
+}
+
+Rectangle World::stampBounds(const WorldStamp& stamp) const {
+    const AtlasRef ref = ParseAtlasRef(stamp.asset);
+    const float width = ref.valid ? std::max(1.0f, ref.source.width) : static_cast<float>(tileSize_);
+    const float height = ref.valid ? std::max(1.0f, ref.source.height) : static_cast<float>(tileSize_);
+    return Rectangle {
+        static_cast<float>(stamp.x * tileSize_) + ((static_cast<float>(tileSize_) - width) * 0.5f),
+        static_cast<float>((stamp.y + 1) * tileSize_) - height,
+        width,
+        height
+    };
+}
+
+Rectangle World::stampCollisionRect(const WorldStamp& stamp, const WorldAtlasTileMeta& meta) const {
+    const Rectangle bounds = stampBounds(stamp);
+    if (!meta.hasCollider) {
+        return bounds;
+    }
+
+    const AtlasRef ref = ParseAtlasRef(stamp.asset);
+    const float sourceWidth = ref.valid ? std::max(1.0f, ref.source.width) : static_cast<float>(tileSize_);
+    const float sourceHeight = ref.valid ? std::max(1.0f, ref.source.height) : static_cast<float>(tileSize_);
+    return Rectangle {
+        bounds.x + (meta.collider.x / sourceWidth) * bounds.width,
+        bounds.y + (meta.collider.y / sourceHeight) * bounds.height,
+        (meta.collider.width / sourceWidth) * bounds.width,
+        (meta.collider.height / sourceHeight) * bounds.height
+    };
+}
+
+std::optional<Rectangle> World::objectCollisionRect(const WorldObject& object) const {
+    const std::optional<std::string> collision = PropertyValue(object.properties, "collision");
+    if (collision.has_value() && CollisionDisablesMovementBlock(*collision)) {
+        return std::nullopt;
+    }
+
+    std::optional<WorldAtlasTileMeta> spriteMeta;
+    const std::optional<std::string> sprite = PropertyValue(object.properties, "sprite");
+    if (sprite.has_value()) {
+        spriteMeta = metaForAsset(*sprite);
+    }
+
+    const bool blocks = collision.has_value()
+        ? CollisionBlocksMovement(*collision)
+        : (spriteMeta.has_value() && spriteMeta->blocksMovement);
+    if (!blocks || !HasArea(object.bounds)) {
+        return std::nullopt;
+    }
+
+    if (const std::optional<Rectangle> localCollider = PropertyCollider(object)) {
+        return Rectangle {
+            object.bounds.x + localCollider->x,
+            object.bounds.y + localCollider->y,
+            localCollider->width,
+            localCollider->height
+        };
+    }
+
+    if (spriteMeta.has_value() && spriteMeta->hasCollider && sprite.has_value()) {
+        const AtlasRef ref = ParseAtlasRef(*sprite);
+        const float sourceWidth = ref.valid ? std::max(1.0f, ref.source.width) : std::max(1.0f, object.bounds.width);
+        const float sourceHeight = ref.valid ? std::max(1.0f, ref.source.height) : std::max(1.0f, object.bounds.height);
+        return Rectangle {
+            object.bounds.x + (spriteMeta->collider.x / sourceWidth) * object.bounds.width,
+            object.bounds.y + (spriteMeta->collider.y / sourceHeight) * object.bounds.height,
+            (spriteMeta->collider.width / sourceWidth) * object.bounds.width,
+            (spriteMeta->collider.height / sourceHeight) * object.bounds.height
+        };
+    }
+
+    return object.bounds;
 }
 
 bool World::IsWalkable(Vector2 worldPosition, float radius) const {
@@ -327,30 +603,25 @@ bool World::IsWalkable(Vector2 worldPosition, float radius) const {
         return false;
     }
 
-    for (const Rectangle& area : blockedAreas_) {
-        if (CheckCollisionRecs(body, area)) {
-            return false;
-        }
-    }
-
-    for (const Rectangle& area : waterAreas_) {
-        if (CheckCollisionRecs(body, area)) {
-            return false;
-        }
-    }
-
-    for (const WorldStamp& stamp : stamps_) {
+    std::vector<size_t> candidateStamps;
+    CollectVisibleStampIndices(body, candidateStamps);
+    for (size_t stampIndex : candidateStamps) {
+        const WorldStamp& stamp = stamps_[stampIndex];
         const auto meta = metaForAsset(stamp.asset);
         if (!meta.has_value() || !meta->blocksMovement) {
             continue;
         }
-        const Rectangle stampRect {
-            static_cast<float>(stamp.x * tileSize_),
-            static_cast<float>(stamp.y * tileSize_),
-            static_cast<float>(tileSize_),
-            static_cast<float>(tileSize_)
-        };
+        const Rectangle stampRect = stampCollisionRect(stamp, *meta);
         if (CheckCollisionRecs(body, stampRect)) {
+            return false;
+        }
+    }
+
+    std::vector<const WorldObject*> candidateObjects;
+    CollectVisibleObjects(body, candidateObjects);
+    for (const WorldObject* object : candidateObjects) {
+        const std::optional<Rectangle> collider = objectCollisionRect(*object);
+        if (collider.has_value() && CheckCollisionRecs(body, *collider)) {
             return false;
         }
     }
@@ -369,88 +640,7 @@ void World::DrawGround(Rectangle visibleArea) const {
         return;
     }
 
-    const bool hasGroundStamps = HasStampsOnLayer(stamps_, "ground");
     DrawRectangleRec(clippedView, GrassColor());
-
-    for (const WorldLayer& layer : layers_) {
-        if (layer.name == "ground" && layer.kind == "color") {
-            DrawRectangleRec(clippedView, Fade(layer.tint, 0.18f));
-        } else if (layer.name == "ground" && LayerHasUsableImage(layer)) {
-            const AtlasRef ref = ParseAtlasRef(layer.asset);
-            if (ref.valid) {
-                Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
-                if (texture != nullptr) {
-                    DrawTiledTexture(*texture, ref.source, clippedView, layer.tint);
-                }
-            }
-        }
-    }
-
-    for (const WorldStamp& stamp : stamps_) {
-        if (stamp.layer != "ground") {
-            continue;
-        }
-        const Rectangle dest {
-            static_cast<float>(stamp.x * tileSize_),
-            static_cast<float>(stamp.y * tileSize_),
-            static_cast<float>(tileSize_),
-            static_cast<float>(tileSize_)
-        };
-        if (!CheckCollisionRecs(dest, clippedView)) {
-            continue;
-        }
-        DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
-    }
-
-    const int minTileX = std::max(0, static_cast<int>(std::floor(clippedView.x / tileSize_)));
-    const int minTileY = std::max(0, static_cast<int>(std::floor(clippedView.y / tileSize_)));
-    const int maxTileX = std::min(width_, static_cast<int>(std::ceil((clippedView.x + clippedView.width) / tileSize_)));
-    const int maxTileY = std::min(height_, static_cast<int>(std::ceil((clippedView.y + clippedView.height) / tileSize_)));
-    if (!kFastMobileRender && !hasGroundStamps) {
-        for (int y = minTileY; y < maxTileY; ++y) {
-            for (int x = minTileX; x < maxTileX; ++x) {
-                if ((x + y) % 2 == 0) {
-                    DrawRectangle(
-                        x * tileSize_,
-                        y * tileSize_,
-                        tileSize_,
-                        tileSize_,
-                        Fade(GrassShade(), 0.22f)
-                    );
-                }
-            }
-        }
-    }
-
-    for (const Rectangle& area : waterAreas_) {
-        if (!CheckCollisionRecs(area, clippedView)) {
-            continue;
-        }
-        bool drewTexture = false;
-        for (const WorldLayer& layer : layers_) {
-            if (layer.name != "water" || layer.kind != "image") {
-                continue;
-            }
-            const AtlasRef ref = ParseAtlasRef(layer.asset);
-            if (!ref.valid) {
-                continue;
-            }
-            Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
-            if (texture != nullptr) {
-                const Rectangle clippedArea = ClampRectToBounds(area, clippedView);
-                if (HasArea(clippedArea)) {
-                    DrawTiledTexture(*texture, ref.source, clippedArea, layer.tint);
-                }
-                drewTexture = true;
-            }
-        }
-        if (!drewTexture) {
-            DrawRectangleRounded(area, 0.18f, 10, WaterColor());
-        }
-        if (!kFastMobileRender) {
-            DrawRectangleRoundedLinesEx(area, 0.18f, 10, 4.0f, WaterEdgeColor());
-        }
-    }
 }
 
 void World::DrawDecorations(Rectangle visibleArea) const {
@@ -458,8 +648,22 @@ void World::DrawDecorations(Rectangle visibleArea) const {
     if (!HasArea(clippedView)) {
         return;
     }
+
+    std::vector<size_t> visibleStamps;
+    CollectVisibleStampIndices(clippedView, visibleStamps);
+
+    auto drawStamp = [&](const WorldStamp& stamp) {
+        const Rectangle dest = stampBounds(stamp);
+        if (CheckCollisionRecs(dest, clippedView)) {
+            DrawTileSpriteRef(stamp.asset, dest, WHITE);
+        }
+    };
+
     for (const WorldLayer& layer : layers_) {
-        if (layer.name == "road") {
+        const bool hasLayerStamps = layer.name == "road" && hasRoadStamps_;
+        if (layer.kind == "color") {
+            DrawRectangleRec(clippedView, Fade(layer.tint, 0.18f));
+        } else if (layer.name == "road" && !hasLayerStamps) {
             const Rectangle bounds = Bounds();
             const float pathY = std::clamp(bounds.height * 0.44f, 96.0f, bounds.height - 120.0f);
             const float pathX = std::clamp(bounds.width * 0.43f, 96.0f, bounds.width - 120.0f);
@@ -479,82 +683,45 @@ void World::DrawDecorations(Rectangle visibleArea) const {
                     }
                 }
             }
-            if (!drewTexture && !HasStampsOnLayer(stamps_, "road")) {
+            if (!drewTexture && !hasRoadStamps_) {
                 if (HasArea(clippedHorizontal)) DrawRectangleRec(clippedHorizontal, Fade(PathColor(), 0.90f));
                 if (HasArea(clippedVertical)) DrawRectangleRec(clippedVertical, Fade(PathColor(), 0.90f));
             }
-            for (const WorldStamp& stamp : stamps_) {
-                if (stamp.layer != "road") {
-                    continue;
+        } else if (LayerHasUsableImage(layer)) {
+            const AtlasRef ref = ParseAtlasRef(layer.asset);
+            if (ref.valid) {
+                Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
+                if (texture != nullptr) {
+                    DrawTiledTexture(*texture, ref.source, clippedView, layer.tint);
                 }
-                const Rectangle dest {
-                    static_cast<float>(stamp.x * tileSize_),
-                    static_cast<float>(stamp.y * tileSize_),
-                    static_cast<float>(tileSize_),
-                    static_cast<float>(tileSize_)
-                };
-                if (!CheckCollisionRecs(dest, clippedView)) {
-                    continue;
-                }
-                DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
             }
-        } else if (layer.asset.find("trees") != std::string::npos) {
-            const int decorationCount = kFastMobileRender
-                ? std::max(8, (width_ * height_) / 140)
-                : std::max(18, (width_ * height_) / 60);
-            const int maxX = std::max(160, width_ * tileSize_ - 160);
-            const int maxY = std::max(180, height_ * tileSize_ - 180);
-            for (int i = 0; i < decorationCount; ++i) {
-                const float x = 80.0f + static_cast<float>((i * 173) % maxX);
-                const float y = 90.0f + static_cast<float>((i * 127) % maxY);
-                if (x < clippedView.x - 64.0f || x > clippedView.x + clippedView.width + 64.0f ||
-                    y < clippedView.y - 64.0f || y > clippedView.y + clippedView.height + 64.0f) {
-                    continue;
-                }
-                DrawCircleV(Vector2 {x, y}, 28.0f, Fade(CanopyColor(), layer.tint.a / 255.0f));
-                DrawCircleV(Vector2 {x - 12.0f, y + 10.0f}, 22.0f, Fade(CanopyShade(), layer.tint.a / 255.0f));
-                DrawRectangleRounded(Rectangle {x - 6.0f, y + 22.0f, 12.0f, 24.0f}, 0.4f, 4, Color {95, 70, 45, 255});
+        }
+
+        for (size_t stampIndex : visibleStamps) {
+            const WorldStamp& stamp = stamps_[stampIndex];
+            if (stamp.layer == layer.name) {
+                drawStamp(stamp);
             }
         }
     }
 
-    for (const WorldStamp& stamp : stamps_) {
-        if (stamp.layer == "ground" || stamp.layer == "road") {
+    for (size_t stampIndex : visibleStamps) {
+        const WorldStamp& stamp = stamps_[stampIndex];
+        const bool knownLayer = std::any_of(layers_.begin(), layers_.end(), [&](const WorldLayer& layer) {
+            return layer.name == stamp.layer;
+        });
+        if (knownLayer) {
             continue;
         }
-        const Rectangle dest {
-            static_cast<float>(stamp.x * tileSize_),
-            static_cast<float>(stamp.y * tileSize_),
-            static_cast<float>(tileSize_),
-            static_cast<float>(tileSize_)
-        };
-        if (!CheckCollisionRecs(dest, clippedView)) {
-            continue;
-        }
-        DrawSpriteRef(stamp.asset, dest, Vector2 {}, 0.0f, WHITE);
+        drawStamp(stamp);
     }
 
     if (!kFastMobileRender) {
-        for (const Rectangle& area : blockedAreas_) {
-            if (!CheckCollisionRecs(area, clippedView)) {
-                continue;
-            }
-            DrawRectangleRounded(area, 0.12f, 6, Color {111, 83, 61, 255});
-            DrawRectangleRounded(
-                Rectangle {area.x + 10.0f, area.y + 10.0f, area.width - 20.0f, area.height - 20.0f},
-                0.1f,
-                6,
-                Color {155, 122, 81, 255}
-            );
-        }
-    }
-    if (!kFastMobileRender) {
-        for (const WorldObject& object : objects_) {
-            if (object.kind == "trigger") {
-                if (!CheckCollisionRecs(object.bounds, clippedView)) {
-                    continue;
-                }
-                DrawRectangleRoundedLinesEx(object.bounds, 0.12f, 8, 2.0f, Fade(Color {245, 226, 120, 255}, 0.65f));
+        std::vector<const WorldObject*> visibleObjects;
+        CollectVisibleObjects(clippedView, visibleObjects);
+        for (const WorldObject* object : visibleObjects) {
+            if (object->kind == "trigger") {
+                DrawRectangleRoundedLinesEx(object->bounds, 0.12f, 8, 2.0f, Fade(Color {245, 226, 120, 255}, 0.65f));
             }
         }
     }
@@ -638,10 +805,9 @@ float World::objectFacing(const WorldObject& object) const {
         return 0.0f;
     }
 
-    if (*value == "north") return 0.0f;
-    if (*value == "east") return 90.0f;
-    if (*value == "south") return 180.0f;
-    if (*value == "west") return 270.0f;
+    if (*value == "north" || *value == "east" || *value == "south" || *value == "west") {
+        return 0.0f;
+    }
     try {
         return std::stof(*value);
     } catch (...) {
@@ -650,16 +816,11 @@ float World::objectFacing(const WorldObject& object) const {
 }
 
 bool World::DrawSpriteRef(const std::string& spriteRef, Rectangle dest, Vector2 origin, float rotation, Color tint) const {
-    const AtlasRef ref = ParseAtlasRef(spriteRef);
-    if (!ref.valid) {
-        return false;
-    }
-    Texture2D* texture = EnsureTextureLoaded(textures_, ref, mapAssetRoot_, characterAssetRoot_);
-    if (!texture) {
-        return false;
-    }
-    DrawTexturePro(*texture, ref.source, dest, origin, rotation, tint);
-    return true;
+    return DrawSpriteRefInternal(textures_, mapAssetRoot_, characterAssetRoot_, spriteRef, dest, origin, rotation, tint, false);
+}
+
+bool World::DrawTileSpriteRef(const std::string& spriteRef, Rectangle dest, Color tint) const {
+    return DrawSpriteRefInternal(textures_, mapAssetRoot_, characterAssetRoot_, spriteRef, dest, Vector2 {}, 0.0f, tint, true);
 }
 
 bool World::DrawObjectSprite(const WorldObject& object, Color tint) const {
@@ -811,40 +972,16 @@ void World::LoadAtlasMetadataForRef(const std::string& assetRef) {
         return;
     }
 
-    std::string line;
-    while (std::getline(in, line)) {
-        if (line.empty()) continue;
-        const size_t sep = line.find('=');
-        if (sep == std::string::npos) continue;
-        if (line.substr(0, sep) != "tile") continue;
-
-        const std::vector<std::string> parts = Nganu::MapFormat::SplitEscaped(line.substr(sep + 1), ',');
-        if (parts.size() < 4) continue;
-
-        int x = 0;
-        int y = 0;
-        int w = 0;
-        int h = 0;
-        try {
-            x = std::stoi(parts[0]);
-            y = std::stoi(parts[1]);
-            w = std::stoi(parts[2]);
-            h = std::stoi(parts[3]);
-        } catch (...) {
-            continue;
-        }
-
+    const std::string text((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    const auto parsedMetadata = Nganu::MapFormat::ParseAtlasMetadata(text, ref.file);
+    for (const auto& [key, source] : parsedMetadata) {
         WorldAtlasTileMeta meta;
-        for (size_t i = 4; i < parts.size(); ++i) {
-            const auto prop = Nganu::MapFormat::SplitPropertyAssignment(parts[i], ':');
-            if (!prop.has_value()) continue;
-            if (prop->first == "collision" && prop->second == "block") {
-                meta.blocksMovement = true;
-            } else if (prop->first == "tag") {
-                meta.tag = prop->second;
-            }
-        }
-        atlasTileMeta_[Nganu::MapFormat::AtlasMetaKey(ref.file, x, y, w, h)] = std::move(meta);
+        meta.collision = source.collision;
+        meta.blocksMovement = source.blocksMovement;
+        meta.hasCollider = source.hasCollider;
+        meta.collider = Rectangle {source.collider.x, source.collider.y, source.collider.width, source.collider.height};
+        meta.tag = source.tag;
+        atlasTileMeta_[key] = std::move(meta);
     }
 }
 

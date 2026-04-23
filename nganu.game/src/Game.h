@@ -24,7 +24,7 @@ struct Avatar {
     Vector2 position {};
     Vector2 velocity {};
     Color bodyColor {};
-    float radius = 14.0f;
+    float radius = 10.0f;
 };
 
 struct RemoteMovementSample {

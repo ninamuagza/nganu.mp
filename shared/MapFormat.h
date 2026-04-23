@@ -45,16 +45,14 @@ struct Object {
 struct Document {
     std::string mapId;
     std::string worldName;
-    int tileSize = 48;
+    int tileSize = 32;
     int width = 0;
     int height = 0;
-    Vec2 spawn {160.0f, 160.0f};
+    Vec2 spawn {96.0f, 96.0f};
     std::unordered_map<std::string, std::string> properties;
     std::vector<Layer> layers;
     std::vector<Stamp> stamps;
     std::vector<Object> objects;
-    std::vector<Rect> blockedAreas;
-    std::vector<Rect> waterAreas;
 };
 
 enum class AssetDomain {
@@ -67,6 +65,14 @@ struct AtlasRef {
     std::string file;
     Rect source;
     bool valid = false;
+};
+
+struct AtlasTileMeta {
+    std::string collision;
+    std::string tag;
+    bool blocksMovement = false;
+    bool hasCollider = false;
+    Rect collider;
 };
 
 struct ParseResult {
@@ -90,6 +96,7 @@ std::optional<AtlasRef> ParseAtlasRef(const std::string& asset);
 std::string AssetFileName(const std::string& ref);
 AssetDomain AssetDomainForRef(const std::string& ref, AssetDomain fallbackDomain);
 std::string AtlasMetaKey(const std::string& file, int x, int y, int w, int h);
+std::unordered_map<std::string, AtlasTileMeta> ParseAtlasMetadata(const std::string& text, const std::string& fileName);
 
 void AddUniqueAssetRef(std::vector<std::string>& refs, const std::string& file);
 void CollectReferencedAssets(const Document& document,

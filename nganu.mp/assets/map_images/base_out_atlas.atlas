@@ -1,1 +1,10 @@
-tile=0,160,32,32,collision:block,tag:water
+tile=0,0,32,32,collision:block,collider:11|12|11|20
+tile=160,96,32,32,collision:block,collider:0|0|32|32
+tile=192,96,32,32,collision:block,collider:12|22|11|9
+tile=288,128,32,96,collision:block,collider:0|62|32|34
+tile=288,128,32,32,collision:block,collider:0|0|32|32
+tile=0,160,32,32,collision:block
+tile=352,160,32,96,collision:block,collider:0|0|32|87
+tile=288,192,32,32,collision:block,collider:0|0|32|32
+tile=384,192,32,32,collision:block,collider:0|0|32|32
+tile=384,256,64,64,collision:block,collider:0|32|64|32

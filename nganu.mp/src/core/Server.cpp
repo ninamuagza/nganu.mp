@@ -45,6 +45,10 @@ namespace {
 constexpr uint64_t kManifestProbeMinIntervalMs = 500;
 constexpr uint64_t kAssetRequestWindowMs = 1000;
 constexpr uint32_t kMaxAssetRequestsPerWindow = 64;
+constexpr float kInteractRadiusMin = 16.0f;
+constexpr float kInteractRadiusPad = 27.0f;
+constexpr float kInteractRangeMin = 37.0f;
+constexpr float kInteractRangeMax = 80.0f;
 
 uint64_t nowMs() {
     const auto now = std::chrono::steady_clock::now().time_since_epoch();
@@ -82,11 +86,13 @@ float objectInteractionRange(const MapData::Object& object) {
     auto range = object.properties.find("interact_radius");
     if (range != object.properties.end()) {
         try {
-            return std::max(24.0f, std::stof(range->second));
+            return std::max(kInteractRadiusMin, std::stof(range->second));
         } catch (...) {
         }
     }
-    return std::clamp((std::max(object.width, object.height) * 0.5f) + 40.0f, 56.0f, 120.0f);
+    return std::clamp((std::max(object.width, object.height) * 0.5f) + kInteractRadiusPad,
+                      kInteractRangeMin,
+                      kInteractRangeMax);
 }
 
 bool playerCanInteractWithObject(const Server::PlayerPosition& playerPosition, const MapData::Object& object) {

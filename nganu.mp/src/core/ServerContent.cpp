@@ -349,8 +349,8 @@ Server::PlayerPosition Server::defaultSpawnPosition(int playerid, const std::str
         activeMap = &map_;
     }
     return PlayerPosition {
-        activeMap->spawnX() + static_cast<float>((std::max(0, playerid - 1) % 6) * 36),
-        activeMap->spawnY() + static_cast<float>((std::max(0, playerid - 1) / 6) * 36)
+        activeMap->spawnX() + static_cast<float>((std::max(0, playerid - 1) % 6) * 24),
+        activeMap->spawnY() + static_cast<float>((std::max(0, playerid - 1) / 6) * 24)
     };
 }
 
@@ -360,7 +360,7 @@ bool Server::teleportPlayerWithinMap(int playerid, PlayerPosition nextPosition, 
     if (!activeMap || posIt == playerPositions_.end()) {
         return false;
     }
-    if (!activeMap->isWalkable(nextPosition.x, nextPosition.y, 15.0f)) {
+    if (!activeMap->isWalkable(nextPosition.x, nextPosition.y, 10.0f)) {
         logger_.warn("Server", "Rejected intra-map teleport for player %d on %s", playerid, playerMapId(playerid).c_str());
         return false;
     }
