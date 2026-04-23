@@ -134,14 +134,42 @@ void Network::pollDiscovery(const std::string& serverName) {
 
 void Network::sendPacket(void* peer, const void* data, size_t len, int channel, bool reliable) {
     if (!peer || !data || len == 0) return;
+    ENetPeer* enetPeer = static_cast<ENetPeer*>(peer);
+    if (enetPeer->state != ENET_PEER_STATE_CONNECTED) {
+        logger_.debug("Network",
+                      "Dropping packet for non-connected peer (state=%d, bytes=%zu)",
+                      static_cast<int>(enetPeer->state),
+                      len);
+        return;
+    }
+    if (channel < 0 || static_cast<size_t>(channel) >= enetPeer->channelCount) {
+        logger_.warn("Network",
+                     "Dropping packet for invalid channel %d (peer channels=%zu, bytes=%zu)",
+                     channel,
+                     static_cast<size_t>(enetPeer->channelCount),
+                     len);
+        return;
+    }
+    if (enetPeer->host && len > enetPeer->host->maximumPacketSize) {
+        logger_.warn("Network",
+                     "Dropping oversized ENet packet (%zu > %zu bytes)",
+                     len,
+                     enetPeer->host->maximumPacketSize);
+        return;
+    }
+
     const enet_uint32 flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
     ENetPacket* packet = enet_packet_create(data, len, flags);
     if (!packet) {
         logger_.warn("Network", "Failed to allocate packet (%zu bytes)", len);
         return;
     }
-    if (enet_peer_send(static_cast<ENetPeer*>(peer), channel, packet) != 0) {
-        logger_.warn("Network", "Failed to queue packet (%zu bytes)", len);
+    if (enet_peer_send(enetPeer, static_cast<enet_uint8>(channel), packet) != 0) {
+        logger_.warn("Network",
+                     "Failed to queue packet (state=%d, channel=%d, bytes=%zu)",
+                     static_cast<int>(enetPeer->state),
+                     channel,
+                     len);
         enet_packet_destroy(packet);
     }
 }
