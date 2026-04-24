@@ -71,6 +71,75 @@ struct HudLayout {
     int chatFont = 15;
 };
 
+enum class FrameAnchor {
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight,
+    Center
+};
+
+float ClampDimensionToAvailable(float preferred, float minimum, float available) {
+    if (available <= 0.0f) {
+        return 0.0f;
+    }
+    const float floor = std::min(minimum, available);
+    return std::clamp(preferred, floor, available);
+}
+
+Rectangle InsetFrameForScreen(float screenWidth, float screenHeight, float insetX = 16.0f, float insetY = 16.0f) {
+    return Rectangle {
+        std::round(insetX),
+        std::round(insetY),
+        std::round(std::max(0.0f, screenWidth - insetX * 2.0f)),
+        std::round(std::max(0.0f, screenHeight - insetY * 2.0f))
+    };
+}
+
+Rectangle AnchoredRectInFrame(const Rectangle& frame,
+                              float preferredWidth,
+                              float minWidth,
+                              float preferredHeight,
+                              float minHeight,
+                              FrameAnchor anchor,
+                              float offsetX = 0.0f,
+                              float offsetY = 0.0f) {
+    const float width = ClampDimensionToAvailable(preferredWidth, minWidth, frame.width);
+    const float height = ClampDimensionToAvailable(preferredHeight, minHeight, frame.height);
+    float x = frame.x;
+    float y = frame.y;
+    switch (anchor) {
+    case FrameAnchor::TopRight:
+        x = frame.x + frame.width - width;
+        break;
+    case FrameAnchor::BottomLeft:
+        y = frame.y + frame.height - height;
+        break;
+    case FrameAnchor::BottomRight:
+        x = frame.x + frame.width - width;
+        y = frame.y + frame.height - height;
+        break;
+    case FrameAnchor::Center:
+        x = frame.x + (frame.width - width) * 0.5f;
+        y = frame.y + (frame.height - height) * 0.5f;
+        break;
+    case FrameAnchor::TopLeft:
+    default:
+        break;
+    }
+
+    const float minX = frame.x;
+    const float minY = frame.y;
+    const float maxX = std::max(frame.x, frame.x + frame.width - width);
+    const float maxY = std::max(frame.y, frame.y + frame.height - height);
+    return Rectangle {
+        std::round(std::clamp(x + offsetX, minX, maxX)),
+        std::round(std::clamp(y + offsetY, minY, maxY)),
+        std::round(width),
+        std::round(height)
+    };
+}
+
 float UiScaleForScreen(float width, float height) {
     const float widthScale = width / 1280.0f;
     const float heightScale = height / 720.0f;
@@ -93,16 +162,6 @@ Rectangle SafeFrameForScreen(float screenWidth, float screenHeight, float widthC
     };
 }
 
-float FitPanelHeight(float available, float minimum, float preferred) {
-    if (available <= 0.0f) {
-        return 0.0f;
-    }
-    if (available < minimum) {
-        return std::max(44.0f, available);
-    }
-    return std::min(preferred, available);
-}
-
 Rectangle GameplayViewport(float screenWidth, float screenHeight) {
     return Rectangle {0.0f, 0.0f, screenWidth, screenHeight};
 }
@@ -123,11 +182,16 @@ struct LoginHitRects {
 struct LoginLayout {
     Rectangle safeFrame {};
     Rectangle card {};
+    Rectangle manifestBox {};
+    Rectangle statusBox {};
     LoginHitRects hitRects {};
     bool compact = false;
     bool tiny = false;
+    bool stackedFields = false;
     float cardPadding = 28.0f;
     float fieldHeight = 44.0f;
+    float headerHeight = 86.0f;
+    float helpY = 0.0f;
 };
 
 float LoginKeyboardOffsetY(float screenHeight, const Rectangle& card, const LoginHitRects& hitRects) {
@@ -153,40 +217,65 @@ float LoginKeyboardOffsetY(float screenHeight, const Rectangle& card, const Logi
 
 LoginLayout ComputeLoginLayout(float screenWidth, float screenHeight) {
     LoginLayout layout;
-    layout.safeFrame = SafeFrameForScreen(screenWidth, screenHeight, 1.24f, 520.0f, 0.88f);
-    layout.compact = layout.safeFrame.width < 760.0f;
-    layout.tiny = layout.safeFrame.width < 620.0f || layout.safeFrame.height < 560.0f;
-    layout.cardPadding = layout.tiny ? 18.0f : 28.0f;
-    layout.fieldHeight = layout.tiny ? 40.0f : 44.0f;
-    const float cardWidth = std::min(layout.tiny ? 520.0f : 620.0f, layout.safeFrame.width);
-    const float cardHeight = std::min(layout.tiny ? 470.0f : (layout.compact ? 540.0f : 520.0f), layout.safeFrame.height);
-    layout.card = CenteredCardInFrame(layout.safeFrame, cardWidth, 620.0f, cardHeight, layout.tiny ? 420.0f : 460.0f);
+    const float horizontalInset = screenWidth < 640.0f ? 12.0f : 16.0f;
+    const float verticalInset = screenHeight < 540.0f ? 12.0f : 16.0f;
+    layout.safeFrame = InsetFrameForScreen(screenWidth, screenHeight, horizontalInset, verticalInset);
+    layout.compact = layout.safeFrame.width < 620.0f || layout.safeFrame.height < 560.0f;
+    layout.tiny = layout.safeFrame.width < 420.0f || layout.safeFrame.height < 500.0f;
+    layout.stackedFields = layout.safeFrame.width < 360.0f;
+    layout.cardPadding = layout.tiny ? 18.0f : 20.0f;
+    layout.fieldHeight = layout.tiny ? 40.0f : 42.0f;
+    layout.headerHeight = layout.tiny ? 80.0f : 86.0f;
+    const float rowGap = layout.tiny ? 18.0f : 20.0f;
+    const float buttonGap = layout.tiny ? 18.0f : 20.0f;
+    const float buttonHeight = layout.tiny ? 46.0f : 48.0f;
+    const float sectionGap = layout.tiny ? 14.0f : 16.0f;
+    const float manifestHeight = layout.tiny ? 60.0f : 64.0f;
+    const float statusHeight = layout.tiny ? 34.0f : 36.0f;
+    const float helpGap = layout.tiny ? 10.0f : 12.0f;
+    const float helpHeight = layout.tiny ? 16.0f : 18.0f;
+    float cardHeight = layout.cardPadding * 2.0f + layout.headerHeight + layout.fieldHeight + rowGap + layout.fieldHeight + buttonGap + buttonHeight +
+                       sectionGap + manifestHeight + sectionGap + statusHeight + helpGap + helpHeight;
+    if (layout.stackedFields) {
+        cardHeight += rowGap + layout.fieldHeight;
+    }
+
+    layout.card = CenteredCardInFrame(layout.safeFrame,
+                                      layout.compact ? 500.0f : 540.0f,
+                                      540.0f,
+                                      cardHeight,
+                                      layout.stackedFields ? 440.0f : 420.0f);
     const Rectangle& card = layout.card;
-    const bool compact = layout.compact;
-    const bool tiny = layout.tiny;
     const float cardPadding = layout.cardPadding;
     const float fieldHeight = layout.fieldHeight;
     const float innerX = card.x + cardPadding;
     const float innerWidth = card.width - cardPadding * 2.0f;
-    const float hostWidth = (compact || tiny) ? innerWidth : innerWidth - 120.0f;
+    const float hostWidth = layout.stackedFields ? innerWidth : std::max(150.0f, innerWidth - 112.0f);
+    const float portWidth = layout.stackedFields ? innerWidth : 100.0f;
 
-    layout.hitRects.nameBox = Rectangle {innerX, card.y + cardPadding + 104.0f, innerWidth, fieldHeight};
-    layout.hitRects.hostBox = Rectangle {innerX, layout.hitRects.nameBox.y + fieldHeight + (tiny ? 30.0f : 28.0f), hostWidth, fieldHeight};
+    layout.hitRects.nameBox = Rectangle {innerX, card.y + cardPadding + layout.headerHeight, innerWidth, fieldHeight};
+    layout.hitRects.hostBox = Rectangle {innerX, layout.hitRects.nameBox.y + fieldHeight + rowGap, hostWidth, fieldHeight};
     layout.hitRects.portBox = Rectangle {
-        compact || tiny ? innerX : layout.hitRects.hostBox.x + layout.hitRects.hostBox.width + 14.0f,
-        compact || tiny ? layout.hitRects.hostBox.y + fieldHeight + 28.0f : layout.hitRects.hostBox.y,
-        compact || tiny ? innerWidth : 106.0f,
+        layout.stackedFields ? innerX : layout.hitRects.hostBox.x + layout.hitRects.hostBox.width + 12.0f,
+        layout.stackedFields ? layout.hitRects.hostBox.y + fieldHeight + rowGap : layout.hitRects.hostBox.y,
+        portWidth,
         fieldHeight
     };
-    layout.hitRects.buttonBox = Rectangle {innerX, layout.hitRects.portBox.y + fieldHeight + (tiny ? 24.0f : 34.0f), innerWidth, tiny ? 46.0f : 50.0f};
+    layout.hitRects.buttonBox = Rectangle {innerX, layout.hitRects.portBox.y + fieldHeight + buttonGap, innerWidth, buttonHeight};
+    layout.manifestBox = Rectangle {innerX, layout.hitRects.buttonBox.y + buttonHeight + sectionGap, innerWidth, manifestHeight};
+    layout.statusBox = Rectangle {innerX, layout.manifestBox.y + manifestHeight + sectionGap, innerWidth, statusHeight};
+    layout.helpY = layout.statusBox.y + statusHeight + helpGap;
 
     const float offsetY = LoginKeyboardOffsetY(screenHeight, layout.card, layout.hitRects);
     if (offsetY != 0.0f) {
         layout.card.y += offsetY;
+        layout.manifestBox.y += offsetY;
+        layout.statusBox.y += offsetY;
         layout.hitRects.nameBox.y += offsetY;
         layout.hitRects.hostBox.y += offsetY;
         layout.hitRects.portBox.y += offsetY;
         layout.hitRects.buttonBox.y += offsetY;
+        layout.helpY += offsetY;
     }
     return layout;
 }
@@ -504,28 +593,33 @@ void HideAndroidKeyboard() {}
 
 HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDebug) {
     HudLayout layout;
-    const float scale = UiScaleForScreen(screenWidth, screenHeight);
     const Rectangle viewport = GameplayViewport(screenWidth, screenHeight);
-    const Rectangle safeFrame = SafeFrameForScreen(viewport.width, viewport.height, 1.76f, 760.0f, 0.90f);
-
-    layout.safeFrame = safeFrame;
-    layout.compact = safeFrame.width < 1080.0f || safeFrame.height < 720.0f;
-    layout.singleColumn = safeFrame.width < 860.0f || safeFrame.height < 570.0f;
-    layout.shortScreen = safeFrame.height < 640.0f;
-    const bool tiny = safeFrame.width < 700.0f || safeFrame.height < 520.0f;
-    layout.margin = std::clamp(18.0f * scale, 10.0f, 22.0f);
-    layout.gap = tiny ? 8.0f : std::clamp(12.0f * scale, 8.0f, 14.0f);
-    layout.topBarHeight = layout.singleColumn ? (tiny ? 84.0f : 88.0f) : (layout.compact ? (layout.shortScreen ? 64.0f : 70.0f) : 56.0f);
-    layout.titleFont = tiny ? 18 : (layout.compact ? 19 : 20);
-    layout.bodyFont = tiny ? 16 : 18;
-    layout.smallFont = tiny ? 13 : (layout.compact ? 14 : 15);
-    layout.chatFont = tiny ? 13 : 15;
+    layout.safeFrame = InsetFrameForScreen(viewport.width,
+                                           viewport.height,
+                                           viewport.width < 640.0f ? 12.0f : 16.0f,
+                                           viewport.height < 520.0f ? 12.0f : 16.0f);
+    layout.compact = layout.safeFrame.width < 980.0f || layout.safeFrame.height < 720.0f;
+    layout.singleColumn = layout.safeFrame.width < 760.0f || layout.safeFrame.height < 600.0f;
+    layout.shortScreen = layout.safeFrame.height < 620.0f;
+    const bool tiny = layout.safeFrame.width < 520.0f || layout.safeFrame.height < 470.0f;
+    layout.margin = tiny ? 10.0f : 16.0f;
+    layout.gap = tiny ? 8.0f : 12.0f;
+    layout.topBarHeight = layout.singleColumn ? (tiny ? 76.0f : 80.0f) : 56.0f;
+    layout.titleFont = tiny ? 18 : 20;
+    layout.bodyFont = tiny ? 15 : 17;
+    layout.smallFont = tiny ? 13 : 14;
+    layout.chatFont = tiny ? 13 : 14;
+#if defined(PLATFORM_ANDROID)
+    const float bottomReserve = std::clamp(std::min(viewport.width, viewport.height) * 0.33f, 156.0f, 204.0f);
+#else
+    const float bottomReserve = 0.0f;
+#endif
 
     layout.contentFrame = Rectangle {
-        safeFrame.x,
-        safeFrame.y + layout.topBarHeight + layout.margin,
-        safeFrame.width,
-        std::max(0.0f, safeFrame.height - layout.topBarHeight - layout.margin)
+        layout.safeFrame.x,
+        layout.safeFrame.y + layout.topBarHeight + layout.margin,
+        layout.safeFrame.width,
+        std::max(0.0f, layout.safeFrame.height - layout.topBarHeight - layout.margin - bottomReserve)
     };
     const float contentTop = layout.contentFrame.y;
     const float contentBottom = layout.contentFrame.y + layout.contentFrame.height;
@@ -534,62 +628,84 @@ HudLayout ComputeHudLayout(float screenWidth, float screenHeight, bool includeDe
     const float contentHeight = layout.contentFrame.height;
 
     if (layout.singleColumn) {
-        const float panelWidth = layout.contentFrame.width;
-        const float availableHeight = std::max(160.0f, contentHeight);
-        const float questHeight = FitPanelHeight(availableHeight * 0.21f, 82.0f, layout.shortScreen ? 92.0f : 110.0f);
-        const float partyHeight = FitPanelHeight((availableHeight - questHeight - layout.gap) * 0.19f, 70.0f, layout.shortScreen ? 84.0f : 96.0f);
-        float remainingHeight = contentBottom - (contentTop + questHeight + layout.gap + partyHeight + layout.gap);
+        const float panelWidth = ClampDimensionToAvailable(420.0f, 260.0f, layout.contentFrame.width);
+        float panelY = contentTop;
+        const float questHeight = ClampDimensionToAvailable(layout.shortScreen ? 90.0f : 106.0f, 74.0f, std::max(0.0f, contentBottom - panelY));
+        layout.questPanel = Rectangle {contentLeft, panelY, panelWidth, questHeight};
+        panelY += questHeight + layout.gap;
+
+        const float partyHeight = ClampDimensionToAvailable(layout.shortScreen ? 84.0f : 100.0f, 70.0f, std::max(0.0f, contentBottom - panelY));
+        layout.partyPanel = Rectangle {contentLeft, panelY, panelWidth, partyHeight};
+        panelY += partyHeight + layout.gap;
+
         float debugHeight = 0.0f;
         if (includeDebug) {
-            debugHeight = FitPanelHeight(remainingHeight * 0.26f, 90.0f, layout.shortScreen ? 102.0f : 120.0f);
-            remainingHeight -= debugHeight + layout.gap;
+            const float reservedChat = layout.shortScreen ? 120.0f : 140.0f;
+            const float availableDebug = std::max(0.0f, contentBottom - panelY - layout.gap - reservedChat);
+            debugHeight = ClampDimensionToAvailable(layout.shortScreen ? 96.0f : 112.0f, 84.0f, availableDebug);
+            layout.debugPanel = Rectangle {contentLeft, panelY, panelWidth, debugHeight};
+            panelY += debugHeight + layout.gap;
         }
-        const float chatHeight = FitPanelHeight(remainingHeight, 108.0f, layout.shortScreen ? 160.0f : 210.0f);
+        const float chatHeight = ClampDimensionToAvailable(layout.shortScreen ? 152.0f : 188.0f, 110.0f, std::max(0.0f, contentBottom - panelY));
         const float chatY = contentBottom - chatHeight;
-        const float debugY = includeDebug ? (chatY - layout.gap - debugHeight) : chatY;
-
-        layout.questPanel = Rectangle {contentLeft, contentTop, panelWidth, questHeight};
-        layout.partyPanel = Rectangle {contentLeft, layout.questPanel.y + layout.questPanel.height + layout.gap, panelWidth, partyHeight};
         layout.chatPanel = Rectangle {contentLeft, chatY, panelWidth, chatHeight};
-        layout.debugPanel = includeDebug
-            ? Rectangle {contentLeft, debugY, panelWidth, debugHeight}
-            : Rectangle {};
         return layout;
     }
 
-    const float partyWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.25f : 0.22f), 220.0f, 320.0f);
-    const float questWidth = std::clamp(layout.contentFrame.width * (layout.compact ? 0.52f : 0.48f), 340.0f, 580.0f);
-    const float questHeight = FitPanelHeight(contentHeight * 0.20f, 106.0f, layout.compact ? 122.0f : 140.0f);
-    const float partyHeight = FitPanelHeight(contentHeight * 0.24f, 132.0f, layout.compact ? 150.0f : 182.0f);
-    layout.questPanel = Rectangle {contentLeft, contentTop, questWidth, questHeight};
-    layout.partyPanel = Rectangle {contentRight - partyWidth, contentTop, partyWidth, partyHeight};
+    layout.questPanel = AnchoredRectInFrame(layout.contentFrame,
+                                            layout.compact ? 380.0f : 420.0f,
+                                            280.0f,
+                                            layout.shortScreen ? 110.0f : 124.0f,
+                                            90.0f,
+                                            FrameAnchor::TopLeft);
+    layout.partyPanel = AnchoredRectInFrame(layout.contentFrame,
+                                            layout.compact ? 240.0f : 260.0f,
+                                            200.0f,
+                                            layout.shortScreen ? 144.0f : 160.0f,
+                                            116.0f,
+                                            FrameAnchor::TopRight);
 
-    const bool sideDebug = includeDebug && layout.contentFrame.width >= 1040.0f && contentHeight >= 560.0f;
-    const float chatWidth = std::clamp(layout.contentFrame.width * (sideDebug ? 0.58f : 0.62f), 400.0f, 610.0f);
-    const float debugWidth = sideDebug
-        ? std::clamp(layout.contentFrame.width - chatWidth - layout.gap, 280.0f, 360.0f)
-        : std::min(320.0f, partyWidth);
-    const float debugHeight = includeDebug ? FitPanelHeight(contentHeight * (sideDebug ? 0.30f : 0.22f), 118.0f, sideDebug ? 210.0f : 156.0f) : 0.0f;
-    const float availableChatHeight = contentBottom - (layout.questPanel.y + layout.questPanel.height) - layout.gap;
-    const float chatHeight = FitPanelHeight(availableChatHeight, layout.shortScreen ? 132.0f : 164.0f, layout.compact ? 208.0f : 248.0f);
-    layout.chatPanel = Rectangle {contentLeft, contentBottom - chatHeight, chatWidth, chatHeight};
+    const bool sideDebug = includeDebug && layout.contentFrame.width >= 980.0f && contentHeight >= 520.0f;
+    Rectangle chatRegion {
+        contentLeft,
+        layout.questPanel.y + layout.questPanel.height + layout.gap,
+        layout.contentFrame.width - (sideDebug ? (320.0f + layout.gap) : 0.0f),
+        std::max(0.0f, contentBottom - (layout.questPanel.y + layout.questPanel.height + layout.gap))
+    };
+    layout.chatPanel = AnchoredRectInFrame(chatRegion,
+                                           layout.compact ? 440.0f : 500.0f,
+                                           320.0f,
+                                           layout.shortScreen ? 180.0f : 220.0f,
+                                           140.0f,
+                                           FrameAnchor::BottomLeft);
 
-    if (sideDebug && includeDebug) {
-        layout.debugPanel = Rectangle {
-            contentRight - debugWidth,
-            contentBottom - debugHeight,
-            debugWidth,
-            debugHeight
+    if (sideDebug) {
+        const Rectangle debugRegion {
+            contentRight - 320.0f,
+            chatRegion.y,
+            320.0f,
+            chatRegion.height
         };
+        layout.debugPanel = AnchoredRectInFrame(debugRegion,
+                                                320.0f,
+                                                240.0f,
+                                                layout.shortScreen ? 152.0f : 188.0f,
+                                                116.0f,
+                                                FrameAnchor::BottomRight);
     } else if (includeDebug) {
-        layout.debugPanel = Rectangle {
-            contentRight - debugWidth,
-            layout.partyPanel.y + layout.partyPanel.height + layout.gap,
-            debugWidth,
-            debugHeight
+        const float debugTop = layout.partyPanel.y + layout.partyPanel.height + layout.gap;
+        const Rectangle debugRegion {
+            contentRight - layout.partyPanel.width,
+            debugTop,
+            layout.partyPanel.width,
+            std::max(0.0f, layout.chatPanel.y - debugTop - layout.gap)
         };
-        const float maxDebugY = layout.chatPanel.y - layout.gap - debugHeight;
-        layout.debugPanel.y = std::min(layout.debugPanel.y, maxDebugY);
+        layout.debugPanel = AnchoredRectInFrame(debugRegion,
+                                                debugRegion.width,
+                                                200.0f,
+                                                layout.shortScreen ? 132.0f : 148.0f,
+                                                104.0f,
+                                                FrameAnchor::TopRight);
     }
     return layout;
 }
@@ -613,8 +729,10 @@ Rectangle ChatMessageAreaRect(const Rectangle& panel) {
 }
 
 Rectangle CenteredCardInFrame(const Rectangle& frame, float preferredWidth, float maxWidth, float preferredHeight, float minHeight) {
-    const float width = std::clamp(preferredWidth, std::min(300.0f, frame.width), std::min(maxWidth, frame.width));
-    const float height = std::clamp(preferredHeight, minHeight, frame.height);
+    const float width = ClampDimensionToAvailable(std::min(preferredWidth, maxWidth),
+                                                  std::min(300.0f, maxWidth),
+                                                  std::min(maxWidth, frame.width));
+    const float height = ClampDimensionToAvailable(preferredHeight, minHeight, frame.height);
     return Rectangle {
         std::round(frame.x + (frame.width - width) * 0.5f),
         std::round(frame.y + (frame.height - height) * 0.5f),
@@ -2014,38 +2132,41 @@ void Game::Draw() const {
 void Game::DrawLoginScreen() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
     const float screenHeight = static_cast<float>(GetScreenHeight());
-    const float scale = UiScaleForScreen(screenWidth, screenHeight);
     const LoginLayout layout = ComputeLoginLayout(screenWidth, screenHeight);
-    const bool compact = layout.compact;
     const bool tiny = layout.tiny;
     const float cardPadding = layout.cardPadding;
-    const float labelOffset = tiny ? 18.0f : 22.0f;
-    const int titleFont = tiny ? 26 : (compact ? 30 : 34);
-    const int subtitleFont = tiny ? 16 : (compact ? 18 : 20);
+    const float labelOffset = tiny ? 18.0f : 20.0f;
+    const int titleFont = tiny ? 28 : 32;
+    const int subtitleFont = tiny ? 16 : 18;
     const int bodyFont = tiny ? 15 : 16;
-    const int fieldFont = tiny ? 19 : 22;
-    const int buttonFont = tiny ? 21 : 24;
-    const int infoFont = tiny ? 15 : 17;
+    const int fieldFont = tiny ? 18 : 20;
+    const int buttonFont = tiny ? 20 : 22;
+    const int infoFont = tiny ? 14 : 16;
 
     DrawRectangleGradientV(0, 0, static_cast<int>(screenWidth), static_cast<int>(screenHeight), Color {209, 236, 227, 255}, Color {138, 180, 160, 255});
     DrawCircle(static_cast<int>(screenWidth - 180.0f), 140, 150.0f, Fade(WHITE, 0.18f));
     DrawCircle(120, static_cast<int>(screenHeight - 120.0f), 180.0f, Fade(Color {54, 110, 77, 255}, 0.16f));
-    DrawCircleGradient(static_cast<int>(screenWidth * 0.5f), static_cast<int>(screenHeight * 0.22f), 180.0f * scale, Fade(Color {255, 255, 255, 40}, 0.55f), Fade(WHITE, 0.0f));
+    DrawCircleGradient(static_cast<int>(screenWidth * 0.5f), static_cast<int>(screenHeight * 0.22f), tiny ? 136.0f : 160.0f, Fade(Color {255, 255, 255, 40}, 0.55f), Fade(WHITE, 0.0f));
 
     const Rectangle card = layout.card;
-
-    DrawCardSurface(card);
-    DrawRectangleRounded(Rectangle {card.x + cardPadding - 10.0f, card.y + cardPadding - 10.0f, card.width - (cardPadding * 2.0f) + 20.0f, tiny ? 78.0f : 90.0f}, 0.14f, 10, Fade(WHITE, 0.04f));
-    DrawUiText("nganu.game", card.x + cardPadding, card.y + cardPadding - 2.0f, titleFont, RAYWHITE);
-    DrawUiText("Minimal client, live content bootstrap", card.x + cardPadding + 2.0f, card.y + cardPadding + 34.0f, subtitleFont, Fade(RAYWHITE, 0.78f));
-    DrawUiText("Login only opens after server manifest and map are ready.", card.x + cardPadding + 2.0f, card.y + cardPadding + (tiny ? 56.0f : 62.0f), bodyFont, Fade(RAYWHITE, 0.56f));
-
     const float innerX = card.x + cardPadding;
     const float innerWidth = card.width - cardPadding * 2.0f;
     const Rectangle nameBox = layout.hitRects.nameBox;
     const Rectangle hostBox = layout.hitRects.hostBox;
     const Rectangle portBox = layout.hitRects.portBox;
     const Rectangle buttonBox = layout.hitRects.buttonBox;
+    const Rectangle manifestBox = layout.manifestBox;
+    const Rectangle statusBox = layout.statusBox;
+
+    DrawCardSurface(card);
+    DrawRectangleRounded(Rectangle {card.x + cardPadding - 8.0f, card.y + cardPadding - 8.0f, innerWidth + 16.0f, layout.headerHeight - (tiny ? 6.0f : 10.0f)}, 0.14f, 10, Fade(WHITE, 0.04f));
+    DrawUiText("nganu.game", innerX, card.y + cardPadding - 2.0f, titleFont, RAYWHITE);
+    DrawUiText(EllipsizeText("Minimal client, live content bootstrap", subtitleFont, innerWidth), innerX + 2.0f, card.y + cardPadding + 34.0f, subtitleFont, Fade(RAYWHITE, 0.78f));
+    DrawWrappedText("Login only opens after server manifest and map are ready.",
+                    Rectangle {innerX + 2.0f, card.y + cardPadding + (tiny ? 56.0f : 60.0f), innerWidth - 2.0f, std::max(18.0f, layout.headerHeight - (tiny ? 56.0f : 60.0f))},
+                    bodyFont,
+                    Fade(RAYWHITE, 0.56f),
+                    2);
 
     auto drawField = [&](const Rectangle& box, const char* label, const std::string& value, bool active) {
         DrawUiText(label, box.x, box.y - labelOffset, tiny ? 16 : 18, Fade(RAYWHITE, 0.72f));
@@ -2080,7 +2201,6 @@ void Game::DrawLoginScreen() const {
                buttonFont,
                canEnterWorld ? Color {15, 31, 25, 255} : Fade(RAYWHITE, 0.78f));
 
-    const Rectangle manifestBox {innerX, buttonBox.y + buttonBox.height + (tiny ? 16.0f : 12.0f), innerWidth, tiny ? 78.0f : (compact ? 84.0f : 74.0f)};
     DrawRectangleRounded(manifestBox, 0.15f, 8, Fade(WHITE, 0.05f));
     const std::string serverLabel = manifest_.valid
         ? ("Server: " + (manifest_.serverName.empty() ? std::string("Unknown") : manifest_.serverName))
@@ -2095,16 +2215,21 @@ void Game::DrawLoginScreen() const {
     DrawUiText(EllipsizeText(worldLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f + static_cast<float>(infoFont + 3), infoFont, Fade(RAYWHITE, 0.74f));
     DrawUiText(EllipsizeText(revisionLabel, infoFont, manifestBox.width - 22.0f), manifestBox.x + 12.0f, manifestBox.y + 10.0f + static_cast<float>((infoFont + 3) * 2), infoFont, Fade(RAYWHITE, 0.74f));
 
-    DrawWrappedText(loginStatus_, Rectangle {innerX, card.y + card.height - (tiny ? 88.0f : 72.0f), innerWidth, tiny ? 52.0f : 40.0f}, tiny ? 16 : 18, Fade(RAYWHITE, 0.82f), tiny ? 3 : 2);
+    DrawRectangleRounded(statusBox, 0.15f, 8, Fade(WHITE, 0.04f));
+    DrawWrappedText(loginStatus_,
+                    Rectangle {statusBox.x + 10.0f, statusBox.y + 8.0f, statusBox.width - 20.0f, statusBox.height - 12.0f},
+                    tiny ? 15 : 17,
+                    Fade(RAYWHITE, 0.82f),
+                    2);
 #if defined(PLATFORM_ANDROID)
     const char* loginHelp = "Auto LAN uses broadcast. For ZeroTier, enter server IP directly.";
 #else
-    const char* loginHelp = compact ? "Tab switch, Enter login, F5 re-check" : "Tab to switch fields, Enter to login, F5 to re-check update";
+    const char* loginHelp = "Tab switch, Enter login, F5 re-check update";
 #endif
-    DrawUiText(loginHelp,
+    DrawUiText(EllipsizeText(loginHelp, tiny ? 13 : 15, innerWidth),
                innerX,
-               card.y + card.height - (tiny ? 28.0f : 34.0f),
-               tiny ? 14 : 16,
+               layout.helpY,
+               tiny ? 13 : 15,
                Fade(RAYWHITE, 0.60f));
 }
 
@@ -2413,13 +2538,14 @@ void Game::DrawTopBar() const {
     const HudLayout layout = ComputeHudLayout(screenWidth, screenHeight, showDebug_);
     const bool compact = layout.compact;
     const bool singleColumn = layout.singleColumn;
-    const float statusWidth = singleColumn ? layout.contentFrame.width
-                                           : std::clamp(layout.contentFrame.width * (compact ? 0.52f : 0.44f), 360.0f, 470.0f);
+    const float statusWidth = singleColumn
+        ? ClampDimensionToAvailable(360.0f, 220.0f, layout.contentFrame.width)
+        : ClampDimensionToAvailable(430.0f, 300.0f, std::max(0.0f, layout.contentFrame.width - 170.0f));
     const Rectangle statusPanel {
         singleColumn ? layout.contentFrame.x : (layout.contentFrame.x + layout.contentFrame.width - statusWidth),
-        layout.safeFrame.y + (singleColumn ? (layout.topBarHeight - 42.0f) : (compact ? 36.0f : 10.0f)),
+        layout.safeFrame.y + (singleColumn ? (layout.topBarHeight - 42.0f) : 10.0f),
         statusWidth,
-        singleColumn ? 32.0f : (compact ? 30.0f : 34.0f)
+        singleColumn ? 32.0f : 34.0f
     };
 
     DrawRectangle(0, 0, static_cast<int>(screenWidth), static_cast<int>(layout.safeFrame.y + layout.topBarHeight), Fade(BLACK, 0.16f));

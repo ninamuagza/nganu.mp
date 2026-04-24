@@ -1160,7 +1160,6 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/math.h \
@@ -1777,7 +1776,6 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/math.h \
@@ -2118,7 +2116,6 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GamePro
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/netinet/in.h \
@@ -2615,7 +2612,6 @@ CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/netinet/in.h \
@@ -3368,7 +3364,6 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProjec
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/netinet/in.h \
@@ -3553,7 +3548,6 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
   /usr/include/linux/limits.h \
   /usr/include/locale.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
   /usr/include/lualib.h \
   /usr/include/stdc-predef.h \
@@ -3605,8 +3599,6 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 /usr/include/lualib.h:
 
 /usr/include/luaconf.h:
-
-/usr/include/lua.hpp:
 
 /usr/include/lua.h:
 

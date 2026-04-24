@@ -58,9 +58,7 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanoris
   /usr/include/limits.h \
   /usr/include/linux/limits.h \
   /usr/include/lua.h \
-  /usr/include/lua.hpp \
   /usr/include/luaconf.h \
-  /usr/include/lualib.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdio.h \
   /usr/include/sys/cdefs.h \
@@ -75,10 +73,6 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanoris
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
-
-/usr/include/stdio.h:
-
-/usr/include/stdc-predef.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -146,6 +140,8 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o:
 
 /usr/include/bits/timesize.h:
 
+/usr/include/stdc-predef.h:
+
 /usr/lib/libc_nonshared.a:
 
 /usr/include/bits/types.h:
@@ -180,13 +176,13 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o:
 
 /usr/include/bits/xopen_lim.h:
 
+/usr/include/stdio.h:
+
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
 
 /usr/include/gnu/stubs-64.h:
 
 /usr/include/gnu/stubs.h:
-
-/usr/include/lua.hpp:
 
 /usr/include/lauxlib.h:
 
@@ -199,5 +195,3 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o:
 /usr/include/linux/limits.h:
 
 /usr/include/luaconf.h:
-
-/usr/include/lualib.h:
