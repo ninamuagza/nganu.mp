@@ -24,36 +24,63 @@
 
 package com.raylib.raymob;
 
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.inputmethod.InputMethodManager;
 import android.app.NativeActivity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 public class SoftKeyboard {
 
     private final Context context;
+    private final NativeActivity activity;
     private final InputMethodManager imm;
     private KeyEvent lastKeyEvent = null;
     private int pendingDeleteCount = 0;
     private boolean suppressNextDeleteUp = false;
+    private EditText inputField = null;
+    private volatile String currentText = "";
+    private volatile boolean enterPressed = false;
+    private boolean suppressTextWatcher = false;
 
     public SoftKeyboard(Context context) {
         imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         this.context = context;
+        this.activity = (NativeActivity)context;
+        activity.runOnUiThread(this::ensureInputField);
     }
 
     /* PUBLIC FOR JNI (raymob.h) */
 
     public void showKeyboard() {
-        imm.showSoftInput(((NativeActivity)context).getWindow().getDecorView(), InputMethodManager.SHOW_FORCED);
+        activity.runOnUiThread(() -> {
+            ensureInputField();
+            if (inputField == null) return;
+            inputField.requestFocus();
+            inputField.setSelection(inputField.getText().length());
+            imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT);
+        });
     }
 
     public void hideKeyboard() {
-        imm.hideSoftInputFromWindow(((NativeActivity)context).getWindow().getDecorView().getWindowToken(), 0);
+        activity.runOnUiThread(() -> {
+            if (inputField == null) return;
+            imm.hideSoftInputFromWindow(inputField.getWindowToken(), 0);
+            inputField.clearFocus();
+        });
     }
 
     public int getKeyboardHeight() {
@@ -109,6 +136,31 @@ public class SoftKeyboard {
         lastKeyEvent = null;
     }
 
+    public String getText() {
+        return currentText;
+    }
+
+    public void setText(String value) {
+        final String nextValue = value != null ? value : "";
+        currentText = nextValue;
+        activity.runOnUiThread(() -> {
+            ensureInputField();
+            if (inputField == null) return;
+            String activeValue = inputField.getText().toString();
+            if (activeValue.equals(nextValue)) return;
+            suppressTextWatcher = true;
+            inputField.setText(nextValue);
+            inputField.setSelection(inputField.getText().length());
+            suppressTextWatcher = false;
+        });
+    }
+
+    public boolean consumeEnterPressed() {
+        if (!enterPressed) return false;
+        enterPressed = false;
+        return true;
+    }
+
     /* PRIVATE FOR JNI (raymob.h) */
 
     public void onKeyDownEvent(KeyEvent event) {
@@ -125,5 +177,64 @@ public class SoftKeyboard {
             return;
         }
         lastKeyEvent = event;
+    }
+
+    private void ensureInputField() {
+        if (inputField != null) return;
+
+        EditText field = new EditText(context);
+        field.setSingleLine(true);
+        field.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        field.setImeOptions(EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        field.setBackground(null);
+        field.setTextColor(Color.TRANSPARENT);
+        field.setHighlightColor(Color.TRANSPARENT);
+        field.setCursorVisible(false);
+        field.setFocusable(true);
+        field.setFocusableInTouchMode(true);
+        field.setAlpha(0.01f);
+        field.setLayoutParams(new FrameLayout.LayoutParams(1, 1, Gravity.START | Gravity.TOP));
+        field.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!suppressTextWatcher) {
+                    currentText = s.toString();
+                }
+            }
+        });
+        field.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handledAction = actionId == EditorInfo.IME_ACTION_DONE
+                || actionId == EditorInfo.IME_ACTION_GO
+                || actionId == EditorInfo.IME_ACTION_SEND
+                || actionId == EditorInfo.IME_ACTION_NEXT;
+            boolean handledEnter = event != null
+                && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                && event.getAction() == KeyEvent.ACTION_UP;
+            if (handledAction || handledEnter) {
+                enterPressed = true;
+                return true;
+            }
+            return false;
+        });
+        field.setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                enterPressed = true;
+                return true;
+            }
+            return false;
+        });
+
+        View decorView = activity.getWindow().getDecorView();
+        if (decorView instanceof ViewGroup) {
+            ((ViewGroup)decorView).addView(field);
+            inputField = field;
+            currentText = field.getText().toString();
+        }
     }
 }

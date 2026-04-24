@@ -36,7 +36,7 @@ constexpr float kInteractRadiusMin = 16.0f;
 constexpr float kInteractRadiusPad = 27.0f;
 constexpr float kInteractRangeMin = 37.0f;
 constexpr float kInteractRangeMax = 80.0f;
-constexpr float kGameplayCameraZoom = 1.35f;
+constexpr float kGameplayCameraZoom = 1.6875f;
 
 #if defined(PLATFORM_ANDROID)
 bool g_androidSoftKeyboardVisible = false;
@@ -51,25 +51,6 @@ struct AndroidJoystickState {
 
 AndroidJoystickState g_androidJoystick;
 #endif
-
-struct HudLayout {
-    Rectangle safeFrame {};
-    float topBarHeight = 56.0f;
-    float margin = 16.0f;
-    float gap = 12.0f;
-    Rectangle contentFrame {};
-    Rectangle questPanel {};
-    Rectangle partyPanel {};
-    Rectangle chatPanel {};
-    Rectangle debugPanel {};
-    bool compact = false;
-    bool singleColumn = false;
-    bool shortScreen = false;
-    int titleFont = 20;
-    int bodyFont = 18;
-    int smallFont = 15;
-    int chatFont = 15;
-};
 
 enum class FrameAnchor {
     TopLeft,
@@ -194,6 +175,124 @@ struct LoginLayout {
     float helpY = 0.0f;
 };
 
+std::string ClipboardTextOrEmpty() {
+    const char* clipboard = GetClipboardText();
+    if (clipboard == nullptr) {
+        return {};
+    }
+    return std::string(clipboard);
+}
+
+bool IsPasteShortcutPressed() {
+    const bool controlDown = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+    const bool shiftDown = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    return (controlDown && IsKeyPressed(KEY_V)) || (shiftDown && IsKeyPressed(KEY_INSERT));
+}
+
+std::string FilterClipboardText(const std::string& raw, size_t maxLen, bool numericOnly, bool allowSpaces) {
+    std::string filtered;
+    filtered.reserve(std::min(raw.size(), maxLen));
+    bool lastWasSpace = false;
+    for (unsigned char value : raw) {
+        if (value == '\r' || value == '\n' || value == '\t') {
+            if (!allowSpaces || filtered.empty() || lastWasSpace || filtered.size() >= maxLen) {
+                continue;
+            }
+            filtered.push_back(' ');
+            lastWasSpace = true;
+            continue;
+        }
+        if (value < 32 || value > 126) {
+            continue;
+        }
+        if (std::isspace(value)) {
+            if (!allowSpaces || filtered.empty() || lastWasSpace || filtered.size() >= maxLen) {
+                continue;
+            }
+            filtered.push_back(' ');
+            lastWasSpace = true;
+            continue;
+        }
+        if (numericOnly && !std::isdigit(value)) {
+            continue;
+        }
+        if (filtered.size() >= maxLen) {
+            break;
+        }
+        filtered.push_back(static_cast<char>(value));
+        lastWasSpace = false;
+    }
+
+    while (!filtered.empty() && filtered.back() == ' ') {
+        filtered.pop_back();
+    }
+    return filtered;
+}
+
+bool ReplaceWithClipboardText(std::string& target, size_t maxLen, bool numericOnly, bool allowSpaces, const std::string& rawClipboard) {
+    const std::string filtered = FilterClipboardText(rawClipboard, maxLen, numericOnly, allowSpaces);
+    if (filtered.empty()) {
+        return false;
+    }
+    target = filtered;
+    return true;
+}
+
+bool AppendClipboardText(std::string& target, size_t maxLen, bool numericOnly, bool allowSpaces, const std::string& rawClipboard) {
+    if (target.size() >= maxLen) {
+        return false;
+    }
+    const std::string filtered = FilterClipboardText(rawClipboard, maxLen - target.size(), numericOnly, allowSpaces);
+    if (filtered.empty()) {
+        return false;
+    }
+    target += filtered;
+    return true;
+}
+
+bool TrySplitHostPortClipboard(const std::string& rawClipboard, std::string& hostTarget, std::string& portTarget) {
+    std::string compact;
+    compact.reserve(rawClipboard.size());
+    for (unsigned char value : rawClipboard) {
+        if (value < 32 || value > 126 || std::isspace(value)) {
+            continue;
+        }
+        compact.push_back(static_cast<char>(value));
+    }
+
+    const size_t colon = compact.rfind(':');
+    if (colon == std::string::npos || compact.find(':') != colon) {
+        return false;
+    }
+
+    const std::string hostPart = FilterClipboardText(compact.substr(0, colon), 64, false, false);
+    const std::string portPart = FilterClipboardText(compact.substr(colon + 1), 5, true, false);
+    if (hostPart.empty() || portPart.empty()) {
+        return false;
+    }
+
+    hostTarget = hostPart;
+    portTarget = portPart;
+    return true;
+}
+
+#if defined(PLATFORM_ANDROID)
+bool AndroidSyncSoftText(std::string& target, size_t maxLen, bool numericOnly, bool allowSpaces = true) {
+    char buffer[256] {};
+    GetSoftKeyboardText(buffer, sizeof(buffer));
+    const std::string filtered = FilterClipboardText(buffer, maxLen, numericOnly, allowSpaces);
+    if (filtered == target) {
+        return false;
+    }
+
+    target = filtered;
+    if (target != buffer) {
+        SetSoftKeyboardText(target.c_str());
+    }
+    return true;
+}
+#endif
+
 float LoginKeyboardOffsetY(float screenHeight, const Rectangle& card, const LoginHitRects& hitRects) {
 #if defined(PLATFORM_ANDROID)
     const int keyboardHeight = GetSoftKeyboardHeight();
@@ -300,38 +399,13 @@ void HideAndroidKeyboard() {
 }
 
 bool AndroidConsumeSoftChar(std::string& target, size_t maxLen, bool numericOnly, bool allowSpaces = true) {
-    const int code = GetLastSoftKeyCode();
-    const int unicode = GetLastSoftKeyUnicode();
-    const char ch = GetLastSoftKeyChar();
-    if (code == 0 && unicode == 0 && ch == '\0') {
-        return false;
-    }
-
-    constexpr int kAndroidKeyCodeEnter = 66;
-    if (code == KEY_ENTER || code == kAndroidKeyCodeEnter || unicode == '\n' || unicode == '\r' || ch == '\n' || ch == '\r') {
-        return false;
-    }
-
-    bool changed = false;
-    if ((code == KEY_BACKSPACE || code == 67 || ch == '\b') && !target.empty()) {
-        target.pop_back();
-        changed = true;
-    } else {
-        const int value = unicode != 0 ? unicode : static_cast<unsigned char>(ch);
-        if (value >= 32 && value <= 126 && target.size() < maxLen) {
-            const bool isSpace = std::isspace(static_cast<unsigned char>(value));
-            if ((!numericOnly || std::isdigit(value)) && (allowSpaces || !isSpace)) {
-                target.push_back(static_cast<char>(value));
-                changed = true;
-            }
-        }
-    }
-
-    ClearLastSoftKey();
-    return changed;
+    return AndroidSyncSoftText(target, maxLen, numericOnly, allowSpaces);
 }
 
 bool AndroidSoftEnterPressed() {
+    if (ConsumeSoftKeyboardEnter()) {
+        return true;
+    }
     constexpr int kAndroidKeyCodeEnter = 66;
     const int code = GetLastSoftKeyCode();
     const int unicode = GetLastSoftKeyUnicode();
@@ -1105,20 +1179,62 @@ void Game::BeginRetryWait(const std::string& reason) {
 }
 
 void Game::UpdateLoginInput() {
+    auto pasteActiveLoginField = [&]() {
+        const std::string rawClipboard = ClipboardTextOrEmpty();
+        if (rawClipboard.empty()) {
+            loginStatus_ = "Clipboard is empty.";
+            return false;
+        }
+
+        switch (loginField_) {
+        case LoginField::Name:
+            if (!ReplaceWithClipboardText(loginName_, 24, false, true, rawClipboard)) {
+                loginStatus_ = "Clipboard has no valid player name text.";
+                return false;
+            }
+            return true;
+        case LoginField::Host:
+            if (TrySplitHostPortClipboard(rawClipboard, loginHost_, loginPort_)) {
+                return true;
+            }
+            if (!ReplaceWithClipboardText(loginHost_, 64, false, false, rawClipboard)) {
+                loginStatus_ = "Clipboard has no valid server host text.";
+                return false;
+            }
+            return true;
+        case LoginField::Port:
+            if (!ReplaceWithClipboardText(loginPort_, 5, true, false, rawClipboard)) {
+                loginStatus_ = "Clipboard has no valid numeric port.";
+                return false;
+            }
+            return true;
+        }
+        return false;
+    };
+
     const LoginHitRects hitRects = ComputeLoginHitRects(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()));
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         const Vector2 point = GetMousePosition();
         if (CheckCollisionPointRec(point, hitRects.nameBox)) {
             loginField_ = LoginField::Name;
             ShowAndroidKeyboard();
+#if defined(PLATFORM_ANDROID)
+            SetSoftKeyboardText(loginName_.c_str());
+#endif
             return;
         } else if (CheckCollisionPointRec(point, hitRects.hostBox)) {
             loginField_ = LoginField::Host;
             ShowAndroidKeyboard();
+#if defined(PLATFORM_ANDROID)
+            SetSoftKeyboardText(loginHost_.c_str());
+#endif
             return;
         } else if (CheckCollisionPointRec(point, hitRects.portBox)) {
             loginField_ = LoginField::Port;
             ShowAndroidKeyboard();
+#if defined(PLATFORM_ANDROID)
+            SetSoftKeyboardText(loginPort_.c_str());
+#endif
             return;
         } else if (CheckCollisionPointRec(point, hitRects.buttonBox)) {
             HideAndroidKeyboard();
@@ -1153,6 +1269,13 @@ void Game::UpdateLoginInput() {
         return;
     }
 
+#if !defined(PLATFORM_ANDROID)
+    if (IsPasteShortcutPressed()) {
+        pasteActiveLoginField();
+        return;
+    }
+#endif
+
     if (IsKeyPressed(KEY_TAB)) {
         switch (loginField_) {
         case LoginField::Name:
@@ -1165,6 +1288,19 @@ void Game::UpdateLoginInput() {
             loginField_ = LoginField::Name;
             break;
         }
+#if defined(PLATFORM_ANDROID)
+        switch (loginField_) {
+        case LoginField::Name:
+            SetSoftKeyboardText(loginName_.c_str());
+            break;
+        case LoginField::Host:
+            SetSoftKeyboardText(loginHost_.c_str());
+            break;
+        case LoginField::Port:
+            SetSoftKeyboardText(loginPort_.c_str());
+            break;
+        }
+#endif
     }
 
     if (IsKeyPressed(KEY_ENTER)) {
@@ -1172,6 +1308,7 @@ void Game::UpdateLoginInput() {
         return;
     }
 
+#if !defined(PLATFORM_ANDROID)
     if (IsKeyPressed(KEY_BACKSPACE)) {
         std::string* target = nullptr;
         switch (loginField_) {
@@ -1214,6 +1351,7 @@ void Game::UpdateLoginInput() {
         }
         pressed = GetCharPressed();
     }
+#endif
 }
 
 void Game::StartConnection() {
@@ -1674,6 +1812,7 @@ void Game::AddChatLine(const std::string& line) {
     if (chatEntries_.size() > 100) {
         chatEntries_.erase(chatEntries_.begin());
     }
+    ++chatLayoutRevision_;
     chatScrollTarget_ = 0.0f;
 }
 
@@ -1773,8 +1912,15 @@ void Game::UpdateChatInput() {
             }
             chatInput_.clear();
         }
+#if defined(PLATFORM_ANDROID)
+        SetSoftKeyboardText(chatInput_.c_str());
+#endif
         chatFocused_ = false;
         HideAndroidKeyboard();
+    };
+    auto pasteChatInput = [&]() {
+        const std::string rawClipboard = ClipboardTextOrEmpty();
+        return AppendClipboardText(chatInput_, 90, false, true, rawClipboard);
     };
 
 #if defined(PLATFORM_ANDROID)
@@ -1782,10 +1928,24 @@ void Game::UpdateChatInput() {
         if (!chatFocused_) {
             chatFocused_ = true;
             ShowAndroidKeyboard();
+            SetSoftKeyboardText(chatInput_.c_str());
             return;
         }
 
         sendChatAndClose();
+        return;
+    }
+#endif
+
+#if !defined(PLATFORM_ANDROID)
+    if (IsPasteShortcutPressed()) {
+        if (!chatFocused_) {
+            chatFocused_ = true;
+#if defined(PLATFORM_ANDROID)
+            ShowAndroidKeyboard();
+#endif
+        }
+        pasteChatInput();
         return;
     }
 #endif
@@ -1795,6 +1955,7 @@ void Game::UpdateChatInput() {
             chatFocused_ = true;
 #if defined(PLATFORM_ANDROID)
             ShowAndroidKeyboard();
+            SetSoftKeyboardText(chatInput_.c_str());
 #endif
             return;
         }
@@ -1814,6 +1975,9 @@ void Game::UpdateChatInput() {
     if (IsKeyPressed(KEY_ESCAPE)) {
         chatFocused_ = false;
         chatInput_.clear();
+#if defined(PLATFORM_ANDROID)
+        SetSoftKeyboardText(chatInput_.c_str());
+#endif
         HideAndroidKeyboard();
         return;
     }
@@ -1822,6 +1986,7 @@ void Game::UpdateChatInput() {
     AndroidConsumeSoftChar(chatInput_, 90, false);
 #endif
 
+#if !defined(PLATFORM_ANDROID)
     int pressed = GetCharPressed();
     while (pressed > 0) {
         if (pressed >= 32 && pressed <= 126 && chatInput_.size() < 90) {
@@ -1844,10 +2009,11 @@ void Game::UpdateChatInput() {
             backspaceRepeatTimer = 0.045f;
         }
     }
+#endif
 }
 
 void Game::UpdateChatScroll(float dt) {
-    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const Rectangle panel = layout.chatPanel;
     const Rectangle messageArea = ChatMessageAreaRect(panel);
 
@@ -2534,8 +2700,7 @@ void Game::DrawHud() const {
 
 void Game::DrawTopBar() const {
     const float screenWidth = static_cast<float>(GetScreenWidth());
-    const float screenHeight = static_cast<float>(GetScreenHeight());
-    const HudLayout layout = ComputeHudLayout(screenWidth, screenHeight, showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const bool compact = layout.compact;
     const bool singleColumn = layout.singleColumn;
     const float statusWidth = singleColumn
@@ -2592,7 +2757,7 @@ void Game::DrawTopBar() const {
 }
 
 void Game::DrawChatPanel() const {
-    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const Rectangle panel = layout.chatPanel;
     const float headerPadding = layout.singleColumn ? 14.0f : 18.0f;
     DrawPanelSurface(panel, 0.08f);
@@ -2603,7 +2768,7 @@ void Game::DrawChatPanel() const {
     const int fontSize = layout.chatFont;
     const int rowHeight = fontSize + 4;
     const int visibleRows = std::max(1, static_cast<int>(messageArea.height) / rowHeight);
-    const std::vector<ChatRow> rows = BuildChatRows(messageArea.width, fontSize);
+    const std::vector<ChatRow>& rows = BuildChatRows(messageArea.width, fontSize);
     const int totalLines = static_cast<int>(rows.size());
     const float maxScroll = static_cast<float>(std::max(0, totalLines - visibleRows));
     const float scrollOffset = std::clamp(chatScrollCurrent_, 0.0f, maxScroll);
@@ -2658,7 +2823,7 @@ void Game::DrawChatPanel() const {
 }
 
 void Game::DrawPartyPanel() const {
-    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const Rectangle panel = layout.partyPanel;
     DrawPanelSurface(panel);
     DrawUiText("Online Players", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
@@ -2677,7 +2842,7 @@ void Game::DrawPartyPanel() const {
 }
 
 void Game::DrawQuestPanel() const {
-    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const Rectangle panel = layout.questPanel;
     DrawPanelSurface(panel);
     DrawUiText("Objective", panel.x + 18.0f, panel.y + 16.0f, layout.titleFont, RAYWHITE);
@@ -2690,7 +2855,7 @@ void Game::DrawQuestPanel() const {
 }
 
 void Game::DrawDebugPanel() const {
-    const HudLayout layout = ComputeHudLayout(static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()), showDebug_);
+    const HudLayout& layout = CurrentHudLayout();
     const Rectangle panel = layout.debugPanel;
     DrawPanelSurface(panel, 0.08f);
     DrawUiText("Debug", panel.x + 18.0f, panel.y + 14.0f, layout.titleFont, RAYWHITE);
@@ -2805,7 +2970,31 @@ std::string Game::EllipsizeText(const std::string& text, int fontSize, float max
     return clipped.empty() ? ellipsis : clipped + ellipsis;
 }
 
-std::vector<ChatRow> Game::BuildChatRows(float maxWidth, int fontSize) const {
+const HudLayout& Game::CurrentHudLayout() const {
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+    if (!hudLayoutCacheValid_ ||
+        hudLayoutCacheScreenWidth_ != screenWidth ||
+        hudLayoutCacheScreenHeight_ != screenHeight ||
+        hudLayoutCacheIncludeDebug_ != showDebug_) {
+        hudLayoutCache_ = ComputeHudLayout(static_cast<float>(screenWidth), static_cast<float>(screenHeight), showDebug_);
+        hudLayoutCacheScreenWidth_ = screenWidth;
+        hudLayoutCacheScreenHeight_ = screenHeight;
+        hudLayoutCacheIncludeDebug_ = showDebug_;
+        hudLayoutCacheValid_ = true;
+    }
+
+    return hudLayoutCache_;
+}
+
+const std::vector<ChatRow>& Game::BuildChatRows(float maxWidth, int fontSize) const {
+    const int widthKey = std::max(0, static_cast<int>(std::round(maxWidth)));
+    if (cachedChatLayoutRevision_ == chatLayoutRevision_ &&
+        cachedChatLayoutWidth_ == widthKey &&
+        cachedChatLayoutFontSize_ == fontSize) {
+        return cachedChatRows_;
+    }
+
     std::vector<ChatRow> rows;
     const std::string continuationPrefix = "  ";
 
@@ -2847,5 +3036,9 @@ std::vector<ChatRow> Game::BuildChatRows(float maxWidth, int fontSize) const {
         }
     }
 
-    return rows;
+    cachedChatRows_ = std::move(rows);
+    cachedChatLayoutRevision_ = chatLayoutRevision_;
+    cachedChatLayoutWidth_ = widthKey;
+    cachedChatLayoutFontSize_ = fontSize;
+    return cachedChatRows_;
 }

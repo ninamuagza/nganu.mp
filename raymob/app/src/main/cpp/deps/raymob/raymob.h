@@ -253,6 +253,28 @@ char GetLastSoftKeyChar(void);
 void ClearLastSoftKey(void);
 
 /**
+ * @brief Copies the current soft keyboard text snapshot into the provided buffer.
+ *
+ * @param text Destination buffer that receives the current text.
+ * @param size Size of the destination buffer.
+ */
+void GetSoftKeyboardText(char* text, unsigned int size);
+
+/**
+ * @brief Replaces the text currently held by the Android soft keyboard bridge.
+ *
+ * @param text Null-terminated UTF-8 text to mirror into the hidden input field.
+ */
+void SetSoftKeyboardText(const char* text);
+
+/**
+ * @brief Returns whether the Android IME triggered its enter/done action since the last query.
+ *
+ * @return true if the enter action was triggered.
+ */
+bool ConsumeSoftKeyboardEnter(void);
+
+/**
  * @brief Allows editing the text displayed in the soft keyboard.
  *
  * @param text Pointer to the text to be edited.

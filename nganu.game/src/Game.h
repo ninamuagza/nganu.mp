@@ -57,6 +57,25 @@ struct ChatBubble {
     size_t previousLineCount = 0;
 };
 
+struct HudLayout {
+    Rectangle safeFrame {};
+    float topBarHeight = 56.0f;
+    float margin = 16.0f;
+    float gap = 12.0f;
+    Rectangle contentFrame {};
+    Rectangle questPanel {};
+    Rectangle partyPanel {};
+    Rectangle chatPanel {};
+    Rectangle debugPanel {};
+    bool compact = false;
+    bool singleColumn = false;
+    bool shortScreen = false;
+    int titleFont = 20;
+    int bodyFont = 18;
+    int smallFont = 15;
+    int chatFont = 15;
+};
+
 struct ContentManifest {
     bool valid = false;
     std::string serverName;
@@ -175,6 +194,16 @@ private:
     bool inventoryLayoutReady_ = false;
     std::unordered_map<std::string, AssetBlobAssembly> pendingAssetAssemblies_;
     std::unordered_map<std::string, PendingAssetRequest> pendingAssetRequests_;
+    size_t chatLayoutRevision_ = 1;
+    mutable size_t cachedChatLayoutRevision_ = 0;
+    mutable int cachedChatLayoutWidth_ = -1;
+    mutable int cachedChatLayoutFontSize_ = -1;
+    mutable std::vector<ChatRow> cachedChatRows_;
+    mutable bool hudLayoutCacheValid_ = false;
+    mutable int hudLayoutCacheScreenWidth_ = -1;
+    mutable int hudLayoutCacheScreenHeight_ = -1;
+    mutable bool hudLayoutCacheIncludeDebug_ = false;
+    mutable HudLayout hudLayoutCache_ {};
 
     void BeginBootUpdateCheck();
     void BeginRetryWait(const std::string& reason);
@@ -240,5 +269,6 @@ private:
     void DrawDebugPanel() const;
     void DrawWrappedText(const std::string& text, Rectangle bounds, int fontSize, Color color, int maxLines = 0) const;
     std::string EllipsizeText(const std::string& text, int fontSize, float maxWidth) const;
-    std::vector<ChatRow> BuildChatRows(float maxWidth, int fontSize) const;
+    const HudLayout& CurrentHudLayout() const;
+    const std::vector<ChatRow>& BuildChatRows(float maxWidth, int fontSize) const;
 };
