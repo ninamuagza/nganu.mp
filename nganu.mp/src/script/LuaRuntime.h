@@ -2,7 +2,13 @@
 
 #include <string>
 #include <vector>
-#include <lua.hpp>
+
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
 #include "core/Logger.h"
 
 class LuaRuntime {

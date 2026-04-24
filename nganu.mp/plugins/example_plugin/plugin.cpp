@@ -1,6 +1,10 @@
 #include "plugin/PluginAPI.h"
-#include <lua.hpp>
 #include <cstdio>
+
+extern "C" {
+#include <lua.h>
+#include <lauxlib.h>
+}
 
 static PluginAPI* g_api = nullptr;
 
