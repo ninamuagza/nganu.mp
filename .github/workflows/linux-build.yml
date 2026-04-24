@@ -38,7 +38,7 @@ jobs:
         working-directory: /tmp/lua-5.5.0/src
         run: |
           make clean || true
-          make -j"$(nproc)" liblua.a
+          make -j"$(nproc)" liblua.a MYCFLAGS="-fPIC"
 
           mkdir -p "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/include" "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/lib"
           cp ./*.h "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/include/"
