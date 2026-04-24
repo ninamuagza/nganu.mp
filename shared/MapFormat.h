@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -82,6 +83,13 @@ struct ParseResult {
     std::string error;
 };
 
+struct TmxWriteOptions {
+    std::filesystem::path mapImageRoot;
+    std::filesystem::path characterImageRoot;
+    std::string mapImageSourcePrefix {"../map_images/"};
+    std::string characterImageSourcePrefix {"../characters/"};
+};
+
 std::vector<std::string> SplitEscaped(const std::string& value, char delim);
 std::optional<std::pair<std::string, std::string>> SplitPropertyAssignment(const std::string& value, char delim);
 std::string EscapeValue(const std::string& value);
@@ -92,6 +100,7 @@ bool ParseRectStrict(const std::string& value, Rect& out);
 bool ParseVec2Strict(const std::string& value, Vec2& out);
 
 ParseResult ParseDocument(const std::string& text);
+std::string SerializeDocumentAsTmx(const Document& document, const TmxWriteOptions& options = {});
 std::optional<AtlasRef> ParseAtlasRef(const std::string& asset);
 std::string AssetFileName(const std::string& ref);
 AssetDomain AssetDomainForRef(const std::string& ref, AssetDomain fallbackDomain);

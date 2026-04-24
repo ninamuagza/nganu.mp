@@ -155,7 +155,7 @@ bool Server::startup(const std::string& cfgPath) {
                  static_cast<unsigned long long>(bootstrapClientTimeoutMs_),
                  static_cast<unsigned long long>(activeClientTimeoutMs_));
 
-    worldMapPath_ = runtime_.getString("worldmap", "assets/maps/overworld.map");
+    worldMapPath_ = runtime_.getString("worldmap", "assets/maps/overworld.tmx");
     mapDirectory_ = std::filesystem::path(worldMapPath_).parent_path();
     if (!loadMaps()) {
         return false;
@@ -198,7 +198,7 @@ bool Server::startup(const std::string& cfgPath) {
         }
     }
 
-    /* 5. Load LuaJIT script */
+    /* 5. Load Lua script */
     RegisterBuiltinFunctions(script_, logger_, network_, *this);
 
     std::string gamemode = runtime_.getString("gamemode", "");
@@ -383,7 +383,7 @@ bool Server::loadMaps() {
 
     for (const auto& entry : std::filesystem::directory_iterator(mapDirectory_)) {
         if (!entry.is_regular_file()) continue;
-        if (entry.path().extension() != ".map") continue;
+        if (entry.path().extension() != ".tmx") continue;
 
         MapData loaded;
         const std::string path = entry.path().string();

@@ -109,10 +109,15 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: \
  /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
  /usr/include/c++/15.2.1/bits/stl_vector.h \
  /usr/include/c++/15.2.1/bits/stl_bvector.h \
- /usr/include/c++/15.2.1/bits/vector.tcc /usr/include/luajit-2.1/lua.hpp \
- /usr/include/luajit-2.1/lua.h /usr/include/luajit-2.1/luaconf.h \
- /usr/include/luajit-2.1/lauxlib.h /usr/include/luajit-2.1/lualib.h \
- /usr/include/luajit-2.1/luajit.h \
+ /usr/include/c++/15.2.1/bits/vector.tcc /usr/include/lua.hpp \
+ /usr/include/lua.h /usr/include/luaconf.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/pthread_stack_min-dynamic.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ /usr/include/bits/uio_lim.h /usr/include/lualib.h /usr/include/lauxlib.h \
  /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
  /usr/include/c++/15.2.1/ctime /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/timex.h \

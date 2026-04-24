@@ -6,7 +6,7 @@ A minimal, production-ready game server built from scratch in C/C++17.
 
 - **ENet UDP networking** — reliable packet delivery over UDP with a simple opcode-based protocol.
 - **Core MMO basics** — movement broadcast, global chat, and admin stdin commands (`list players`, `kick <id>`).
-- **LuaJIT runtime** — load and execute Lua scripts with the LuaJIT 2.1 VM.
+- **Lua runtime** — load and execute Lua scripts with the standard Lua VM.
 - **Dynamic plugin system** — load `.so`/`.dll` plugins at startup with a stable C ABI.
 - **Configuration file** — simple `key=value` config (`server.cfg`).
 - **Single-threaded** — deterministic tick loop at 100 Hz.
@@ -15,7 +15,7 @@ A minimal, production-ready game server built from scratch in C/C++17.
 
 ```bash
 cd nganu.mp
-pkg-config --modversion luajit   # should print the installed LuaJIT version
+pkg-config --modversion lua5.5   # should print the installed Lua 5.5 version
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --parallel
 ```
@@ -43,7 +43,7 @@ nganu.mp/
 │   ├── core/             # Server, Runtime, Logger
 │   ├── network/          # ENet wrapper, Packet protocol
 │   ├── plugin/           # Plugin loader and ABI
-│   └── script/           # LuaJIT runtime and built-in bindings
+│   └── script/           # Lua runtime and built-in bindings
 ├── vendor/
 │   └── enet/             # ENet networking library (vendored)
 ├── plugins/              # Plugin sources and built plugins
@@ -51,7 +51,7 @@ nganu.mp/
 ├── scripts/              # Lua script sources
 │   └── main.lua
 ├── assets/
-│   └── maps/             # Server-side map source files (.map)
+│   └── maps/             # Server-side map source files (.tmx)
 ├── server.cfg            # Server configuration
 ├── server.test.cfg       # Minimal smoke-test configuration
 └── CMakeLists.txt
@@ -74,4 +74,4 @@ chatmaxlen=200
 
 ## License
 
-See vendor directories and your installed LuaJIT package for third-party licenses.
+See vendor directories and your installed Lua package for third-party licenses.

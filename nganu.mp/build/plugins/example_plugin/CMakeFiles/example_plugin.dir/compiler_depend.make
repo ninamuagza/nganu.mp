@@ -14,7 +14,7 @@
   /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib/libc.so.6 \
   /usr/lib/libc_nonshared.a \
-  /usr/lib/libluajit-5.1.so \
+  /usr/lib/liblua.so \
   /usr/lib/libm.so.6 \
   /usr/lib/libmvec.so.1 \
   plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o
@@ -24,7 +24,11 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanoris
   /usr/include/bits/floatn-common.h \
   /usr/include/bits/floatn.h \
   /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
+  /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
   /usr/include/bits/time64.h \
@@ -38,7 +42,9 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanoris
   /usr/include/bits/types/cookie_io_functions_t.h \
   /usr/include/bits/types/struct_FILE.h \
   /usr/include/bits/typesizes.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/cstdio \
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -48,129 +54,150 @@ plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o: /home/fanoris
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lauxlib.h \
+  /usr/include/limits.h \
+  /usr/include/linux/limits.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdio.h \
   /usr/include/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
-
-/usr/include/stdio.h:
-
-/usr/include/luajit-2.1/lua.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
-
-/usr/include/gnu/stubs.h:
-
-/usr/include/gnu/stubs-64.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
-
-/usr/include/c++/15.2.1/cstdio:
-
-/usr/include/bits/types/struct_FILE.h:
-
-/usr/include/bits/typesizes.h:
-
-/usr/include/bits/types/cookie_io_functions_t.h:
-
-/usr/include/luajit-2.1/lualib.h:
-
-/usr/include/luajit-2.1/luaconf.h:
-
-/usr/include/bits/wordsize.h:
-
-/usr/include/bits/types/__fpos_t.h:
-
-/usr/include/features-time64.h:
-
-/usr/include/bits/types/__fpos64_t.h:
-
-/usr/lib/libc.so.6:
-
-/usr/lib/libc_nonshared.a:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o:
-
-/usr/include/c++/15.2.1/pstl/pstl_config.h:
-
-/usr/include/bits/time64.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
-
-/usr/lib/crtn.o:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
-
-/usr/lib/libgcc_s.so.1:
-
-/usr/include/bits/types/__mbstate_t.h:
-
-/usr/lib/libluajit-5.1.so:
-
-/usr/include/sys/cdefs.h:
-
-/usr/include/stdc-predef.h:
-
-/usr/include/bits/timesize.h:
-
-/usr/lib/libm.so:
-
-/usr/lib/libstdc++.so:
-
-/usr/include/luajit-2.1/lauxlib.h:
-
-/usr/include/bits/floatn-common.h:
-
-/usr/lib/libgcc_s.so:
-
-/usr/lib/crti.o:
-
-/home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h:
-
-/usr/include/luajit-2.1/lua.hpp:
-
-/usr/lib/ld-linux-x86-64.so.2:
-
-/usr/lib/libm.so.6:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
-
-/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
-/usr/lib/libmvec.so.1:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
 
-/usr/include/features.h:
+/usr/include/stdio.h:
 
-/usr/include/bits/stdio.h:
-
-plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o:
-
-/usr/include/bits/floatn.h:
-
-/usr/include/bits/libc-header-start.h:
-
-/usr/include/bits/long-double.h:
+/usr/include/stdc-predef.h:
 
 /usr/include/bits/stdio_lim.h:
 
-/usr/include/bits/types.h:
+/usr/include/bits/pthread_stack_min-dynamic.h:
 
-/usr/include/luajit-2.1/luajit.h:
+/usr/include/bits/posix2_lim.h:
 
-/usr/include/bits/types/__FILE.h:
+/usr/include/bits/long-double.h:
+
+/usr/include/c++/15.2.1/cstdio:
+
+/usr/include/bits/libc-header-start.h:
+
+/usr/include/bits/floatn.h:
+
+plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o:
+
+/usr/include/bits/stdio.h:
+
+/usr/include/features.h:
+
+/usr/lib/libmvec.so.1:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
+
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin/plugin.cpp:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
+
+/usr/lib/libm.so.6:
+
+/usr/lib/ld-linux-x86-64.so.2:
+
+/usr/lib/liblua.so:
+
+/home/fanorisky/GameProject/nganu.mp/src/plugin/PluginAPI.h:
+
+/usr/include/bits/posix1_lim.h:
 
 /usr/lib/libc.so:
 
+/usr/include/bits/types/__FILE.h:
+
+/usr/lib/libgcc_s.so:
+
+/usr/include/bits/floatn-common.h:
+
+/usr/lib/libstdc++.so:
+
+/usr/lib/libm.so:
+
+/usr/lib/libgcc_s.so.1:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
+
+/usr/lib/crtn.o:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
+
+/usr/lib/libc.so.6:
+
+/usr/include/bits/time64.h:
+
+/usr/include/c++/15.2.1/pstl/pstl_config.h:
+
+/usr/include/bits/timesize.h:
+
+/usr/lib/libc_nonshared.a:
+
+/usr/include/bits/types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/lua.h:
+
+/usr/include/bits/types/__fpos64_t.h:
+
+/usr/include/features-time64.h:
+
+/usr/include/bits/types/__fpos_t.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/local_lim.h:
+
+/usr/include/bits/types/__mbstate_t.h:
+
+/usr/include/bits/types/cookie_io_functions_t.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/bits/types/struct_FILE.h:
+
+/usr/include/bits/uio_lim.h:
+
+/usr/lib/crti.o:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/lua.hpp:
+
+/usr/include/lauxlib.h:
+
 /usr/include/bits/types/FILE.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o:
+
+/usr/include/limits.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/luaconf.h:
+
+/usr/include/lualib.h:

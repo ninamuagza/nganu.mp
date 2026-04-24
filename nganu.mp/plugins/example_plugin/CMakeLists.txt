@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 add_library(example_plugin SHARED plugin.cpp)
 target_include_directories(example_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(example_plugin PRIVATE PkgConfig::LUAJIT)
+target_link_libraries(example_plugin PRIVATE nganu_lua)
 set_target_properties(example_plugin PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/plugins"

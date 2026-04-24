@@ -6,19 +6,44 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 
-if(ANDROID)
-  set(LUAJIT_SRC_DIR "${CMAKE_SOURCE_DIR}/vendor/LuaJIT/src")
-  set(LUAJIT_LIB "${LUAJIT_SRC_DIR}/libluajit.a")
+set(NGANU_LUA_INCLUDE_DIR "" CACHE PATH "Path to Lua 5.5 headers")
+set(NGANU_LUA_LIBRARY "" CACHE FILEPATH "Path to the Lua 5.5 library")
 
-  if(NOT EXISTS "${LUAJIT_LIB}")
-    message(FATAL_ERROR
-      "Android build requires prebuilt LuaJIT at ${LUAJIT_LIB}. "
-      "Build it first in CI before configuring game-server."
-    )
+function(nganu_require_lua_55_header include_dir)
+  if(NOT EXISTS "${include_dir}/lua.h")
+    message(FATAL_ERROR "Lua header not found: ${include_dir}/lua.h")
   endif()
+
+  file(STRINGS "${include_dir}/lua.h" LUA_MAJOR_LINE REGEX "^#define[ \t]+LUA_VERSION_MAJOR_N[ \t]+[0-9]+")
+  file(STRINGS "${include_dir}/lua.h" LUA_MINOR_LINE REGEX "^#define[ \t]+LUA_VERSION_MINOR_N[ \t]+[0-9]+")
+  string(REGEX MATCH "[0-9]+" LUA_MAJOR "${LUA_MAJOR_LINE}")
+  string(REGEX MATCH "[0-9]+" LUA_MINOR "${LUA_MINOR_LINE}")
+
+  if(NOT LUA_MAJOR STREQUAL "5" OR NOT LUA_MINOR STREQUAL "5")
+    message(FATAL_ERROR "Lua 5.5 is required, but ${include_dir}/lua.h reports ${LUA_MAJOR}.${LUA_MINOR}")
+  endif()
+endfunction()
+
+add_library(nganu_lua INTERFACE)
+
+if(NGANU_LUA_INCLUDE_DIR AND NGANU_LUA_LIBRARY)
+  nganu_require_lua_55_header("${NGANU_LUA_INCLUDE_DIR}")
+  target_include_directories(nganu_lua INTERFACE "${NGANU_LUA_INCLUDE_DIR}")
+  target_link_libraries(nganu_lua INTERFACE "${NGANU_LUA_LIBRARY}")
 else()
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(LUAJIT REQUIRED IMPORTED_TARGET luajit)
+  find_package(PkgConfig QUIET)
+  if(PkgConfig_FOUND)
+    pkg_search_module(LUA55 QUIET IMPORTED_TARGET lua5.5 lua-5.5)
+  endif()
+
+  if(LUA55_FOUND)
+  target_link_libraries(nganu_lua INTERFACE PkgConfig::LUA55)
+  else()
+    find_package(Lua REQUIRED)
+    nganu_require_lua_55_header("${LUA_INCLUDE_DIR}")
+    target_include_directories(nganu_lua INTERFACE ${LUA_INCLUDE_DIR})
+    target_link_libraries(nganu_lua INTERFACE ${LUA_LIBRARIES})
+  endif()
 endif()
 
 set(ENET_SOURCES
@@ -69,29 +94,15 @@ target_include_directories(game-server PRIVATE
   vendor/enet/include
 )
 
-if(ANDROID)
-  target_include_directories(game-server PRIVATE
-    "${LUAJIT_SRC_DIR}"
-  )
-
-  target_link_libraries(game-server PRIVATE
-    enet_static
-    "${LUAJIT_LIB}"
-    m
-  )
-else()
-  target_include_directories(game-server PRIVATE
-    ${LUAJIT_INCLUDE_DIRS}
-  )
-
-  target_link_libraries(game-server PRIVATE
-    enet_static
-    PkgConfig::LUAJIT
-  )
-endif()
+target_link_libraries(game-server PRIVATE
+  enet_static
+  nganu_lua
+)
 
 if(UNIX AND NOT ANDROID)
   target_link_libraries(game-server PRIVATE dl m)
+elseif(ANDROID)
+  target_link_libraries(game-server PRIVATE m)
 endif()
 
 set_target_properties(game-server PROPERTIES

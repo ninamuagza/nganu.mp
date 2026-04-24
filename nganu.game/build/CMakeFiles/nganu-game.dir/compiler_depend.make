@@ -765,6 +765,8 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/bits/select.h \
   /usr/include/bits/setjmp.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdint-least.h \
+  /usr/include/bits/stdint-uintn.h \
   /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
   /usr/include/bits/stdlib-bsearch.h \
@@ -813,6 +815,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/algorithmfwd.h \
   /usr/include/c++/15.2.1/bits/alloc_traits.h \
+  /usr/include/c++/15.2.1/bits/allocated_ptr.h \
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/basic_ios.h \
   /usr/include/c++/15.2.1/bits/basic_ios.tcc \
@@ -820,6 +823,8 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bits/basic_string.tcc \
   /usr/include/c++/15.2.1/bits/char_traits.h \
   /usr/include/c++/15.2.1/bits/charconv.h \
+  /usr/include/c++/15.2.1/bits/chrono.h \
+  /usr/include/c++/15.2.1/bits/codecvt.h \
   /usr/include/c++/15.2.1/bits/concept_check.h \
   /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
   /usr/include/c++/15.2.1/bits/cxxabi_forced.h \
@@ -829,6 +834,10 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bits/exception.h \
   /usr/include/c++/15.2.1/bits/exception_defines.h \
   /usr/include/c++/15.2.1/bits/exception_ptr.h \
+  /usr/include/c++/15.2.1/bits/fs_dir.h \
+  /usr/include/c++/15.2.1/bits/fs_fwd.h \
+  /usr/include/c++/15.2.1/bits/fs_ops.h \
+  /usr/include/c++/15.2.1/bits/fs_path.h \
   /usr/include/c++/15.2.1/bits/functexcept.h \
   /usr/include/c++/15.2.1/bits/functional_hash.h \
   /usr/include/c++/15.2.1/bits/hash_bytes.h \
@@ -839,8 +848,11 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bits/istream.tcc \
   /usr/include/c++/15.2.1/bits/locale_classes.h \
   /usr/include/c++/15.2.1/bits/locale_classes.tcc \
+  /usr/include/c++/15.2.1/bits/locale_conv.h \
   /usr/include/c++/15.2.1/bits/locale_facets.h \
   /usr/include/c++/15.2.1/bits/locale_facets.tcc \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.h \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc \
   /usr/include/c++/15.2.1/bits/localefwd.h \
   /usr/include/c++/15.2.1/bits/memory_resource.h \
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
@@ -851,12 +863,16 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bits/ostream.h \
   /usr/include/c++/15.2.1/bits/ostream.tcc \
   /usr/include/c++/15.2.1/bits/ostream_insert.h \
+  /usr/include/c++/15.2.1/bits/parse_numbers.h \
   /usr/include/c++/15.2.1/bits/postypes.h \
   /usr/include/c++/15.2.1/bits/predefined_ops.h \
   /usr/include/c++/15.2.1/bits/ptr_traits.h \
+  /usr/include/c++/15.2.1/bits/quoted_string.h \
   /usr/include/c++/15.2.1/bits/range_access.h \
   /usr/include/c++/15.2.1/bits/refwrap.h \
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr_base.h \
   /usr/include/c++/15.2.1/bits/specfun.h \
   /usr/include/c++/15.2.1/bits/sstream.tcc \
   /usr/include/c++/15.2.1/bits/std_abs.h \
@@ -878,6 +894,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/bits/string_view.tcc \
   /usr/include/c++/15.2.1/bits/stringfwd.h \
   /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
+  /usr/include/c++/15.2.1/bits/unique_ptr.h \
   /usr/include/c++/15.2.1/bits/unordered_map.h \
   /usr/include/c++/15.2.1/bits/uses_allocator.h \
   /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
@@ -888,10 +905,13 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/cerrno \
   /usr/include/c++/15.2.1/clocale \
   /usr/include/c++/15.2.1/cmath \
+  /usr/include/c++/15.2.1/codecvt \
   /usr/include/c++/15.2.1/concepts \
   /usr/include/c++/15.2.1/cstddef \
+  /usr/include/c++/15.2.1/cstdint \
   /usr/include/c++/15.2.1/cstdio \
   /usr/include/c++/15.2.1/cstdlib \
+  /usr/include/c++/15.2.1/ctime \
   /usr/include/c++/15.2.1/cwchar \
   /usr/include/c++/15.2.1/cwctype \
   /usr/include/c++/15.2.1/debug/assertions.h \
@@ -900,20 +920,25 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/ext/aligned_buffer.h \
   /usr/include/c++/15.2.1/ext/alloc_traits.h \
   /usr/include/c++/15.2.1/ext/atomicity.h \
+  /usr/include/c++/15.2.1/ext/concurrence.h \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/string_conversions.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/filesystem \
   /usr/include/c++/15.2.1/initializer_list \
+  /usr/include/c++/15.2.1/iomanip \
   /usr/include/c++/15.2.1/ios \
   /usr/include/c++/15.2.1/iosfwd \
   /usr/include/c++/15.2.1/istream \
   /usr/include/c++/15.2.1/limits \
+  /usr/include/c++/15.2.1/locale \
   /usr/include/c++/15.2.1/new \
   /usr/include/c++/15.2.1/optional \
   /usr/include/c++/15.2.1/ostream \
   /usr/include/c++/15.2.1/pstl/execution_defs.h \
   /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
+  /usr/include/c++/15.2.1/ratio \
   /usr/include/c++/15.2.1/sstream \
   /usr/include/c++/15.2.1/stdexcept \
   /usr/include/c++/15.2.1/streambuf \
@@ -947,7 +972,9 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/messages_members.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
@@ -955,6 +982,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/libintl.h \
   /usr/include/linux/errno.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
@@ -965,6 +993,7 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/pthread.h \
   /usr/include/sched.h \
   /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/sys/cdefs.h \
@@ -975,7 +1004,8 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /ho
   /usr/include/wchar.h \
   /usr/include/wctype.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
 CMakeFiles/nganu-game.dir/src/AssetManager.cpp.o: /home/fanorisky/GameProject/nganu.game/src/AssetManager.cpp \
   /home/fanorisky/GameProject/nganu.game/src/AssetManager.h \
@@ -4427,37 +4457,13 @@ CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o:
 
 /usr/include/c++/15.2.1/memory:
 
-/usr/include/c++/15.2.1/iomanip:
-
 /usr/include/c++/15.2.1/fstream:
-
-/usr/include/c++/15.2.1/codecvt:
 
 /usr/include/c++/15.2.1/bits/unordered_set.h:
 
-/usr/include/c++/15.2.1/bits/unique_ptr.h:
-
 /usr/include/c++/15.2.1/bits/stl_raw_storage_iter.h:
 
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
-
-/usr/include/c++/15.2.1/bits/locale_conv.h:
-
-/usr/include/c++/15.2.1/bits/fs_path.h:
-
-/usr/include/c++/15.2.1/bits/fs_ops.h:
-
-/usr/include/c++/15.2.1/bits/codecvt.h:
-
-/usr/include/c++/15.2.1/bits/chrono.h:
-
 /usr/include/c++/15.2.1/bits/atomic_base.h:
-
-/usr/include/c++/15.2.1/bits/allocated_ptr.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
-
-/home/fanorisky/GameProject/nganu.game/src/ui/UiWindowConfig.h:
 
 /home/fanorisky/GameProject/nganu.game/src/ui/UiTheme.h:
 
@@ -4479,17 +4485,9 @@ CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o:
 
 /usr/include/c++/15.2.1/cstring:
 
-/home/fanorisky/GameProject/nganu.game/src/ItemDefs.h:
-
-/usr/include/c++/15.2.1/cstdint:
-
 /home/fanorisky/GameProject/nganu.game/src/AssetManager.cpp:
 
 /usr/include/wchar.h:
-
-/usr/include/c++/15.2.1/bits/shared_ptr.h:
-
-/usr/include/sys/single_threaded.h:
 
 /usr/lib/libstdc++.so:
 
@@ -4500,6 +4498,10 @@ CMakeFiles/nganu-game.dir/src/ui/UiDataStore.cpp.o:
 CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compress.c.o:
 
 /usr/include/ctype.h:
+
+/home/fanorisky/GameProject/nganu.game/src/ui/UiWindowConfig.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
 
@@ -4512,10 +4514,6 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/compre
 CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
-
-/usr/include/c++/15.2.1/bits/parse_numbers.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
 
 /usr/include/c++/15.2.1/unordered_map:
 
@@ -4562,6 +4560,38 @@ CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o:
 /usr/include/c++/15.2.1/new:
 
 /usr/include/c++/15.2.1/istream:
+
+/usr/include/c++/15.2.1/iomanip:
+
+/usr/include/c++/15.2.1/initializer_list:
+
+/usr/include/c++/15.2.1/ext/type_traits.h:
+
+/usr/include/c++/15.2.1/ext/string_conversions.h:
+
+/usr/include/c++/15.2.1/locale:
+
+/usr/include/c++/15.2.1/ext/aligned_buffer.h:
+
+/usr/include/c++/15.2.1/bits/align.h:
+
+/usr/include/c++/15.2.1/debug/debug.h:
+
+/usr/include/c++/15.2.1/compare:
+
+/usr/include/c++/15.2.1/cwctype:
+
+/usr/include/c++/15.2.1/cstdlib:
+
+/usr/include/c++/15.2.1/cstdio:
+
+/home/fanorisky/GameProject/nganu.game/src/ItemDefs.h:
+
+/usr/include/c++/15.2.1/cstdint:
+
+/usr/lib/libgcc_s.so:
+
+/usr/include/c++/15.2.1/cstddef:
 
 /usr/include/netinet/tcp.h:
 
@@ -4615,10 +4645,6 @@ CMakeFiles/nganu-game.dir/src/ui/UiTheme.cpp.o:
 
 /usr/include/bits/types/__mbstate_t.h:
 
-/usr/include/c++/15.2.1/bits/fs_dir.h:
-
-/usr/include/bits/stdio_lim.h:
-
 /usr/include/asm/posix_types.h:
 
 /usr/include/bits/time.h:
@@ -4649,7 +4675,13 @@ CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o:
 
 /usr/include/bits/types/locale_t.h:
 
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
+
+/usr/include/c++/15.2.1/bits/parse_numbers.h:
+
 /usr/include/bits/types/__locale_t.h:
+
+/usr/include/c++/15.2.1/bits/fs_path.h:
 
 /usr/include/c++/15.2.1/bits/sstream.tcc:
 
@@ -4679,10 +4711,6 @@ CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o:
 
 /usr/include/gnu/stubs.h:
 
-/usr/include/c++/15.2.1/bits/fs_fwd.h:
-
-/usr/include/bits/pthreadtypes-arch.h:
-
 /usr/include/gnu/stubs-64.h:
 
 /usr/include/linux/types.h:
@@ -4701,11 +4729,9 @@ CMakeFiles/nganu-game.dir/src/ObjectiveUi.cpp.o:
 
 /usr/include/bits/stdio.h:
 
-CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
+/usr/include/c++/15.2.1/ext/alloc_traits.h:
 
-/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
-
-/usr/include/c++/15.2.1/debug/assertions.h:
+/usr/include/bits/unistd_ext.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
 
@@ -4719,19 +4745,15 @@ CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
 
 /usr/include/bits/in.h:
 
-/usr/include/c++/15.2.1/locale:
-
-/usr/include/c++/15.2.1/ext/aligned_buffer.h:
-
 /usr/include/c++/15.2.1/ext/concurrence.h:
 
 /usr/include/c++/15.2.1/bits/cxxabi_forced.h:
 
 /usr/include/bits/ioctl-types.h:
 
-/usr/include/c++/15.2.1/bits/align.h:
+/usr/include/c++/15.2.1/ios:
 
-/usr/include/c++/15.2.1/debug/debug.h:
+/usr/include/bits/thread-shared-types.h:
 
 /usr/include/c++/15.2.1/bits/atomic_lockfree_defines.h:
 
@@ -4762,6 +4784,8 @@ CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
 /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/list.h:
 
 /usr/include/bits/uintn-identity.h:
+
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
 
 /usr/include/bits/wordsize.h:
 
@@ -4829,6 +4853,10 @@ CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
 
 /usr/include/asm/socket.h:
 
+/usr/include/c++/15.2.1/ext/atomicity.h:
+
+/usr/include/bits/types/struct_timespec.h:
+
 /usr/include/asm/bitsperlong.h:
 
 /usr/include/c++/15.2.1/bits/alloc_traits.h:
@@ -4855,13 +4883,19 @@ CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
 
 /usr/include/strings.h:
 
-/usr/include/c++/15.2.1/compare:
-
-/usr/include/c++/15.2.1/cwctype:
+/usr/include/c++/15.2.1/bits/allocated_ptr.h:
 
 /usr/include/c++/15.2.1/iterator:
 
 /usr/include/asm-generic/errno-base.h:
+
+/usr/include/c++/15.2.1/exception:
+
+/usr/include/asm-generic/bitsperlong.h:
+
+/usr/include/c++/15.2.1/bits/stl_heap.h:
+
+/usr/include/asm-generic/types.h:
 
 /usr/include/c++/15.2.1/bits/ostream.h:
 
@@ -4881,8 +4915,6 @@ CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o:
 
 /usr/include/c++/15.2.1/bits/predefined_ops.h:
 
-/usr/include/c++/15.2.1/ext/string_conversions.h:
-
 /usr/include/bits/posix_opt.h:
 
 /usr/include/bits/atomic_wide_counter.h:
@@ -4899,10 +4931,6 @@ CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o:
 
 /usr/include/c++/15.2.1/bits/stl_function.h:
 
-/usr/include/bits/thread-shared-types.h:
-
-/usr/include/c++/15.2.1/ios:
-
 /usr/lib/libc.so:
 
 /usr/include/c++/15.2.1/tr1/beta_function.tcc:
@@ -4911,11 +4939,11 @@ CMakeFiles/nganu-game.dir/src/ItemDefs.cpp.o:
 
 /usr/include/c++/15.2.1/bits/exception_ptr.h:
 
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
+/usr/include/bits/sockaddr.h:
 
 /usr/include/bits/select.h:
 
-/usr/include/bits/sockaddr.h:
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
 
 /usr/include/bits/types/cookie_io_functions_t.h:
 
@@ -4937,7 +4965,9 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 /usr/include/bits/stdint-uintn.h:
 
-/usr/include/c++/15.2.1/cstdlib:
+/usr/include/c++/15.2.1/ext/numeric_traits.h:
+
+/usr/include/bits/getopt_core.h:
 
 /usr/include/c++/15.2.1/bits/move.h:
 
@@ -4954,14 +4984,6 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 /usr/include/asm-generic/errno.h:
 
 /usr/include/c++/15.2.1/bits/stl_vector.h:
-
-/usr/include/asm-generic/bitsperlong.h:
-
-/usr/include/c++/15.2.1/bits/stl_heap.h:
-
-/usr/include/asm-generic/types.h:
-
-/usr/include/c++/15.2.1/exception:
 
 /usr/include/bits/stdint-intn.h:
 
@@ -5031,10 +5053,6 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 /usr/include/c++/15.2.1/bits/char_traits.h:
 
-/usr/include/bits/types/struct_timespec.h:
-
-/usr/include/c++/15.2.1/ext/atomicity.h:
-
 /usr/include/bits/mathcalls-narrow.h:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
@@ -5065,6 +5083,10 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 /usr/include/c++/15.2.1/bits/basic_ios.h:
 
+/usr/include/c++/15.2.1/bits/chrono.h:
+
+/usr/include/c++/15.2.1/bits/codecvt.h:
+
 /usr/include/c++/15.2.1/bits/concept_check.h:
 
 /usr/include/netdb.h:
@@ -5073,15 +5095,31 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 /usr/include/c++/15.2.1/bits/erase_if.h:
 
+CMakeFiles/nganu-game.dir/src/InventoryUi.cpp.o:
+
+/usr/include/c++/15.2.1/debug/assertions.h:
+
+/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
+
 /usr/include/c++/15.2.1/vector:
 
 /usr/include/c++/15.2.1/bits/exception_defines.h:
 
-/usr/include/c++/15.2.1/bits/functexcept.h:
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/c++/15.2.1/bits/fs_dir.h:
+
+/usr/include/bits/pthreadtypes-arch.h:
+
+/usr/include/c++/15.2.1/bits/fs_fwd.h:
 
 /usr/lib/crtn.o:
 
 /usr/include/c++/15.2.1/bits/functional_hash.h:
+
+/usr/include/c++/15.2.1/bits/fs_ops.h:
+
+/usr/include/c++/15.2.1/bits/functexcept.h:
 
 /usr/include/c++/15.2.1/bits/hash_bytes.h:
 
@@ -5105,11 +5143,11 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/unix.c
 
 /usr/include/c++/15.2.1/bits/istream.tcc:
 
-/usr/include/c++/15.2.1/cstdio:
-
 /usr/include/alloca.h:
 
 /usr/include/c++/15.2.1/bits/locale_classes.h:
+
+/usr/include/c++/15.2.1/bits/locale_conv.h:
 
 /usr/include/c++/15.2.1/bits/nested_exception.h:
 
@@ -5149,6 +5187,10 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 
 /usr/include/c++/15.2.1/bits/range_access.h:
 
+/usr/include/sys/single_threaded.h:
+
+/usr/include/c++/15.2.1/bits/shared_ptr.h:
+
 /usr/include/c++/15.2.1/bits/specfun.h:
 
 /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h:
@@ -5158,6 +5200,8 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 /usr/include/c++/15.2.1/cwchar:
 
 /usr/include/c++/15.2.1/bits/uniform_int_dist.h:
+
+/usr/include/c++/15.2.1/bits/unique_ptr.h:
 
 /usr/include/c++/15.2.1/bits/unordered_map.h:
 
@@ -5189,20 +5233,6 @@ CMakeFiles/nganu-game.dir/home/fanorisky/GameProject/nganu.mp/vendor/enet/peer.c
 
 /usr/include/c++/15.2.1/cmath:
 
+/usr/include/c++/15.2.1/codecvt:
+
 /usr/include/c++/15.2.1/concepts:
-
-/usr/lib/libgcc_s.so:
-
-/usr/include/c++/15.2.1/cstddef:
-
-/usr/include/bits/unistd_ext.h:
-
-/usr/include/c++/15.2.1/ext/alloc_traits.h:
-
-/usr/include/bits/getopt_core.h:
-
-/usr/include/c++/15.2.1/ext/numeric_traits.h:
-
-/usr/include/c++/15.2.1/ext/type_traits.h:
-
-/usr/include/c++/15.2.1/initializer_list:

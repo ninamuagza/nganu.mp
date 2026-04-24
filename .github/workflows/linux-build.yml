@@ -26,12 +26,30 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake pkg-config libluajit-5.1-dev
+          sudo apt-get install -y cmake curl build-essential
+
+      - name: Fetch Lua source
+        run: |
+          rm -rf /tmp/lua-5.5.0 /tmp/lua-5.5.0.tar.gz nganu.mp/vendor/lua-linux
+          curl -L https://www.lua.org/ftp/lua-5.5.0.tar.gz -o /tmp/lua-5.5.0.tar.gz
+          tar -xzf /tmp/lua-5.5.0.tar.gz -C /tmp
+
+      - name: Build Lua static library for Linux
+        working-directory: /tmp/lua-5.5.0/src
+        run: |
+          make clean || true
+          make -j"$(nproc)" liblua.a
+
+          mkdir -p "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/include" "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/lib"
+          cp ./*.h "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/include/"
+          cp ./liblua.a "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/lib/"
 
       - name: Configure and build server
         working-directory: nganu.mp
         run: |
-          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release \
+            -DNGANU_LUA_INCLUDE_DIR="$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/include" \
+            -DNGANU_LUA_LIBRARY="$GITHUB_WORKSPACE/nganu.mp/vendor/lua-linux/lib/liblua.a"
           cmake --build build-ci --parallel
 
       - name: Server smoke test
@@ -60,10 +78,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Fetch LuaJIT source
+      - name: Fetch Lua source
         run: |
-          rm -rf nganu.mp/vendor/LuaJIT
-          git clone --depth=1 https://github.com/LuaJIT/LuaJIT.git nganu.mp/vendor/LuaJIT
+          rm -rf /tmp/lua-5.5.0 /tmp/lua-5.5.0.tar.gz nganu.mp/vendor/lua-android
+          curl -L https://www.lua.org/ftp/lua-5.5.0.tar.gz -o /tmp/lua-5.5.0.tar.gz
+          tar -xzf /tmp/lua-5.5.0.tar.gz -C /tmp
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -78,31 +97,32 @@ jobs:
           ls "$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
           ls "$ANDROID_SDK_ROOT/cmake/${ANDROID_CMAKE_VERSION}/bin"
 
-      - name: Build LuaJIT static library for Android arm64
-        working-directory: nganu.mp/vendor/LuaJIT/src
+      - name: Build Lua static library for Android arm64
+        working-directory: /tmp/lua-5.5.0/src
         run: |
           export NDK="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}"
           export TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
           export API="${ANDROID_API_LEVEL}"
+          export SYSROOT="$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 
           make clean || true
 
-          make -j"$(nproc)" libluajit.a \
-            HOST_CC="cc" \
-            CC="${TOOLCHAIN}/clang" \
-            CROSS="" \
-            TARGET_AR="${TOOLCHAIN}/llvm-ar rcus" \
-            TARGET_STRIP="${TOOLCHAIN}/llvm-strip" \
-            TARGET_SYS=Linux \
-            TARGET_FLAGS="--target=aarch64-linux-android${API} --sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
-            TARGET_CFLAGS="-fPIC" \
-            TARGET_LDFLAGS="--target=aarch64-linux-android${API} --sysroot=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+          make -j"$(nproc)" liblua.a \
+            AR="${TOOLCHAIN}/llvm-ar rcu" \
+            RANLIB="${TOOLCHAIN}/llvm-ranlib" \
+            CC="${TOOLCHAIN}/clang --target=aarch64-linux-android${API} --sysroot=${SYSROOT}" \
+            MYCFLAGS="-fPIC"
 
-      - name: Verify LuaJIT outputs
+          mkdir -p "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/include" "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/lib"
+          cp ./*.h "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/include/"
+          cp ./liblua.a "$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/lib/"
+
+      - name: Verify Lua outputs
         run: |
-          ls -la nganu.mp/vendor/LuaJIT/src
-          test -f nganu.mp/vendor/LuaJIT/src/libluajit.a
-          file nganu.mp/vendor/LuaJIT/src/libluajit.a || true
+          ls -la nganu.mp/vendor/lua-android/include
+          ls -la nganu.mp/vendor/lua-android/lib
+          test -f nganu.mp/vendor/lua-android/lib/liblua.a
+          file nganu.mp/vendor/lua-android/lib/liblua.a || true
 
       - name: Configure Android build
         working-directory: nganu.mp
@@ -112,7 +132,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}/build/cmake/android.toolchain.cmake" \
             -DANDROID_ABI=arm64-v8a \
-            -DANDROID_PLATFORM=${ANDROID_API_LEVEL}
+            -DANDROID_PLATFORM=${ANDROID_API_LEVEL} \
+            -DNGANU_LUA_INCLUDE_DIR="$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/include" \
+            -DNGANU_LUA_LIBRARY="$GITHUB_WORKSPACE/nganu.mp/vendor/lua-android/lib/liblua.a"
 
       - name: Build Android server
         working-directory: nganu.mp

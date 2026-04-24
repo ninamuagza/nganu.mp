@@ -305,7 +305,8 @@ game__server_EXTERNAL_OBJECTS =
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/build.make
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/compiler_depend.ts
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: libenet_static.a
-/home/fanorisky/GameProject/nganu.mp/bin/game-server: /usr/lib/libluajit-5.1.so
+/home/fanorisky/GameProject/nganu.mp/bin/game-server: /usr/lib/liblua.so
+/home/fanorisky/GameProject/nganu.mp/bin/game-server: /usr/lib/libm.so
 /home/fanorisky/GameProject/nganu.mp/bin/game-server: CMakeFiles/game-server.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX executable /home/fanorisky/GameProject/nganu.mp/bin/game-server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game-server.dir/link.txt --verbose=$(VERBOSE)

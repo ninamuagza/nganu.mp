@@ -7,7 +7,7 @@ Tanggal acuan sesi ini: 2026-04-16
 Repo ini sekarang sudah punya dua sisi yang saling terhubung:
 
 - `nganu.mp/game-server`
-  Server C++17 berbasis ENet + LuaJIT + plugin.
+  Server C++17 berbasis ENet + Lua + plugin.
 - `nganu.game`
   Client `raylib` untuk MMORPG 2D top-down.
 
@@ -305,11 +305,10 @@ cd /home/fanorisky/GameProject/nganu.game
 - Folder fisik server sekarang juga mulai dipisah:
   - `nganu.mp/game-server/assets/map_images`
   - `nganu.mp/game-server/assets/characters`
-- Format ref atlas di `.map` sekarang mendukung domain eksplisit seperti:
+- Format ref atlas content sekarang mendukung domain eksplisit seperti:
   - `map:terrain_atlas.png@0@0@32@32`
   - `character:base_out_atlas.png@608@0@32@32`
-- Proyek content editor ada di [`nganu.editor`](./nganu.editor) untuk memilih source rect atlas, menyusun map, dan menyiapkan asset yang sesuai dengan pipeline runtime.
-- `nganu.editor` sekarang juga punya mode map editor dasar untuk paint tile, toggle `block/water`, set `spawn`, dan save `.map` v2.
-- Runtime sekarang diarahkan ke satu world besar default [`overworld.map`](./nganu.mp/game-server/assets/maps/overworld.map), dengan `portal` default sebagai teleport dalam map yang sama.
+- Source map sekarang ditulis sebagai `.tmx` dan diarahkan untuk diauthor lewat Tiled.
+- Runtime sekarang diarahkan ke satu world besar default [`overworld.tmx`](./nganu.mp/assets/maps/overworld.tmx), dengan `portal` default sebagai teleport dalam map yang sama.
 - Konsep `region` sekarang dipakai sebagai object map untuk area besar seperti `Greenfields` dan `Crossroads`, lalu client HUD membaca region aktif dari posisi player.
-- `nganu.editor` object mode sekarang juga mendukung placement `region`, jadi editor ikut selaras dengan desain overworld tunggal.
+- Internal editor repo sudah dihapus; authoring map mengikuti workflow Tiled.

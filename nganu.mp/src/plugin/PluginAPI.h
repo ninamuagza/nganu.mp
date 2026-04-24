@@ -8,7 +8,7 @@
   #define PLUGIN_CALL
 #endif
 
-/* Forward declare the LuaJIT state so plugins can register C functions
+/* Forward declare the Lua state so plugins can register C functions
    without including Lua headers through this public ABI. */
 struct lua_State;
 typedef int (*SCRIPT_FUNCTION)(lua_State* state);

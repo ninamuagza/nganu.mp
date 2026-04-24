@@ -16,7 +16,7 @@
   /usr/lib/ld-linux-x86-64.so.2 \
   /usr/lib/libc.so.6 \
   /usr/lib/libc_nonshared.a \
-  /usr/lib/libluajit-5.1.so \
+  /usr/lib/liblua.so \
   /usr/lib/libm.so.6 \
   /usr/lib/libmvec.so.1 \
   CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o \
@@ -77,6 +77,8 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/bits/select.h \
   /usr/include/bits/setjmp.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdint-least.h \
+  /usr/include/bits/stdint-uintn.h \
   /usr/include/bits/stdio.h \
   /usr/include/bits/stdio_lim.h \
   /usr/include/bits/stdlib-bsearch.h \
@@ -125,6 +127,7 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/algorithmfwd.h \
   /usr/include/c++/15.2.1/bits/alloc_traits.h \
+  /usr/include/c++/15.2.1/bits/allocated_ptr.h \
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/basic_ios.h \
   /usr/include/c++/15.2.1/bits/basic_ios.tcc \
@@ -132,6 +135,8 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bits/basic_string.tcc \
   /usr/include/c++/15.2.1/bits/char_traits.h \
   /usr/include/c++/15.2.1/bits/charconv.h \
+  /usr/include/c++/15.2.1/bits/chrono.h \
+  /usr/include/c++/15.2.1/bits/codecvt.h \
   /usr/include/c++/15.2.1/bits/concept_check.h \
   /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
   /usr/include/c++/15.2.1/bits/cxxabi_forced.h \
@@ -141,6 +146,10 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bits/exception.h \
   /usr/include/c++/15.2.1/bits/exception_defines.h \
   /usr/include/c++/15.2.1/bits/exception_ptr.h \
+  /usr/include/c++/15.2.1/bits/fs_dir.h \
+  /usr/include/c++/15.2.1/bits/fs_fwd.h \
+  /usr/include/c++/15.2.1/bits/fs_ops.h \
+  /usr/include/c++/15.2.1/bits/fs_path.h \
   /usr/include/c++/15.2.1/bits/functexcept.h \
   /usr/include/c++/15.2.1/bits/functional_hash.h \
   /usr/include/c++/15.2.1/bits/hash_bytes.h \
@@ -151,8 +160,11 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bits/istream.tcc \
   /usr/include/c++/15.2.1/bits/locale_classes.h \
   /usr/include/c++/15.2.1/bits/locale_classes.tcc \
+  /usr/include/c++/15.2.1/bits/locale_conv.h \
   /usr/include/c++/15.2.1/bits/locale_facets.h \
   /usr/include/c++/15.2.1/bits/locale_facets.tcc \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.h \
+  /usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc \
   /usr/include/c++/15.2.1/bits/localefwd.h \
   /usr/include/c++/15.2.1/bits/memory_resource.h \
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
@@ -163,12 +175,16 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bits/ostream.h \
   /usr/include/c++/15.2.1/bits/ostream.tcc \
   /usr/include/c++/15.2.1/bits/ostream_insert.h \
+  /usr/include/c++/15.2.1/bits/parse_numbers.h \
   /usr/include/c++/15.2.1/bits/postypes.h \
   /usr/include/c++/15.2.1/bits/predefined_ops.h \
   /usr/include/c++/15.2.1/bits/ptr_traits.h \
+  /usr/include/c++/15.2.1/bits/quoted_string.h \
   /usr/include/c++/15.2.1/bits/range_access.h \
   /usr/include/c++/15.2.1/bits/refwrap.h \
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr.h \
+  /usr/include/c++/15.2.1/bits/shared_ptr_base.h \
   /usr/include/c++/15.2.1/bits/specfun.h \
   /usr/include/c++/15.2.1/bits/sstream.tcc \
   /usr/include/c++/15.2.1/bits/std_abs.h \
@@ -190,6 +206,7 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/bits/string_view.tcc \
   /usr/include/c++/15.2.1/bits/stringfwd.h \
   /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
+  /usr/include/c++/15.2.1/bits/unique_ptr.h \
   /usr/include/c++/15.2.1/bits/unordered_map.h \
   /usr/include/c++/15.2.1/bits/uses_allocator.h \
   /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
@@ -200,10 +217,13 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/cerrno \
   /usr/include/c++/15.2.1/clocale \
   /usr/include/c++/15.2.1/cmath \
+  /usr/include/c++/15.2.1/codecvt \
   /usr/include/c++/15.2.1/concepts \
   /usr/include/c++/15.2.1/cstddef \
+  /usr/include/c++/15.2.1/cstdint \
   /usr/include/c++/15.2.1/cstdio \
   /usr/include/c++/15.2.1/cstdlib \
+  /usr/include/c++/15.2.1/ctime \
   /usr/include/c++/15.2.1/cwchar \
   /usr/include/c++/15.2.1/cwctype \
   /usr/include/c++/15.2.1/debug/assertions.h \
@@ -212,20 +232,25 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/ext/aligned_buffer.h \
   /usr/include/c++/15.2.1/ext/alloc_traits.h \
   /usr/include/c++/15.2.1/ext/atomicity.h \
+  /usr/include/c++/15.2.1/ext/concurrence.h \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/string_conversions.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/filesystem \
   /usr/include/c++/15.2.1/initializer_list \
+  /usr/include/c++/15.2.1/iomanip \
   /usr/include/c++/15.2.1/ios \
   /usr/include/c++/15.2.1/iosfwd \
   /usr/include/c++/15.2.1/istream \
   /usr/include/c++/15.2.1/limits \
+  /usr/include/c++/15.2.1/locale \
   /usr/include/c++/15.2.1/new \
   /usr/include/c++/15.2.1/optional \
   /usr/include/c++/15.2.1/ostream \
   /usr/include/c++/15.2.1/pstl/execution_defs.h \
   /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
+  /usr/include/c++/15.2.1/ratio \
   /usr/include/c++/15.2.1/sstream \
   /usr/include/c++/15.2.1/stdexcept \
   /usr/include/c++/15.2.1/streambuf \
@@ -259,7 +284,9 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/messages_members.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h \
   /usr/include/ctype.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
@@ -267,6 +294,7 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/libintl.h \
   /usr/include/linux/errno.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
@@ -277,6 +305,7 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/pthread.h \
   /usr/include/sched.h \
   /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/sys/cdefs.h \
@@ -287,7 +316,8 @@ CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o: /h
   /usr/include/wchar.h \
   /usr/include/wctype.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
 CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/ContentRevision.cpp \
   /home/fanorisky/GameProject/nganu.mp/src/core/ContentRevision.h \
@@ -859,6 +889,7 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/bits/iscanonical.h \
   /usr/include/bits/libc-header-start.h \
   /usr/include/bits/libm-simd-decl-stubs.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
   /usr/include/bits/math-vector.h \
@@ -866,6 +897,8 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/bits/mathcalls-macros.h \
   /usr/include/bits/mathcalls-narrow.h \
   /usr/include/bits/mathcalls.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
   /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
@@ -919,12 +952,14 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wctype-wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/algorithm \
   /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/atomic \
@@ -1113,20 +1148,21 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
   /usr/include/libintl.h \
+  /usr/include/limits.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/math.h \
   /usr/include/netinet/in.h \
   /usr/include/pthread.h \
@@ -1145,9 +1181,11 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o: /home/fanorisky/Ga
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 CMakeFiles/game-server.dir/src/core/Runtime.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/Runtime.cpp \
   /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
@@ -1437,6 +1475,7 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/bits/iscanonical.h \
   /usr/include/bits/libc-header-start.h \
   /usr/include/bits/libm-simd-decl-stubs.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
   /usr/include/bits/math-vector.h \
@@ -1444,6 +1483,8 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/bits/mathcalls-macros.h \
   /usr/include/bits/mathcalls-narrow.h \
   /usr/include/bits/mathcalls.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
   /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
@@ -1517,12 +1558,14 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wctype-wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/algorithm \
   /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/atomic \
@@ -1722,20 +1765,21 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
   /usr/include/libintl.h \
+  /usr/include/limits.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/math.h \
   /usr/include/netinet/in.h \
   /usr/include/pthread.h \
@@ -1758,9 +1802,11 @@ CMakeFiles/game-server.dir/src/core/Server.cpp.o: /home/fanorisky/GameProject/ng
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/core/ServerContent.cpp \
   /home/fanorisky/GameProject/shared/ContentIntegrity.h \
@@ -1814,8 +1860,11 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GamePro
   /usr/include/bits/getopt_posix.h \
   /usr/include/bits/in.h \
   /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
   /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
@@ -1869,12 +1918,14 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GamePro
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wctype-wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/algorithm \
   /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/atomic \
@@ -2055,20 +2106,21 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GamePro
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
   /usr/include/libintl.h \
+  /usr/include/limits.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/netinet/in.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -2088,9 +2140,11 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o: /home/fanorisky/GamePro
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.cpp \
   /home/fanorisky/GameProject/nganu.mp/src/inventory/InventoryService.h \
@@ -2312,8 +2366,11 @@ CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/
   /usr/include/bits/getopt_posix.h \
   /usr/include/bits/in.h \
   /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
   /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
@@ -2367,12 +2424,14 @@ CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wctype-wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/atomic \
   /usr/include/c++/15.2.1/backward/binders.h \
@@ -2544,20 +2603,21 @@ CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
   /usr/include/libintl.h \
+  /usr/include/limits.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/netinet/in.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -2577,9 +2637,11 @@ CMakeFiles/game-server.dir/src/main.cpp.o: /home/fanorisky/GameProject/nganu.mp/
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 CMakeFiles/game-server.dir/src/network/Network.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/network/Network.cpp \
   /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
@@ -3060,8 +3122,11 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProjec
   /usr/include/bits/getopt_posix.h \
   /usr/include/bits/in.h \
   /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
   /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
@@ -3115,12 +3180,14 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProjec
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wctype-wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/atomic \
   /usr/include/c++/15.2.1/backward/binders.h \
@@ -3289,20 +3356,21 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProjec
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
   /usr/include/libintl.h \
+  /usr/include/limits.h \
   /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/netinet/in.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
@@ -3322,9 +3390,11 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o: /home/fanorisky/GameProjec
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProject/nganu.mp/src/script/LuaRuntime.cpp \
   /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h \
@@ -3341,8 +3411,12 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
   /usr/include/bits/floatn-common.h \
   /usr/include/bits/floatn.h \
   /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
   /usr/include/bits/locale.h \
   /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
+  /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
@@ -3383,10 +3457,12 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
   /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
+  /usr/include/bits/uio_lim.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
   /usr/include/c++/15.2.1/backward/binders.h \
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/alloc_traits.h \
@@ -3471,14 +3547,15 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
+  /usr/include/lauxlib.h \
+  /usr/include/limits.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
   /usr/include/locale.h \
-  /usr/include/luajit-2.1/lauxlib.h \
-  /usr/include/luajit-2.1/lua.h \
-  /usr/include/luajit-2.1/lua.hpp \
-  /usr/include/luajit-2.1/luaconf.h \
-  /usr/include/luajit-2.1/luajit.h \
-  /usr/include/luajit-2.1/lualib.h \
+  /usr/include/lua.h \
+  /usr/include/lua.hpp \
+  /usr/include/luaconf.h \
+  /usr/include/lualib.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
@@ -3487,8 +3564,10 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
   /usr/include/sys/types.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h
 
 
 /home/fanorisky/GameProject/nganu.mp/src/plugin/PluginManager.cpp:
@@ -3515,23 +3594,29 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /home/fanorisky/GameProject/shared/ContentIntegrity.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h:
+
 /usr/include/unistd.h:
 
 /usr/include/sys/time.h:
 
 /usr/include/netinet/in.h:
 
-/usr/include/luajit-2.1/lualib.h:
+/usr/include/lualib.h:
 
-/usr/include/luajit-2.1/luaconf.h:
+/usr/include/luaconf.h:
 
-/usr/include/luajit-2.1/lua.hpp:
+/usr/include/lua.hpp:
 
-/usr/include/luajit-2.1/lua.h:
+/usr/include/lua.h:
 
-/usr/include/luajit-2.1/lauxlib.h:
+/usr/include/linux/limits.h:
 
 /usr/include/linux/close_range.h:
+
+/usr/include/limits.h:
+
+/usr/include/lauxlib.h:
 
 /usr/include/dlfcn.h:
 
@@ -3573,7 +3658,9 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/bits/sockaddr.h:
 
-/usr/include/bits/confname.h:
+/usr/include/bits/posix2_lim.h:
+
+/usr/include/bits/local_lim.h:
 
 /usr/include/asm/sockios.h:
 
@@ -3605,43 +3692,17 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/c++/15.2.1/fstream:
 
-/usr/include/c++/15.2.1/codecvt:
-
-/usr/include/c++/15.2.1/bits/unique_ptr.h:
-
 /usr/include/c++/15.2.1/cstdarg:
 
 /usr/include/c++/15.2.1/bits/stream_iterator.h:
 
-/usr/include/bits/sigstksz.h:
-
-/usr/include/c++/15.2.1/bits/fs_path.h:
-
-/usr/include/c++/15.2.1/bits/fs_ops.h:
-
-/usr/include/c++/15.2.1/bits/chrono.h:
-
-/usr/include/c++/15.2.1/bits/allocated_ptr.h:
-
 /home/fanorisky/GameProject/nganu.mp/src/core/MapData.cpp:
+
+/home/fanorisky/GameProject/nganu.mp/src/core/ContentRevision.cpp:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
-
-/usr/include/c++/15.2.1/iomanip:
-
-/usr/include/c++/15.2.1/cstdint:
-
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
-
-/usr/include/c++/15.2.1/bits/locale_conv.h:
-
-/usr/include/c++/15.2.1/bits/codecvt.h:
-
-/usr/include/bits/stdint-least.h:
-
-/home/fanorisky/GameProject/nganu.mp/src/core/ContentRevision.cpp:
+/usr/include/bits/posix1_lim.h:
 
 /usr/include/wchar.h:
 
@@ -3650,10 +3711,6 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 /usr/include/time.h:
 
 /usr/include/sys/types.h:
-
-/usr/include/c++/15.2.1/bits/shared_ptr.h:
-
-/usr/include/sys/single_threaded.h:
 
 /home/fanorisky/GameProject/nganu.mp/src/script/Builtins.cpp:
 
@@ -3677,19 +3734,55 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/gnu/stubs-64.h:
 
-/usr/include/c++/15.2.1/bits/quoted_string.h:
-
-/usr/include/features-time64.h:
-
 /usr/include/ctype.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/time_members.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
 
-/usr/include/c++/15.2.1/bits/basic_ios.tcc:
+/home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h:
 
-/usr/include/bits/libm-simd-decl-stubs.h:
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h:
 
-/usr/include/c++/15.2.1/cerrno:
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_inline.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
+
+/usr/include/bits/types/stack_t.h:
+
+/usr/include/c++/15.2.1/unordered_map:
+
+/usr/include/c++/15.2.1/typeinfo:
+
+/usr/include/c++/15.2.1/type_traits:
+
+/usr/include/c++/15.2.1/tr1/special_function_util.h:
+
+/usr/include/strings.h:
+
+/usr/include/signal.h:
+
+/usr/include/c++/15.2.1/tr1/poly_laguerre.tcc:
+
+/usr/include/c++/15.2.1/tr1/modified_bessel_func.tcc:
+
+/usr/include/bits/types/struct_sigstack.h:
+
+/usr/include/c++/15.2.1/tr1/legendre_function.tcc:
+
+/usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
+
+/usr/include/c++/15.2.1/tr1/gamma.tcc:
+
+/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
 
 /usr/include/c++/15.2.1/algorithm:
 
@@ -3704,10 +3797,6 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 /usr/include/c++/15.2.1/bits/algorithmfwd.h:
 
 /usr/include/bits/timesize.h:
-
-/usr/include/bits/types/wint_t.h:
-
-/usr/include/c++/15.2.1/bits/memoryfwd.h:
 
 /usr/include/sys/ucontext.h:
 
@@ -3739,13 +3828,37 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/bits/types/mbstate_t.h:
 
+/usr/include/c++/15.2.1/bits/allocated_ptr.h:
+
+/home/fanorisky/GameProject/nganu.mp/src/network/Packet.cpp:
+
+/usr/include/c++/15.2.1/compare:
+
+/usr/include/c++/15.2.1/cwctype:
+
+/usr/include/c++/15.2.1/istream:
+
 /usr/include/bits/types/clock_t.h:
+
+/usr/include/bits/types/sig_atomic_t.h:
+
+/usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
+
+/usr/include/bits/types/__fpos_t.h:
 
 /usr/include/c++/15.2.1/iostream:
 
 /usr/include/bits/mathcalls.h:
 
 /usr/include/bits/types/__locale_t.h:
+
+/usr/include/bits/confname.h:
+
+/usr/lib/liblua.so:
+
+/usr/include/bits/sigstksz.h:
+
+/usr/include/c++/15.2.1/bits/fs_path.h:
 
 /home/fanorisky/GameProject/nganu.mp/src/network/Packet.h:
 
@@ -3759,21 +3872,15 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/bits/stdlib-float.h:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h:
-
 /usr/include/c++/15.2.1/debug/debug.h:
-
-/usr/include/c++/15.2.1/type_traits:
 
 /usr/include/bits/stdlib-bsearch.h:
 
 /usr/include/bits/stdio.h:
 
-/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
-
-/usr/include/c++/15.2.1/debug/assertions.h:
-
 /usr/include/c++/15.2.1/new:
+
+/usr/include/bits/stdint-least.h:
 
 /usr/include/bits/types/error_t.h:
 
@@ -3789,13 +3896,9 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/bits/setjmp.h:
 
-/home/fanorisky/GameProject/nganu.mp/src/core/Server.h:
-
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
-
-/usr/include/bits/select.h:
-
 /usr/include/bits/types/cookie_io_functions_t.h:
+
+/usr/include/c++/15.2.1/cstdlib:
 
 /usr/include/features.h:
 
@@ -3809,9 +3912,9 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 
 /usr/include/c++/15.2.1/bits/exception_ptr.h:
 
-/usr/include/c++/15.2.1/bits/fs_fwd.h:
+/usr/include/c++/15.2.1/tr1/poly_hermite.tcc:
 
-/usr/include/bits/pthreadtypes-arch.h:
+/usr/include/bits/types/timer_t.h:
 
 /usr/lib/Scrt1.o:
 
@@ -3830,6 +3933,8 @@ CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o: /home/fanorisky/GameProj
 /usr/include/c++/15.2.1/bits/stl_uninitialized.h:
 
 /usr/include/c++/15.2.1/bits/stl_algo.h:
+
+/usr/include/bits/uio_lim.h:
 
 /usr/include/c++/15.2.1/bits/exception.h:
 
@@ -3859,6 +3964,10 @@ CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o:
 
 /usr/include/bits/fp-logb.h:
 
+/usr/include/features-time64.h:
+
+/usr/include/c++/15.2.1/bits/quoted_string.h:
+
 /home/fanorisky/GameProject/nganu.mp/src/main.cpp:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
@@ -3873,8 +3982,6 @@ CMakeFiles/game-server.dir/src/inventory/InventoryService.cpp.o:
 
 CMakeFiles/game-server.dir/home/fanorisky/GameProject/shared/MapFormat.cpp.o:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
-
 CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o:
 
 /usr/include/c++/15.2.1/string:
@@ -3885,13 +3992,27 @@ CMakeFiles/game-server.dir/src/core/MovementValidation.cpp.o:
 
 /home/fanorisky/GameProject/shared/MapFormat.cpp:
 
-/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
-
 CMakeFiles/game-server.dir/src/core/ContentRevision.cpp.o:
 
 /usr/lib/ld-linux-x86-64.so.2:
 
 /usr/include/c++/15.2.1/cstdio:
+
+/usr/include/bits/types/wint_t.h:
+
+/usr/include/c++/15.2.1/bits/memoryfwd.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/math.h:
+
+/usr/include/c++/15.2.1/bits/invoke.h:
+
+/usr/include/c++/15.2.1/bits/stl_function.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/usr/include/c++/15.2.1/ios:
 
 CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o:
 
@@ -3901,9 +4022,19 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o:
 
-/usr/include/c++/15.2.1/ratio:
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
 
-/usr/include/bits/floatn-common.h:
+CMakeFiles/game-server.dir/src/script/Builtins.cpp.o:
+
+/home/fanorisky/GameProject/shared/Protocol.h:
+
+/usr/include/bits/getopt_posix.h:
+
+/usr/include/errno.h:
+
+/usr/include/c++/15.2.1/tuple:
+
+CMakeFiles/game-server.dir/src/core/Server.cpp.o:
 
 /usr/lib/libc_nonshared.a:
 
@@ -3923,23 +4054,15 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o:
 
 /usr/include/bits/types/locale_t.h:
 
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
+
+/usr/include/c++/15.2.1/bits/parse_numbers.h:
+
 /usr/include/locale.h:
 
 /usr/lib/libstdc++.so:
 
-/usr/include/c++/15.2.1/bits/std_thread.h:
-
-/usr/include/bits/environments.h:
-
-/usr/include/c++/15.2.1/filesystem:
-
-/usr/include/bits/types/struct_FILE.h:
-
 /usr/include/asm/types.h:
-
-/usr/include/c++/15.2.1/ctime:
-
-/usr/include/bits/timex.h:
 
 /usr/include/bits/errno.h:
 
@@ -3948,6 +4071,12 @@ CMakeFiles/game-server.dir/src/core/ServerContent.cpp.o:
 /home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/unix.h:
 
 /usr/include/c++/15.2.1/bits/ostream.h:
+
+/usr/include/bits/libm-simd-decl-stubs.h:
+
+/usr/include/c++/15.2.1/bits/basic_ios.tcc:
+
+/usr/include/c++/15.2.1/cerrno:
 
 /usr/include/bits/types/__mbstate_t.h:
 
@@ -3963,19 +4092,13 @@ CMakeFiles/game-server.dir/src/network/Packet.cpp.o:
 
 /usr/include/bits/uintn-identity.h:
 
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.h:
+
 /home/fanorisky/GameProject/nganu.mp/src/core/MapData.h:
 
 /usr/include/libintl.h:
 
 /usr/include/bits/endianness.h:
-
-/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
-
-/usr/include/c++/15.2.1/bits/parse_numbers.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
-
-/usr/lib/libluajit-5.1.so:
 
 /usr/lib/libgcc_s.so.1:
 
@@ -3988,6 +4111,12 @@ libenet_static.a:
 /usr/include/bits/sigevent-consts.h:
 
 CMakeFiles/game-server.dir/src/script/LuaRuntime.cpp.o:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
+
+/usr/include/bits/floatn-common.h:
+
+/usr/include/c++/15.2.1/ratio:
 
 /usr/include/arpa/inet.h:
 
@@ -4003,21 +4132,13 @@ CMakeFiles/game-server.dir/src/plugin/PluginManager.cpp.o:
 
 /usr/include/asm/posix_types.h:
 
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
+
+/usr/include/bits/types/__sigset_t.h:
+
 /usr/include/asm-generic/posix_types.h:
 
 /usr/include/c++/15.2.1/bits/locale_classes.tcc:
-
-/usr/include/strings.h:
-
-/usr/include/signal.h:
-
-/usr/include/c++/15.2.1/tr1/poly_laguerre.tcc:
-
-/usr/include/c++/15.2.1/bits/fs_dir.h:
-
-/usr/include/bits/stdio_lim.h:
-
-CMakeFiles/game-server.dir/src/core/Runtime.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
 
@@ -4026,16 +4147,6 @@ CMakeFiles/game-server.dir/src/core/Runtime.cpp.o:
 /usr/include/bits/stdint-intn.h:
 
 /usr/include/bits/types/clockid_t.h:
-
-/home/fanorisky/GameProject/shared/Protocol.h:
-
-/usr/include/bits/getopt_posix.h:
-
-/usr/include/errno.h:
-
-CMakeFiles/game-server.dir/src/core/Server.cpp.o:
-
-/usr/include/c++/15.2.1/tuple:
 
 /usr/include/bits/atomic_wide_counter.h:
 
@@ -4047,21 +4158,7 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 
 /usr/include/bits/byteswap.h:
 
-/usr/include/c++/15.2.1/tr1/special_function_util.h:
-
 /usr/include/c++/15.2.1/bits/cpp_type_traits.h:
-
-/usr/include/bits/endian.h:
-
-/usr/include/math.h:
-
-/usr/include/c++/15.2.1/bits/invoke.h:
-
-/usr/include/c++/15.2.1/bits/stl_function.h:
-
-/usr/include/bits/thread-shared-types.h:
-
-/usr/include/c++/15.2.1/ios:
 
 /usr/include/bits/floatn.h:
 
@@ -4075,6 +4172,10 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/charconv.h:
 
+/usr/include/c++/15.2.1/bits/chrono.h:
+
+/usr/include/c++/15.2.1/bits/codecvt.h:
+
 /usr/include/c++/15.2.1/bits/concept_check.h:
 
 /usr/include/c++/15.2.1/ext/concurrence.h:
@@ -4087,17 +4188,33 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/erase_if.h:
 
+/usr/include/c++/15.2.1/debug/assertions.h:
+
+/usr/include/c++/15.2.1/bits/shared_ptr_base.h:
+
 /usr/include/c++/15.2.1/vector:
 
 /usr/include/c++/15.2.1/bits/exception_defines.h:
 
-/usr/include/c++/15.2.1/bits/functexcept.h:
+/usr/include/bits/stdio_lim.h:
 
-/usr/include/c++/15.2.1/streambuf:
+CMakeFiles/game-server.dir/src/core/Runtime.cpp.o:
+
+/usr/include/c++/15.2.1/bits/fs_dir.h:
+
+/usr/include/bits/pthreadtypes-arch.h:
+
+/usr/include/c++/15.2.1/bits/fs_fwd.h:
 
 /usr/lib/crtn.o:
 
 /usr/include/c++/15.2.1/bits/functional_hash.h:
+
+/usr/include/c++/15.2.1/bits/fs_ops.h:
+
+/usr/include/c++/15.2.1/bits/functexcept.h:
+
+/usr/include/c++/15.2.1/streambuf:
 
 /usr/include/c++/15.2.1/bits/hash_bytes.h:
 
@@ -4121,6 +4238,8 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/locale_classes.h:
 
+/usr/include/c++/15.2.1/bits/locale_conv.h:
+
 /usr/include/c++/15.2.1/bits/locale_facets.h:
 
 /usr/include/bits/types/struct_itimerspec.h:
@@ -4142,6 +4261,12 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 /usr/include/c++/15.2.1/bits/locale_facets.tcc:
 
 /usr/include/c++/15.2.1/bits/stl_bvector.h:
+
+/home/fanorisky/GameProject/nganu.mp/src/core/Server.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
 
 /home/fanorisky/GameProject/nganu.mp/src/core/Logger.h:
 
@@ -4179,17 +4304,9 @@ CMakeFiles/game-server.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/streambuf.tcc:
 
-/usr/include/bits/types/stack_t.h:
-
-/usr/include/c++/15.2.1/unordered_map:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
 /usr/include/c++/15.2.1/bits/ostream.tcc:
-
-CMakeFiles/game-server.dir/src/script/Builtins.cpp.o:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
 
 /usr/include/c++/15.2.1/bits/ostream_insert.h:
 
@@ -4200,6 +4317,12 @@ CMakeFiles/game-server.dir/src/script/Builtins.cpp.o:
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h:
 
 /usr/include/c++/15.2.1/bits/range_access.h:
+
+/usr/include/sys/single_threaded.h:
+
+/usr/include/c++/15.2.1/bits/shared_ptr.h:
+
+/usr/include/c++/15.2.1/tr1/bessel_function.tcc:
 
 CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
@@ -4219,9 +4342,9 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
 /usr/include/asm-generic/bitsperlong.h:
 
-/usr/include/asm-generic/types.h:
-
 /usr/include/c++/15.2.1/bits/stl_heap.h:
+
+/usr/include/asm-generic/types.h:
 
 /usr/include/c++/15.2.1/exception:
 
@@ -4241,13 +4364,13 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
 /usr/include/c++/15.2.1/bits/uniform_int_dist.h:
 
+/usr/include/c++/15.2.1/bits/unique_ptr.h:
+
 /usr/include/c++/15.2.1/bits/unordered_map.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
 
 /usr/include/c++/15.2.1/bits/uses_allocator.h:
-
-/usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
 
 /usr/include/c++/15.2.1/bits/basic_string.h:
 
@@ -4275,25 +4398,19 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
 /usr/include/c++/15.2.1/cmath:
 
+/usr/include/c++/15.2.1/codecvt:
+
 /usr/include/c++/15.2.1/concepts:
 
 /usr/lib/libgcc_s.so:
 
 /usr/include/c++/15.2.1/cstddef:
 
-/usr/include/c++/15.2.1/cstdlib:
+/usr/include/c++/15.2.1/cstdint:
 
-/home/fanorisky/GameProject/nganu.mp/src/network/Packet.cpp:
+/usr/include/bits/timex.h:
 
-/usr/include/c++/15.2.1/compare:
-
-/usr/include/c++/15.2.1/cwctype:
-
-/usr/include/c++/15.2.1/istream:
-
-/usr/include/c++/15.2.1/locale:
-
-/usr/include/c++/15.2.1/ext/aligned_buffer.h:
+/usr/include/c++/15.2.1/ctime:
 
 /usr/include/bits/unistd_ext.h:
 
@@ -4303,9 +4420,19 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
 /usr/include/c++/15.2.1/ext/numeric_traits.h:
 
+/usr/include/c++/15.2.1/iomanip:
+
 /usr/include/c++/15.2.1/bits/this_thread_sleep.h:
 
 /usr/include/c++/15.2.1/ext/type_traits.h:
+
+/usr/include/c++/15.2.1/bits/std_thread.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/types/struct_FILE.h:
+
+/usr/include/c++/15.2.1/filesystem:
 
 /usr/include/c++/15.2.1/initializer_list:
 
@@ -4317,42 +4444,10 @@ CMakeFiles/game-server.dir/src/core/MapData.cpp.o:
 
 /usr/include/c++/15.2.1/optional:
 
+/usr/include/c++/15.2.1/ext/aligned_buffer.h:
+
+/usr/include/c++/15.2.1/locale:
+
 /usr/include/c++/15.2.1/sstream:
 
 /usr/include/c++/15.2.1/string_view:
-
-/usr/include/c++/15.2.1/tr1/bessel_function.tcc:
-
-/usr/include/c++/15.2.1/tr1/gamma.tcc:
-
-/usr/include/bits/types/struct_sigstack.h:
-
-/usr/include/c++/15.2.1/tr1/legendre_function.tcc:
-
-/usr/include/luajit-2.1/luajit.h:
-
-/usr/include/c++/15.2.1/tr1/modified_bessel_func.tcc:
-
-/usr/include/bits/types/timer_t.h:
-
-/usr/include/c++/15.2.1/tr1/poly_hermite.tcc:
-
-/usr/include/bits/types/sig_atomic_t.h:
-
-/usr/include/bits/types/__fpos_t.h:
-
-/usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
-
-/usr/include/c++/15.2.1/typeinfo:
-
-/usr/include/bits/types/__sigset_t.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_inline.h:
-
-/home/fanorisky/GameProject/nganu.mp/vendor/enet/include/enet/enet.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h:

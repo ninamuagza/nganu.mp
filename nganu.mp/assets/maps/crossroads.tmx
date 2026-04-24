@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="44" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="5">
+    <properties>
+        <property name="nganu_format" value="tmx_v1"/>
+        <property name="map_id" value="crossroads"/>
+        <property name="world_name" value="Crossroads"/>
+        <property name="spawn_x" type="float" value="200"/>
+        <property name="spawn_y" type="float" value="413"/>
+        <property name="biome" value="trade_crossroads"/>
+        <property name="climate" value="dry_wind"/>
+        <property name="map_script" value="crossroads_main"/>
+        <property name="music" value="crossroads_market"/>
+        <property name="player_sprite_east" value="character:base_out_atlas.png@672@0@32@32"/>
+        <property name="player_sprite_north" value="character:base_out_atlas.png@640@0@32@32"/>
+        <property name="player_sprite_south" value="character:base_out_atlas.png@608@0@32@32"/>
+        <property name="player_sprite_west" value="character:base_out_atlas.png@704@0@32@32"/>
+    </properties>
+    <objectgroup id="1" name="ground">
+        <properties>
+            <property name="nganu_role" value="map_layer"/>
+            <property name="kind" value="image"/>
+            <property name="asset" value="map:terrain_atlas.png@32@0@32@32"/>
+            <property name="tint" value="#F8EBCDFF"/>
+            <property name="parallax" type="float" value="1"/>
+        </properties>
+    </objectgroup>
+    <objectgroup id="2" name="road">
+        <properties>
+            <property name="nganu_role" value="map_layer"/>
+            <property name="kind" value="image"/>
+            <property name="asset" value="map:terrain_atlas.png@96@0@32@32"/>
+            <property name="tint" value="#EED7A8FF"/>
+            <property name="parallax" type="float" value="1"/>
+        </properties>
+    </objectgroup>
+    <objectgroup id="3" name="detail">
+        <properties>
+            <property name="nganu_role" value="map_layer"/>
+            <property name="kind" value="tilemap"/>
+            <property name="tint" value="#FFF1C8FF"/>
+            <property name="parallax" type="float" value="1.08"/>
+        </properties>
+    </objectgroup>
+    <objectgroup id="4" name="objects">
+        <properties>
+            <property name="nganu_role" value="map_objects"/>
+        </properties>
+        <object id="1" name="sign_north" type="prop" x="403" y="149" width="32" height="32">
+            <properties>
+                <property name="collider" value="10|20|12|12"/>
+                <property name="collision" value="block"/>
+                <property name="description" value="The northern caravan road leads into the hills."/>
+                <property name="facing" value="north"/>
+                <property name="pivot" value="0.0|0.0"/>
+                <property name="sprite" value="map:base_out_atlas.png@384@0@32@32"/>
+                <property name="title" value="Northern Route"/>
+                <property name="z" value="1"/>
+            </properties>
+        </object>
+        <object id="2" name="sign_south" type="prop" x="451" y="608" width="32" height="32">
+            <properties>
+                <property name="collider" value="10|20|12|12"/>
+                <property name="collision" value="block"/>
+                <property name="description" value="The southern road heads toward the river camps."/>
+                <property name="facing" value="south"/>
+                <property name="pivot" value="0.0|0.0"/>
+                <property name="sprite" value="map:base_out_atlas.png@384@0@32@32"/>
+                <property name="title" value="Southern Route"/>
+                <property name="z" value="1"/>
+            </properties>
+        </object>
+        <object id="3" name="milestone_center" type="prop" x="437" y="368" width="32" height="32">
+            <properties>
+                <property name="collider" value="8|18|16|14"/>
+                <property name="collision" value="block"/>
+                <property name="description" value="Merchants carved old distance marks into this stone."/>
+                <property name="facing" value="south"/>
+                <property name="pivot" value="0.0|0.0"/>
+                <property name="sprite" value="map:base_out_atlas.png@416@0@32@32"/>
+                <property name="title" value="Crossroads Marker"/>
+                <property name="z" value="1"/>
+            </properties>
+        </object>
+        <object id="4" name="portal_to_greenfields" type="portal" x="120" y="373" width="85" height="107">
+            <properties>
+                <property name="facing" value="west"/>
+                <property name="pivot" value="0.0|0.0"/>
+                <property name="script" value="portal_travel"/>
+                <property name="sprite" value="map:base_out_atlas.png@384@0@32@32"/>
+                <property name="target_map" value="starter_field"/>
+                <property name="target_x" value="747"/>
+                <property name="target_y" value="448"/>
+                <property name="title" value="Gate to Greenfields"/>
+                <property name="z" value="1"/>
+            </properties>
+        </object>
+    </objectgroup>
+</map>

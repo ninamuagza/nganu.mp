@@ -96,7 +96,8 @@ example_plugin_EXTERNAL_OBJECTS =
 /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/plugin.cpp.o
 /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/build.make
 /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/compiler_depend.ts
-/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: /usr/lib/libluajit-5.1.so
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: /usr/lib/liblua.so
+/home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: /usr/lib/libm.so
 /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so: plugins/example_plugin/CMakeFiles/example_plugin.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/fanorisky/GameProject/nganu.mp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library /home/fanorisky/GameProject/nganu.mp/plugins/example_plugin.so"
 	cd /home/fanorisky/GameProject/nganu.mp/build/plugins/example_plugin && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example_plugin.dir/link.txt --verbose=$(VERBOSE)

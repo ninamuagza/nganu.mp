@@ -473,7 +473,7 @@ Konsekuensi:
 
 Keputusan:
 
-- `nganu.editor` dan tooling lain diposisikan sebagai alat produksi content, bukan penentu state runtime saat game berjalan.
+- Tiled dan tooling lain diposisikan sebagai alat produksi content, bukan penentu state runtime saat game berjalan.
 
 Alasan:
 
@@ -482,8 +482,8 @@ Alasan:
 
 Konsekuensi:
 
-- editor harus menghasilkan output yang dikonsumsi server/client
-- editor tidak boleh menjadi sumber state live gameplay
+- authoring tool harus menghasilkan output yang dikonsumsi server/client
+- authoring tool tidak boleh menjadi sumber state live gameplay
 
 ## Arah Struktur Modul
 
@@ -510,14 +510,14 @@ Peran:
 - session/state management
 - plugin integration
 
-### `nganu.editor`
+### Tiled / Tooling Eksternal
 
 Peran:
 
-- editor atlas/map/content tooling
+- authoring map/content tooling
 - memproduksi content yang nantinya disajikan server ke client
 
-Editor bukan runtime authority. Editor adalah alat authoring untuk content pipeline.
+Tool authoring bukan runtime authority. Tool authoring hanya untuk content pipeline.
 
 ## Target Arsitektur Jangka Menengah
 

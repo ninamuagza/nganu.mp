@@ -1,0 +1,3523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="499">
+    <properties>
+        <property name="nganu_format" value="tmx_v1"/>
+        <property name="map_id" value="new_map"/>
+        <property name="world_name" value="New Region"/>
+        <property name="spawn_x" type="float" value="400"/>
+        <property name="spawn_y" type="float" value="208"/>
+        <property name="climate" value="temperate"/>
+        <property name="music" value="prototype_day"/>
+    </properties>
+    <objectgroup id="1" name="base">
+        <properties>
+            <property name="nganu_role" value="map_layer"/>
+            <property name="kind" value="tilemap"/>
+            <property name="tint" value="#FFFFFFFF"/>
+            <property name="parallax" type="float" value="1"/>
+        </properties>
+        <object id="1" name="stamp" type="stamp" x="0" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="2" name="stamp" type="stamp" x="32" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="3" name="stamp" type="stamp" x="64" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="4" name="stamp" type="stamp" x="96" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="5" name="stamp" type="stamp" x="128" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="6" name="stamp" type="stamp" x="160" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="7" name="stamp" type="stamp" x="192" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="8" name="stamp" type="stamp" x="224" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="9" name="stamp" type="stamp" x="256" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="10" name="stamp" type="stamp" x="288" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="11" name="stamp" type="stamp" x="320" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="12" name="stamp" type="stamp" x="352" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="13" name="stamp" type="stamp" x="384" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="14" name="stamp" type="stamp" x="416" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="15" name="stamp" type="stamp" x="448" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="16" name="stamp" type="stamp" x="480" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="17" name="stamp" type="stamp" x="512" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="18" name="stamp" type="stamp" x="544" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="19" name="stamp" type="stamp" x="576" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="20" name="stamp" type="stamp" x="608" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="21" name="stamp" type="stamp" x="640" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="22" name="stamp" type="stamp" x="672" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="23" name="stamp" type="stamp" x="704" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="24" name="stamp" type="stamp" x="736" y="0" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="0"/>
+            </properties>
+        </object>
+        <object id="25" name="stamp" type="stamp" x="0" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="26" name="stamp" type="stamp" x="32" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="27" name="stamp" type="stamp" x="64" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="28" name="stamp" type="stamp" x="96" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="29" name="stamp" type="stamp" x="128" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="30" name="stamp" type="stamp" x="160" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="31" name="stamp" type="stamp" x="192" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="32" name="stamp" type="stamp" x="224" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="33" name="stamp" type="stamp" x="256" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="34" name="stamp" type="stamp" x="288" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="35" name="stamp" type="stamp" x="320" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="36" name="stamp" type="stamp" x="352" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="37" name="stamp" type="stamp" x="384" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="38" name="stamp" type="stamp" x="416" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="39" name="stamp" type="stamp" x="448" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="40" name="stamp" type="stamp" x="480" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="41" name="stamp" type="stamp" x="512" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="42" name="stamp" type="stamp" x="544" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="43" name="stamp" type="stamp" x="576" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="44" name="stamp" type="stamp" x="608" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="45" name="stamp" type="stamp" x="640" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="46" name="stamp" type="stamp" x="672" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="47" name="stamp" type="stamp" x="704" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="48" name="stamp" type="stamp" x="736" y="32" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="1"/>
+            </properties>
+        </object>
+        <object id="49" name="stamp" type="stamp" x="0" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="50" name="stamp" type="stamp" x="32" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="51" name="stamp" type="stamp" x="64" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="52" name="stamp" type="stamp" x="96" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="53" name="stamp" type="stamp" x="128" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="54" name="stamp" type="stamp" x="160" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="55" name="stamp" type="stamp" x="192" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="56" name="stamp" type="stamp" x="224" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="57" name="stamp" type="stamp" x="256" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="58" name="stamp" type="stamp" x="288" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="59" name="stamp" type="stamp" x="320" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="60" name="stamp" type="stamp" x="352" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="61" name="stamp" type="stamp" x="384" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="62" name="stamp" type="stamp" x="416" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="63" name="stamp" type="stamp" x="448" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="64" name="stamp" type="stamp" x="480" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="65" name="stamp" type="stamp" x="512" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="66" name="stamp" type="stamp" x="544" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="67" name="stamp" type="stamp" x="576" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="68" name="stamp" type="stamp" x="608" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="69" name="stamp" type="stamp" x="640" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="70" name="stamp" type="stamp" x="672" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="71" name="stamp" type="stamp" x="704" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="72" name="stamp" type="stamp" x="736" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="73" name="stamp" type="stamp" x="0" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="74" name="stamp" type="stamp" x="32" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="75" name="stamp" type="stamp" x="64" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="76" name="stamp" type="stamp" x="96" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="77" name="stamp" type="stamp" x="128" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="78" name="stamp" type="stamp" x="160" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="79" name="stamp" type="stamp" x="192" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="80" name="stamp" type="stamp" x="224" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="81" name="stamp" type="stamp" x="256" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="82" name="stamp" type="stamp" x="288" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="83" name="stamp" type="stamp" x="320" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="84" name="stamp" type="stamp" x="352" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="85" name="stamp" type="stamp" x="384" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="86" name="stamp" type="stamp" x="416" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="87" name="stamp" type="stamp" x="448" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="88" name="stamp" type="stamp" x="480" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="89" name="stamp" type="stamp" x="512" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="90" name="stamp" type="stamp" x="544" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="91" name="stamp" type="stamp" x="576" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="92" name="stamp" type="stamp" x="608" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="93" name="stamp" type="stamp" x="640" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="94" name="stamp" type="stamp" x="672" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="95" name="stamp" type="stamp" x="704" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="96" name="stamp" type="stamp" x="736" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="97" name="stamp" type="stamp" x="0" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="98" name="stamp" type="stamp" x="32" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="99" name="stamp" type="stamp" x="64" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="100" name="stamp" type="stamp" x="96" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="101" name="stamp" type="stamp" x="128" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="102" name="stamp" type="stamp" x="160" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="103" name="stamp" type="stamp" x="192" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="104" name="stamp" type="stamp" x="224" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="105" name="stamp" type="stamp" x="256" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="106" name="stamp" type="stamp" x="288" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="107" name="stamp" type="stamp" x="320" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="108" name="stamp" type="stamp" x="352" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="109" name="stamp" type="stamp" x="384" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="110" name="stamp" type="stamp" x="416" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="111" name="stamp" type="stamp" x="448" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="112" name="stamp" type="stamp" x="480" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="113" name="stamp" type="stamp" x="512" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="114" name="stamp" type="stamp" x="544" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="115" name="stamp" type="stamp" x="576" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="116" name="stamp" type="stamp" x="608" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="117" name="stamp" type="stamp" x="640" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="118" name="stamp" type="stamp" x="672" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="119" name="stamp" type="stamp" x="704" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="120" name="stamp" type="stamp" x="736" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="121" name="stamp" type="stamp" x="0" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="122" name="stamp" type="stamp" x="32" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="123" name="stamp" type="stamp" x="64" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="124" name="stamp" type="stamp" x="96" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="125" name="stamp" type="stamp" x="128" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="126" name="stamp" type="stamp" x="160" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="127" name="stamp" type="stamp" x="192" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="128" name="stamp" type="stamp" x="224" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="129" name="stamp" type="stamp" x="256" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="130" name="stamp" type="stamp" x="288" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="131" name="stamp" type="stamp" x="320" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="132" name="stamp" type="stamp" x="352" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="133" name="stamp" type="stamp" x="384" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="134" name="stamp" type="stamp" x="416" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="135" name="stamp" type="stamp" x="448" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="136" name="stamp" type="stamp" x="480" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="137" name="stamp" type="stamp" x="512" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="138" name="stamp" type="stamp" x="544" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="139" name="stamp" type="stamp" x="576" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="140" name="stamp" type="stamp" x="608" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="141" name="stamp" type="stamp" x="640" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="142" name="stamp" type="stamp" x="672" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="143" name="stamp" type="stamp" x="704" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="144" name="stamp" type="stamp" x="736" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="145" name="stamp" type="stamp" x="0" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="146" name="stamp" type="stamp" x="32" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="147" name="stamp" type="stamp" x="64" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="148" name="stamp" type="stamp" x="96" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="149" name="stamp" type="stamp" x="128" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="150" name="stamp" type="stamp" x="160" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="151" name="stamp" type="stamp" x="192" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="152" name="stamp" type="stamp" x="224" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="153" name="stamp" type="stamp" x="256" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="154" name="stamp" type="stamp" x="288" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="155" name="stamp" type="stamp" x="320" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="156" name="stamp" type="stamp" x="352" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="157" name="stamp" type="stamp" x="384" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="158" name="stamp" type="stamp" x="416" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="159" name="stamp" type="stamp" x="448" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="160" name="stamp" type="stamp" x="480" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="161" name="stamp" type="stamp" x="512" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="162" name="stamp" type="stamp" x="544" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="163" name="stamp" type="stamp" x="576" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="164" name="stamp" type="stamp" x="608" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="165" name="stamp" type="stamp" x="640" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="166" name="stamp" type="stamp" x="672" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="167" name="stamp" type="stamp" x="704" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="168" name="stamp" type="stamp" x="736" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="169" name="stamp" type="stamp" x="0" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="170" name="stamp" type="stamp" x="32" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="171" name="stamp" type="stamp" x="64" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="172" name="stamp" type="stamp" x="96" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="173" name="stamp" type="stamp" x="128" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="174" name="stamp" type="stamp" x="160" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="175" name="stamp" type="stamp" x="192" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="176" name="stamp" type="stamp" x="224" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="177" name="stamp" type="stamp" x="256" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="178" name="stamp" type="stamp" x="288" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="179" name="stamp" type="stamp" x="320" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="180" name="stamp" type="stamp" x="352" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="181" name="stamp" type="stamp" x="384" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="182" name="stamp" type="stamp" x="416" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="183" name="stamp" type="stamp" x="448" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="184" name="stamp" type="stamp" x="480" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="185" name="stamp" type="stamp" x="512" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="186" name="stamp" type="stamp" x="544" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="187" name="stamp" type="stamp" x="576" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="188" name="stamp" type="stamp" x="608" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="189" name="stamp" type="stamp" x="640" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="190" name="stamp" type="stamp" x="672" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="191" name="stamp" type="stamp" x="704" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="192" name="stamp" type="stamp" x="736" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="193" name="stamp" type="stamp" x="0" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="194" name="stamp" type="stamp" x="32" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="195" name="stamp" type="stamp" x="64" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="196" name="stamp" type="stamp" x="96" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="197" name="stamp" type="stamp" x="128" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="198" name="stamp" type="stamp" x="160" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="199" name="stamp" type="stamp" x="192" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="200" name="stamp" type="stamp" x="224" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="201" name="stamp" type="stamp" x="256" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="202" name="stamp" type="stamp" x="288" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="203" name="stamp" type="stamp" x="320" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="204" name="stamp" type="stamp" x="352" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="205" name="stamp" type="stamp" x="384" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="206" name="stamp" type="stamp" x="416" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="207" name="stamp" type="stamp" x="448" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="208" name="stamp" type="stamp" x="480" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="209" name="stamp" type="stamp" x="512" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="210" name="stamp" type="stamp" x="544" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="211" name="stamp" type="stamp" x="576" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="212" name="stamp" type="stamp" x="608" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="213" name="stamp" type="stamp" x="640" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="214" name="stamp" type="stamp" x="672" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="215" name="stamp" type="stamp" x="704" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="216" name="stamp" type="stamp" x="736" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="217" name="stamp" type="stamp" x="0" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="218" name="stamp" type="stamp" x="32" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="219" name="stamp" type="stamp" x="64" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="220" name="stamp" type="stamp" x="96" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="221" name="stamp" type="stamp" x="128" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="222" name="stamp" type="stamp" x="160" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="223" name="stamp" type="stamp" x="192" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="224" name="stamp" type="stamp" x="224" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="225" name="stamp" type="stamp" x="256" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="226" name="stamp" type="stamp" x="288" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="227" name="stamp" type="stamp" x="320" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="228" name="stamp" type="stamp" x="352" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="229" name="stamp" type="stamp" x="384" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="230" name="stamp" type="stamp" x="416" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="231" name="stamp" type="stamp" x="448" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="232" name="stamp" type="stamp" x="480" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="233" name="stamp" type="stamp" x="512" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="234" name="stamp" type="stamp" x="544" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="235" name="stamp" type="stamp" x="576" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="236" name="stamp" type="stamp" x="608" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="237" name="stamp" type="stamp" x="640" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="238" name="stamp" type="stamp" x="672" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="239" name="stamp" type="stamp" x="704" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="240" name="stamp" type="stamp" x="736" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="241" name="stamp" type="stamp" x="0" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="242" name="stamp" type="stamp" x="32" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="243" name="stamp" type="stamp" x="64" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="244" name="stamp" type="stamp" x="96" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="245" name="stamp" type="stamp" x="128" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="246" name="stamp" type="stamp" x="160" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="247" name="stamp" type="stamp" x="192" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="248" name="stamp" type="stamp" x="224" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="249" name="stamp" type="stamp" x="256" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="250" name="stamp" type="stamp" x="288" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="251" name="stamp" type="stamp" x="320" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="252" name="stamp" type="stamp" x="352" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="253" name="stamp" type="stamp" x="384" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="254" name="stamp" type="stamp" x="416" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="255" name="stamp" type="stamp" x="448" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="256" name="stamp" type="stamp" x="480" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="257" name="stamp" type="stamp" x="512" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="258" name="stamp" type="stamp" x="544" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="259" name="stamp" type="stamp" x="576" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="260" name="stamp" type="stamp" x="608" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="261" name="stamp" type="stamp" x="640" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="262" name="stamp" type="stamp" x="672" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="263" name="stamp" type="stamp" x="704" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="264" name="stamp" type="stamp" x="736" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="265" name="stamp" type="stamp" x="0" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="266" name="stamp" type="stamp" x="32" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="267" name="stamp" type="stamp" x="64" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="268" name="stamp" type="stamp" x="96" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="269" name="stamp" type="stamp" x="128" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="270" name="stamp" type="stamp" x="160" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="271" name="stamp" type="stamp" x="192" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="272" name="stamp" type="stamp" x="224" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="273" name="stamp" type="stamp" x="256" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="274" name="stamp" type="stamp" x="288" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="275" name="stamp" type="stamp" x="320" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="276" name="stamp" type="stamp" x="352" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="277" name="stamp" type="stamp" x="384" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="278" name="stamp" type="stamp" x="416" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="279" name="stamp" type="stamp" x="448" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="280" name="stamp" type="stamp" x="480" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="281" name="stamp" type="stamp" x="512" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="282" name="stamp" type="stamp" x="544" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="283" name="stamp" type="stamp" x="576" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="284" name="stamp" type="stamp" x="608" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="285" name="stamp" type="stamp" x="640" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="286" name="stamp" type="stamp" x="672" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="287" name="stamp" type="stamp" x="704" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="288" name="stamp" type="stamp" x="736" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="289" name="stamp" type="stamp" x="0" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="290" name="stamp" type="stamp" x="32" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="291" name="stamp" type="stamp" x="64" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="292" name="stamp" type="stamp" x="96" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="293" name="stamp" type="stamp" x="128" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="294" name="stamp" type="stamp" x="160" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="295" name="stamp" type="stamp" x="192" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="296" name="stamp" type="stamp" x="224" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="297" name="stamp" type="stamp" x="256" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="298" name="stamp" type="stamp" x="288" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="299" name="stamp" type="stamp" x="320" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="300" name="stamp" type="stamp" x="352" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="301" name="stamp" type="stamp" x="384" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="302" name="stamp" type="stamp" x="416" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="303" name="stamp" type="stamp" x="448" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="304" name="stamp" type="stamp" x="480" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="305" name="stamp" type="stamp" x="512" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="306" name="stamp" type="stamp" x="544" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="307" name="stamp" type="stamp" x="576" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="308" name="stamp" type="stamp" x="608" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="309" name="stamp" type="stamp" x="640" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="310" name="stamp" type="stamp" x="672" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="311" name="stamp" type="stamp" x="704" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="312" name="stamp" type="stamp" x="736" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="313" name="stamp" type="stamp" x="0" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="314" name="stamp" type="stamp" x="32" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="315" name="stamp" type="stamp" x="64" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="316" name="stamp" type="stamp" x="96" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="317" name="stamp" type="stamp" x="128" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="318" name="stamp" type="stamp" x="160" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="319" name="stamp" type="stamp" x="192" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="320" name="stamp" type="stamp" x="224" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="321" name="stamp" type="stamp" x="256" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="322" name="stamp" type="stamp" x="288" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="323" name="stamp" type="stamp" x="320" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="324" name="stamp" type="stamp" x="352" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="325" name="stamp" type="stamp" x="384" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="326" name="stamp" type="stamp" x="416" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="327" name="stamp" type="stamp" x="448" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="328" name="stamp" type="stamp" x="480" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="329" name="stamp" type="stamp" x="512" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="330" name="stamp" type="stamp" x="544" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="331" name="stamp" type="stamp" x="576" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="332" name="stamp" type="stamp" x="608" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="333" name="stamp" type="stamp" x="640" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="334" name="stamp" type="stamp" x="672" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="335" name="stamp" type="stamp" x="704" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="336" name="stamp" type="stamp" x="736" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="337" name="stamp" type="stamp" x="0" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="338" name="stamp" type="stamp" x="32" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="339" name="stamp" type="stamp" x="64" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="340" name="stamp" type="stamp" x="96" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="341" name="stamp" type="stamp" x="128" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="342" name="stamp" type="stamp" x="160" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="343" name="stamp" type="stamp" x="192" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="344" name="stamp" type="stamp" x="224" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="345" name="stamp" type="stamp" x="256" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="346" name="stamp" type="stamp" x="288" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="347" name="stamp" type="stamp" x="320" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="348" name="stamp" type="stamp" x="352" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="349" name="stamp" type="stamp" x="384" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="350" name="stamp" type="stamp" x="416" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="351" name="stamp" type="stamp" x="448" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="352" name="stamp" type="stamp" x="480" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="353" name="stamp" type="stamp" x="512" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="354" name="stamp" type="stamp" x="544" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="355" name="stamp" type="stamp" x="576" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="356" name="stamp" type="stamp" x="608" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="357" name="stamp" type="stamp" x="640" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="358" name="stamp" type="stamp" x="672" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="359" name="stamp" type="stamp" x="704" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="360" name="stamp" type="stamp" x="736" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="361" name="stamp" type="stamp" x="0" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="362" name="stamp" type="stamp" x="32" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="363" name="stamp" type="stamp" x="64" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="364" name="stamp" type="stamp" x="96" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="365" name="stamp" type="stamp" x="128" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="366" name="stamp" type="stamp" x="160" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="367" name="stamp" type="stamp" x="192" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="368" name="stamp" type="stamp" x="224" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="369" name="stamp" type="stamp" x="256" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="370" name="stamp" type="stamp" x="288" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="371" name="stamp" type="stamp" x="320" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="372" name="stamp" type="stamp" x="352" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="373" name="stamp" type="stamp" x="384" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="374" name="stamp" type="stamp" x="416" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="375" name="stamp" type="stamp" x="448" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="376" name="stamp" type="stamp" x="480" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="377" name="stamp" type="stamp" x="512" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="378" name="stamp" type="stamp" x="544" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="379" name="stamp" type="stamp" x="576" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="380" name="stamp" type="stamp" x="608" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="381" name="stamp" type="stamp" x="640" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="382" name="stamp" type="stamp" x="672" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="383" name="stamp" type="stamp" x="704" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="384" name="stamp" type="stamp" x="736" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="385" name="stamp" type="stamp" x="0" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="386" name="stamp" type="stamp" x="32" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="387" name="stamp" type="stamp" x="64" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="388" name="stamp" type="stamp" x="96" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="389" name="stamp" type="stamp" x="128" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="390" name="stamp" type="stamp" x="160" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="391" name="stamp" type="stamp" x="192" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="392" name="stamp" type="stamp" x="224" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="393" name="stamp" type="stamp" x="256" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="394" name="stamp" type="stamp" x="288" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="395" name="stamp" type="stamp" x="320" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="396" name="stamp" type="stamp" x="352" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="397" name="stamp" type="stamp" x="384" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="398" name="stamp" type="stamp" x="416" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="399" name="stamp" type="stamp" x="448" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="400" name="stamp" type="stamp" x="480" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="401" name="stamp" type="stamp" x="512" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="402" name="stamp" type="stamp" x="544" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="403" name="stamp" type="stamp" x="576" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="404" name="stamp" type="stamp" x="608" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="405" name="stamp" type="stamp" x="640" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="406" name="stamp" type="stamp" x="672" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="407" name="stamp" type="stamp" x="704" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="408" name="stamp" type="stamp" x="736" y="512" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="16"/>
+            </properties>
+        </object>
+        <object id="409" name="stamp" type="stamp" x="0" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="0"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="410" name="stamp" type="stamp" x="32" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="1"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="411" name="stamp" type="stamp" x="64" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="2"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="412" name="stamp" type="stamp" x="96" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="3"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="413" name="stamp" type="stamp" x="128" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="4"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="414" name="stamp" type="stamp" x="160" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="415" name="stamp" type="stamp" x="192" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="416" name="stamp" type="stamp" x="224" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="417" name="stamp" type="stamp" x="256" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="418" name="stamp" type="stamp" x="288" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="419" name="stamp" type="stamp" x="320" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="420" name="stamp" type="stamp" x="352" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="421" name="stamp" type="stamp" x="384" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="422" name="stamp" type="stamp" x="416" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="423" name="stamp" type="stamp" x="448" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="424" name="stamp" type="stamp" x="480" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="425" name="stamp" type="stamp" x="512" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="426" name="stamp" type="stamp" x="544" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="427" name="stamp" type="stamp" x="576" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="428" name="stamp" type="stamp" x="608" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="429" name="stamp" type="stamp" x="640" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="430" name="stamp" type="stamp" x="672" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="21"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="431" name="stamp" type="stamp" x="704" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="22"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+        <object id="432" name="stamp" type="stamp" x="736" y="544" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@0@800@32@32"/>
+                <property name="grid_x" type="int" value="23"/>
+                <property name="grid_y" type="int" value="17"/>
+            </properties>
+        </object>
+    </objectgroup>
+    <objectgroup id="2" name="layer_2">
+        <properties>
+            <property name="nganu_role" value="map_layer"/>
+            <property name="kind" value="tilemap"/>
+            <property name="tint" value="#FFFFFFFF"/>
+            <property name="parallax" type="float" value="1"/>
+        </properties>
+        <object id="433" name="stamp" type="stamp" x="352" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@192@832@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="434" name="stamp" type="stamp" x="352" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@192@864@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="435" name="stamp" type="stamp" x="352" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@192@896@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="436" name="stamp" type="stamp" x="576" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@192@960@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="437" name="stamp" type="stamp" x="576" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@192@992@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="438" name="stamp" type="stamp" x="384" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@224@832@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="439" name="stamp" type="stamp" x="384" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@224@864@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="440" name="stamp" type="stamp" x="384" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@224@896@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="441" name="stamp" type="stamp" x="608" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@224@960@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="442" name="stamp" type="stamp" x="608" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@224@992@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="443" name="stamp" type="stamp" x="416" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@256@832@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="444" name="stamp" type="stamp" x="416" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@256@864@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="445" name="stamp" type="stamp" x="416" y="224" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@256@896@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="7"/>
+            </properties>
+        </object>
+        <object id="446" name="stamp" type="stamp" x="640" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@256@960@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="447" name="stamp" type="stamp" x="640" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@256@992@32@32"/>
+                <property name="grid_x" type="int" value="20"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="448" name="stamp" type="stamp" x="224" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@288@352@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="449" name="stamp" type="stamp" x="224" y="64" width="96" height="96">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@288@352@96@96"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="450" name="stamp" type="stamp" x="224" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@288@384@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="451" name="stamp" type="stamp" x="224" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@288@416@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="452" name="stamp" type="stamp" x="256" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@320@352@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="453" name="stamp" type="stamp" x="256" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@320@384@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="454" name="stamp" type="stamp" x="160" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="455" name="stamp" type="stamp" x="192" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="456" name="stamp" type="stamp" x="224" y="192" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="6"/>
+            </properties>
+        </object>
+        <object id="457" name="stamp" type="stamp" x="160" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="458" name="stamp" type="stamp" x="192" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="459" name="stamp" type="stamp" x="224" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="460" name="stamp" type="stamp" x="256" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="461" name="stamp" type="stamp" x="288" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="462" name="stamp" type="stamp" x="160" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="5"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="463" name="stamp" type="stamp" x="192" y="384" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="12"/>
+            </properties>
+        </object>
+        <object id="464" name="stamp" type="stamp" x="192" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="6"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="465" name="stamp" type="stamp" x="224" y="416" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="13"/>
+            </properties>
+        </object>
+        <object id="466" name="stamp" type="stamp" x="224" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="7"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="467" name="stamp" type="stamp" x="256" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="468" name="stamp" type="stamp" x="256" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="8"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="469" name="stamp" type="stamp" x="288" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="470" name="stamp" type="stamp" x="288" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="471" name="stamp" type="stamp" x="320" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="472" name="stamp" type="stamp" x="320" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="473" name="stamp" type="stamp" x="320" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="10"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="474" name="stamp" type="stamp" x="352" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="475" name="stamp" type="stamp" x="352" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="11"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="476" name="stamp" type="stamp" x="384" y="320" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="10"/>
+            </properties>
+        </object>
+        <object id="477" name="stamp" type="stamp" x="384" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="12"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="478" name="stamp" type="stamp" x="416" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="13"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="479" name="stamp" type="stamp" x="448" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="480" name="stamp" type="stamp" x="448" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="481" name="stamp" type="stamp" x="448" y="480" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="14"/>
+                <property name="grid_y" type="int" value="15"/>
+            </properties>
+        </object>
+        <object id="482" name="stamp" type="stamp" x="480" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="483" name="stamp" type="stamp" x="512" y="160" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="5"/>
+            </properties>
+        </object>
+        <object id="484" name="stamp" type="stamp" x="512" y="288" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="9"/>
+            </properties>
+        </object>
+        <object id="485" name="stamp" type="stamp" x="512" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="486" name="stamp" type="stamp" x="512" y="448" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="16"/>
+                <property name="grid_y" type="int" value="14"/>
+            </properties>
+        </object>
+        <object id="487" name="stamp" type="stamp" x="544" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="488" name="stamp" type="stamp" x="544" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="17"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="489" name="stamp" type="stamp" x="576" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="490" name="stamp" type="stamp" x="576" y="352" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="18"/>
+                <property name="grid_y" type="int" value="11"/>
+            </properties>
+        </object>
+        <object id="491" name="stamp" type="stamp" x="608" y="256" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@32@992@32@32"/>
+                <property name="grid_x" type="int" value="19"/>
+                <property name="grid_y" type="int" value="8"/>
+            </properties>
+        </object>
+        <object id="492" name="stamp" type="stamp" x="288" y="64" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@352@352@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="2"/>
+            </properties>
+        </object>
+        <object id="493" name="stamp" type="stamp" x="288" y="96" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@352@384@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+        <object id="494" name="stamp" type="stamp" x="288" y="128" width="32" height="32">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@352@416@32@32"/>
+                <property name="grid_x" type="int" value="9"/>
+                <property name="grid_y" type="int" value="4"/>
+            </properties>
+        </object>
+        <object id="495" name="stamp" type="stamp" x="464" y="64" width="64" height="64">
+            <properties>
+                <property name="asset_ref" value="map:terrain_atlas.png@576@384@64@64"/>
+                <property name="grid_x" type="int" value="15"/>
+                <property name="grid_y" type="int" value="3"/>
+            </properties>
+        </object>
+    </objectgroup>
+    <objectgroup id="3" name="objects">
+        <properties>
+            <property name="nganu_role" value="map_objects"/>
+        </properties>
+        <object id="496" name="portal_1" type="portal" x="640" y="320" width="32" height="32">
+            <properties>
+                <property name="collider" value="11|16|11|16"/>
+                <property name="collision" value="block"/>
+                <property name="sprite" value="map:terrain_atlas.png@544@384@32@32"/>
+                <property name="target_x" value="640"/>
+                <property name="target_y" value="320"/>
+                <property name="title" value="Portal"/>
+            </properties>
+        </object>
+        <object id="497" name="npc_2" type="npc" x="224" y="256" width="32" height="32">
+            <properties>
+                <property name="name" value="Guide"/>
+                <property name="sprite" value="map:terrain_atlas.png@544@384@32@32"/>
+                <property name="title" value="NPC"/>
+            </properties>
+        </object>
+        <object id="498" name="portal_3" type="portal" x="544" y="480" width="32" height="32">
+            <properties>
+                <property name="sprite" value="map:terrain_atlas.png@544@384@32@32"/>
+                <property name="target_x" value="544"/>
+                <property name="target_y" value="480"/>
+                <property name="title" value="Portal"/>
+            </properties>
+        </object>
+    </objectgroup>
+</map>

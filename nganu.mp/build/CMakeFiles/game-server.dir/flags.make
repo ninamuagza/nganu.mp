@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/fanorisky/GameProject/nganu.mp/src -I/home/fanorisky/GameProject/nganu.mp/.. -I/home/fanorisky/GameProject/nganu.mp/vendor/enet/include -isystem /usr/include/luajit-2.1
+CXX_INCLUDES = -I/home/fanorisky/GameProject/nganu.mp/src -I/home/fanorisky/GameProject/nganu.mp/.. -I/home/fanorisky/GameProject/nganu.mp/vendor/enet/include
 
 CXX_FLAGS = -O3 -DNDEBUG -std=gnu++17
 
